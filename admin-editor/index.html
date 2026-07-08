@@ -136,6 +136,115 @@
   #statusBar.err { color: var(--err); }
   #statusBar.idle { color: var(--muted); }
 
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+  }
+  .tabs button {
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .tabs button:hover { background: #eef1f5; }
+  .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  #settingsForm {
+    flex: 1;
+    overflow: auto;
+    padding: 12px 14px;
+    background: var(--panel);
+    display: none;
+  }
+  #settingsForm.active { display: block; }
+  #settingsForm.stale { opacity: 0.4; pointer-events: none; }
+  #treeContainer.active { display: block; }
+  #treeContainer:not(.active) { display: none; }
+
+  #reformatNote {
+    display: none;
+    font-size: 11.5px;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 5px;
+    padding: 6px 8px;
+    margin-bottom: 12px;
+  }
+  #reformatNote.shown { display: block; }
+
+  .formSection { margin-bottom: 18px; }
+  .formSection > h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 8px 0;
+  }
+  .formRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .formRow label {
+    font-size: 12.5px;
+    width: 150px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+  .formRow input[type="text"],
+  .formRow input[type="number"],
+  .formRow textarea {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .formRow textarea { font-family: var(--mono); resize: vertical; }
+  .formRow input[type="checkbox"] { margin: 0; }
+  .quad input { width: 0; }
+  .dynRow {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .dynRow input {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    flex: 1;
+    min-width: 0;
+  }
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .miniBtn {
+    padding: 3px 8px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  #settingsForm > p.disabledNote {
+    color: var(--err);
+    font-size: 12.5px;
+  }
+
   details.node { margin-left: 14px; }
   details.node > summary {
     cursor: pointer;
@@ -178,8 +287,12 @@
 
 <main>
   <div id="treePane">
-    <div class="paneHeader">Structure</div>
-    <div id="treeContainer"></div>
+    <div class="tabs">
+      <button id="tabStructure" class="active">Structure</button>
+      <button id="tabSettings">Basic Settings</button>
+    </div>
+    <div id="treeContainer" class="active"></div>
+    <div id="settingsForm"></div>
   </div>
   <div id="rawPane">
     <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
@@ -319,6 +432,250 @@
     treeContainer.appendChild(buildTreeNode(null, parsed, true));
   }
 
+  // --- Basic Settings form (Phase 2) -----------------------------------
+  // Editing here regenerates the whole document via JSON.stringify, so
+  // any hand-written comments are lost the first time it's used to make
+  // a change. The raw JSON pane remains the only comment-safe editor.
+
+  const settingsForm = document.getElementById('settingsForm');
+  const tabStructure = document.getElementById('tabStructure');
+  const tabSettings = document.getElementById('tabSettings');
+  let formTouchedThisSession = false;
+
+  settingsForm.innerHTML = `
+    <div id="reformatNote">Editing here rewrites the whole file with standard formatting. Any <code>//</code> or <code>/* */</code> comments in the file will be removed the moment you change a field below. Edit the raw JSON pane instead if you need to preserve them.</div>
+    <p class="disabledNote" id="formDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+
+    <div class="formSection">
+      <h3>Projection</h3>
+      <div class="formRow"><label>projectionCode</label><input type="text" id="f_projectionCode" placeholder="EPSG:3857"></div>
+      <div class="formRow"><label>projectionExtent</label>
+        <input type="number" id="f_projExtent0" placeholder="minX">
+        <input type="number" id="f_projExtent1" placeholder="minY">
+        <input type="number" id="f_projExtent2" placeholder="maxX">
+        <input type="number" id="f_projExtent3" placeholder="maxY">
+      </div>
+    </div>
+
+    <div class="formSection">
+      <h3>View</h3>
+      <div class="formRow"><label>extent</label>
+        <input type="number" id="f_extent0" placeholder="minX">
+        <input type="number" id="f_extent1" placeholder="minY">
+        <input type="number" id="f_extent2" placeholder="maxX">
+        <input type="number" id="f_extent3" placeholder="maxY">
+      </div>
+      <div class="formRow"><label>center</label>
+        <input type="number" id="f_center0" placeholder="x">
+        <input type="number" id="f_center1" placeholder="y">
+      </div>
+      <div class="formRow"><label>zoom</label><input type="number" step="0.1" id="f_zoom"></div>
+      <div class="formRow" style="align-items:flex-start;"><label>resolutions</label><textarea id="f_resolutions" rows="3" placeholder="comma or newline separated"></textarea></div>
+    </div>
+
+    <div class="formSection">
+      <h3>Page settings</h3>
+      <div class="formRow"><label>footer.img</label><input type="text" id="f_footerImg"></div>
+      <div class="formRow"><label>footer.url</label><input type="text" id="f_footerUrl"></div>
+      <div class="formRow"><label>footer.text</label><input type="text" id="f_footerText"></div>
+      <div class="formRow"><label>mapGrid.visible</label><input type="checkbox" id="f_mapGrid"></div>
+      <div class="formRow"><label>mapInteractions.embedded</label><input type="checkbox" id="f_embedded"></div>
+    </div>
+
+    <div class="formSection">
+      <h3>Source</h3>
+      <div id="sourceList"></div>
+      <button type="button" class="miniBtn" id="btnAddSource">+ Add source</button>
+    </div>
+
+    <div class="formSection">
+      <h3>Palette</h3>
+      <div id="paletteList"></div>
+      <button type="button" class="miniBtn" id="btnAddColor">+ Add color</button>
+    </div>
+  `;
+
+  const reformatNote = document.getElementById('reformatNote');
+  const formDisabledNote = document.getElementById('formDisabledNote');
+  const sourceList = document.getElementById('sourceList');
+  const paletteList = document.getElementById('paletteList');
+
+  function setSettingsFormEnabled(enabled) {
+    settingsForm.classList.toggle('stale', !enabled);
+    formDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function numOrUndef(v) {
+    if (v === '' || v === null || v === undefined) return undefined;
+    const n = parseFloat(v);
+    return Number.isNaN(n) ? undefined : n;
+  }
+
+  function makeSourceRow(name, url) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    row.innerHTML = `
+      <input type="text" class="srcName" placeholder="name" value="${escapeHtml(name || '')}">
+      <input type="text" class="srcUrl" placeholder="url" value="${escapeHtml(url || '')}">
+      <button type="button" class="miniBtn srcRemove">✕</button>
+    `;
+    row.querySelector('.srcRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelectorAll('input').forEach(el => el.addEventListener('input', applyFormChange));
+    return row;
+  }
+
+  function makeColorRow(color) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    row.innerHTML = `
+      <span class="swatch" style="background:${escapeHtml(color || '#ffffff')}"></span>
+      <input type="text" class="colorVal" placeholder="rgb(0,0,0) or #hex" value="${escapeHtml(color || '')}">
+      <button type="button" class="miniBtn colorRemove">✕</button>
+    `;
+    const input = row.querySelector('.colorVal');
+    const swatch = row.querySelector('.swatch');
+    input.addEventListener('input', () => { swatch.style.background = input.value; applyFormChange(); });
+    row.querySelector('.colorRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    return row;
+  }
+
+  document.getElementById('btnAddSource').addEventListener('click', () => {
+    sourceList.appendChild(makeSourceRow('', ''));
+  });
+  document.getElementById('btnAddColor').addEventListener('click', () => {
+    paletteList.appendChild(makeColorRow(''));
+  });
+
+  const scalarFieldIds = [
+    'f_projectionCode', 'f_projExtent0', 'f_projExtent1', 'f_projExtent2', 'f_projExtent3',
+    'f_extent0', 'f_extent1', 'f_extent2', 'f_extent3', 'f_center0', 'f_center1', 'f_zoom',
+    'f_resolutions', 'f_footerImg', 'f_footerUrl', 'f_footerText'
+  ];
+  scalarFieldIds.forEach(id => {
+    document.getElementById(id).addEventListener('input', applyFormChange);
+  });
+  document.getElementById('f_mapGrid').addEventListener('change', applyFormChange);
+  document.getElementById('f_embedded').addEventListener('change', applyFormChange);
+
+  function populateSettingsForm(parsed) {
+    if (settingsForm.contains(document.activeElement)) return; // don't clobber in-progress typing
+    const g = id => document.getElementById(id);
+    g('f_projectionCode').value = parsed.projectionCode || '';
+    const pe = parsed.projectionExtent || [];
+    g('f_projExtent0').value = pe[0] ?? '';
+    g('f_projExtent1').value = pe[1] ?? '';
+    g('f_projExtent2').value = pe[2] ?? '';
+    g('f_projExtent3').value = pe[3] ?? '';
+    const ex = parsed.extent || [];
+    g('f_extent0').value = ex[0] ?? '';
+    g('f_extent1').value = ex[1] ?? '';
+    g('f_extent2').value = ex[2] ?? '';
+    g('f_extent3').value = ex[3] ?? '';
+    const ce = parsed.center || [];
+    g('f_center0').value = ce[0] ?? '';
+    g('f_center1').value = ce[1] ?? '';
+    g('f_zoom').value = parsed.zoom ?? '';
+    g('f_resolutions').value = Array.isArray(parsed.resolutions) ? parsed.resolutions.join(', ') : '';
+
+    const footer = (parsed.pageSettings && parsed.pageSettings.footer) || {};
+    g('f_footerImg').value = footer.img || '';
+    g('f_footerUrl').value = footer.url || '';
+    g('f_footerText').value = footer.text || '';
+    g('f_mapGrid').checked = !!(parsed.pageSettings && parsed.pageSettings.mapGrid && parsed.pageSettings.mapGrid.visible);
+    g('f_embedded').checked = !!(parsed.pageSettings && parsed.pageSettings.mapInteractions && parsed.pageSettings.mapInteractions.embedded);
+
+    sourceList.innerHTML = '';
+    Object.entries(parsed.source || {}).forEach(([name, def]) => {
+      sourceList.appendChild(makeSourceRow(name, def && def.url));
+    });
+
+    paletteList.innerHTML = '';
+    (parsed.palette || []).forEach(color => {
+      paletteList.appendChild(makeColorRow(color));
+    });
+  }
+
+  function collectFormValues() {
+    const next = JSON.parse(JSON.stringify(currentParsed));
+    const g = id => document.getElementById(id).value;
+
+    next.projectionCode = g('f_projectionCode') || undefined;
+    if (!next.projectionCode) delete next.projectionCode;
+
+    const pe = [numOrUndef(g('f_projExtent0')), numOrUndef(g('f_projExtent1')), numOrUndef(g('f_projExtent2')), numOrUndef(g('f_projExtent3'))];
+    if (pe.every(v => v !== undefined)) next.projectionExtent = pe; else delete next.projectionExtent;
+
+    const ex = [numOrUndef(g('f_extent0')), numOrUndef(g('f_extent1')), numOrUndef(g('f_extent2')), numOrUndef(g('f_extent3'))];
+    if (ex.every(v => v !== undefined)) next.extent = ex; else delete next.extent;
+
+    const ce = [numOrUndef(g('f_center0')), numOrUndef(g('f_center1'))];
+    if (ce.every(v => v !== undefined)) next.center = ce; else delete next.center;
+
+    const zoom = numOrUndef(g('f_zoom'));
+    if (zoom !== undefined) next.zoom = zoom; else delete next.zoom;
+
+    const resolutions = g('f_resolutions').split(/[\s,]+/).map(s => s.trim()).filter(Boolean).map(Number).filter(n => !Number.isNaN(n));
+    if (resolutions.length) next.resolutions = resolutions; else delete next.resolutions;
+
+    const footerImg = g('f_footerImg'), footerUrl = g('f_footerUrl'), footerText = g('f_footerText');
+    if (footerImg || footerUrl || footerText) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.footer = {};
+      if (footerImg) next.pageSettings.footer.img = footerImg;
+      if (footerUrl) next.pageSettings.footer.url = footerUrl;
+      if (footerText) next.pageSettings.footer.text = footerText;
+    } else if (next.pageSettings) {
+      delete next.pageSettings.footer;
+    }
+    const mapGridChecked = document.getElementById('f_mapGrid').checked;
+    next.pageSettings = next.pageSettings || {};
+    next.pageSettings.mapGrid = { visible: mapGridChecked };
+    const embeddedChecked = document.getElementById('f_embedded').checked;
+    next.pageSettings.mapInteractions = { embedded: embeddedChecked };
+    if (Object.keys(next.pageSettings).length === 0) delete next.pageSettings;
+
+    const nextSource = {};
+    sourceList.querySelectorAll('.dynRow').forEach(row => {
+      const name = row.querySelector('.srcName').value.trim();
+      const url = row.querySelector('.srcUrl').value.trim();
+      if (name) nextSource[name] = { url };
+    });
+    if (Object.keys(nextSource).length) next.source = nextSource; else delete next.source;
+
+    const nextPalette = [];
+    paletteList.querySelectorAll('.colorVal').forEach(input => {
+      if (input.value.trim()) nextPalette.push(input.value.trim());
+    });
+    if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
+
+    return next;
+  }
+
+  function applyFormChange() {
+    if (!currentParsed) return;
+    formTouchedThisSession = true;
+    reformatNote.classList.add('shown');
+    const next = collectFormValues();
+    const serialized = JSON.stringify(next, null, 2);
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+    setter.call(rawText, serialized);
+    rawText.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function switchTab(tab) {
+    const showSettings = tab === 'settings';
+    tabStructure.classList.toggle('active', !showSettings);
+    tabSettings.classList.toggle('active', showSettings);
+    treeContainer.classList.toggle('active', !showSettings);
+    settingsForm.classList.toggle('active', showSettings);
+  }
+  tabStructure.addEventListener('click', () => switchTab('structure'));
+  tabSettings.addEventListener('click', () => switchTab('settings'));
+
+  setSettingsFormEnabled(false);
+
+  let currentParsed = null;
+
   function parseAndRender() {
     const text = rawText.value;
     if (text.trim() === '') {
@@ -326,6 +683,8 @@
       statusBar.textContent = 'No file loaded.';
       treeContainer.innerHTML = '';
       treeContainer.classList.remove('stale');
+      currentParsed = null;
+      setSettingsFormEnabled(false);
       return;
     }
     let parsed;
@@ -335,6 +694,7 @@
       statusBar.className = 'err';
       statusBar.textContent = 'Invalid JSON: ' + locateError(text, e.message);
       treeContainer.classList.add('stale');
+      setSettingsFormEnabled(false);
       return;
     }
     statusBar.className = 'ok';
@@ -343,10 +703,14 @@
     statusBar.textContent = `Valid JSON — ${controlCount} controls, ${layerCount} top-level layers.`;
     treeContainer.classList.remove('stale');
     renderTree(parsed);
+    currentParsed = parsed;
+    setSettingsFormEnabled(true);
+    populateSettingsForm(parsed);
   }
 
   rawText.addEventListener('input', () => {
     setDirty();
+    btnSaveAs.disabled = rawText.value.trim() === '';
     clearTimeout(parseDebounce);
     parseDebounce = setTimeout(parseAndRender, 250);
   });
