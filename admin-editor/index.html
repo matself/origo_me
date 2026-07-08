@@ -167,7 +167,7 @@
   #treeContainer.active { display: block; }
   #treeContainer:not(.active) { display: none; }
 
-  #layerSearch {
+  #layerSearch, #styleSearch {
     width: 100%;
     font: inherit;
     font-size: 12.5px;
@@ -176,7 +176,9 @@
     border-radius: 6px;
     margin-bottom: 10px;
   }
-  #layerCount { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  #layerCount, #styleCount { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .styleRow.filteredOut { display: none; }
+  .styleRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
   .layerRow {
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -1174,6 +1176,8 @@
   stylesFormEl.innerHTML = `
     <p class="disabledNote" id="stylesDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
     <div id="missingStylesWarning"></div>
+    <input type="text" id="styleSearch" placeholder="Filter by style name…">
+    <div id="styleCount"></div>
     <div id="stylesList"></div>
     <button type="button" class="miniBtn" id="btnAddStyle">+ Add style</button>
   `;
@@ -1181,6 +1185,8 @@
   const stylesDisabledNote = document.getElementById('stylesDisabledNote');
   const missingStylesWarning = document.getElementById('missingStylesWarning');
   const stylesList = document.getElementById('stylesList');
+  const styleSearch = document.getElementById('styleSearch');
+  const styleCountEl = document.getElementById('styleCount');
 
   function setStylesFormEnabled(enabled) {
     stylesFormEl.classList.toggle('stale', !enabled);
@@ -1221,20 +1227,29 @@
         <button type="button" class="miniBtn styleRemove">✕</button>
       </div>
       <div class="styleRowBody">
-        <textarea class="styleText optionsText" spellcheck="false">${escapeHtml(text)}</textarea>
-        <div class="styleStatus optionsStatus muted">Valid.</div>
+        <details>
+          <summary>style rules</summary>
+          <textarea class="styleText optionsText" spellcheck="false">${escapeHtml(text)}</textarea>
+          <div class="styleStatus optionsStatus muted">Valid.</div>
+        </details>
       </div>
     `;
 
     const nameInput = row.querySelector('.styleName');
     const badge = row.querySelector('.usageBadge');
+    row.dataset.styleName = (name || '').toLowerCase();
     function refreshUsageBadge() {
       const count = currentStyleUsage[nameInput.value.trim()] || 0;
       badge.textContent = `used by ${count} layer${count === 1 ? '' : 's'}`;
       badge.classList.toggle('zero', count === 0);
     }
     refreshUsageBadge();
-    nameInput.addEventListener('input', () => { refreshUsageBadge(); applyFormChange(); });
+    nameInput.addEventListener('input', () => {
+      row.dataset.styleName = nameInput.value.toLowerCase();
+      refreshUsageBadge();
+      applyStyleSearchFilter();
+      applyFormChange();
+    });
 
     const styleText = row.querySelector('.styleText');
     const styleStatus = row.querySelector('.styleStatus');
@@ -1270,6 +1285,14 @@
     stylesList.appendChild(makeStyleRow('', [[{}]]));
   });
 
+  function applyStyleSearchFilter() {
+    const q = styleSearch.value.trim().toLowerCase();
+    stylesList.querySelectorAll('.styleRow').forEach(row => {
+      row.classList.toggle('filteredOut', q !== '' && !row.dataset.styleName.includes(q));
+    });
+  }
+  styleSearch.addEventListener('input', applyStyleSearchFilter);
+
   function populateStylesForm(parsed) {
     if (stylesFormEl.contains(document.activeElement)) return; // don't clobber in-progress typing
     currentStyleUsage = computeStyleUsage(parsed.layers);
@@ -1277,6 +1300,8 @@
     Object.entries(parsed.styles || {}).forEach(([name, valueArr]) => {
       stylesList.appendChild(makeStyleRow(name, valueArr, true));
     });
+    styleCountEl.textContent = `${Object.keys(parsed.styles || {}).length} style(s) total.`;
+    applyStyleSearchFilter();
     const definedNames = new Set(Object.keys(parsed.styles || {}));
     const missing = Object.keys(currentStyleUsage).filter(n => !definedNames.has(n));
     if (missing.length) {
