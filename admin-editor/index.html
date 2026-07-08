@@ -427,6 +427,7 @@
   const btnSave = document.getElementById('btnSave');
   const btnSaveAs = document.getElementById('btnSaveAs');
   const fileInput = document.getElementById('fileInput');
+  suppressAutofill(rawText.parentElement);
 
   let fileHandle = null;
   let currentFileName = null;
@@ -483,6 +484,19 @@
     return String(s).replace(/[&<>"']/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[c]));
+  }
+
+  // Config field values (names, URLs, titles) routinely look like login-form
+  // data to password managers. These attributes are the standard opt-outs
+  // for LastPass, 1Password, Bitwarden and Chrome/Edge's built-in autofill.
+  function suppressAutofill(root) {
+    root.querySelectorAll('input, textarea').forEach(el => {
+      el.setAttribute('autocomplete', 'off');
+      el.setAttribute('data-lpignore', 'true');
+      el.setAttribute('data-1p-ignore', 'true');
+      el.setAttribute('data-bwignore', 'true');
+      el.setAttribute('data-form-type', 'other');
+    });
   }
 
   function buildLeafHtml(value) {
@@ -605,6 +619,7 @@
       <button type="button" class="miniBtn" id="btnAddColor">+ Add color</button>
     </div>
   `;
+  suppressAutofill(settingsForm);
 
   const reformatNote = document.getElementById('reformatNote');
   const formDisabledNote = document.getElementById('formDisabledNote');
@@ -632,6 +647,7 @@
     `;
     row.querySelector('.srcRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
     row.querySelectorAll('input').forEach(el => el.addEventListener('input', applyFormChange));
+    suppressAutofill(row);
     return row;
   }
 
@@ -647,6 +663,7 @@
     const swatch = row.querySelector('.swatch');
     input.addEventListener('input', () => { swatch.style.background = input.value; applyFormChange(); });
     row.querySelector('.colorRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    suppressAutofill(row);
     return row;
   }
 
@@ -731,6 +748,7 @@
     <div id="controlsList"></div>
     <button type="button" class="miniBtn" id="btnAddControl">+ Add control</button>
   `;
+  suppressAutofill(controlsForm);
   const controlsList = document.getElementById('controlsList');
   const controlsDisabledNote = document.getElementById('controlsDisabledNote');
 
@@ -806,6 +824,7 @@
       if (next) { controlsList.insertBefore(next, row); applyFormChange(); }
     });
 
+    suppressAutofill(row);
     return row;
   }
 
@@ -864,6 +883,7 @@
     <div id="layersList"></div>
     <button type="button" class="miniBtn" id="btnAddLayer">+ Add layer</button>
   `;
+  suppressAutofill(layersFormEl);
   const layersDisabledNote = document.getElementById('layersDisabledNote');
   const layersList = document.getElementById('layersList');
   const layerSearch = document.getElementById('layerSearch');
@@ -1017,6 +1037,7 @@
       subList.appendChild(makeLayerRow({ name: '', type: '' }));
     });
 
+    suppressAutofill(row);
     return row;
   }
 
