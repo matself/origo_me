@@ -155,17 +155,64 @@
   .tabs button:hover { background: #eef1f5; }
   .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  #settingsForm, #controlsForm {
+  #settingsForm, #controlsForm, #layersForm {
     flex: 1;
     overflow: auto;
     padding: 12px 14px;
     background: var(--panel);
     display: none;
   }
-  #settingsForm.active, #controlsForm.active { display: block; }
-  #settingsForm.stale, #controlsForm.stale { opacity: 0.4; pointer-events: none; }
+  #settingsForm.active, #controlsForm.active, #layersForm.active { display: block; }
+  #settingsForm.stale, #controlsForm.stale, #layersForm.stale { opacity: 0.4; pointer-events: none; }
   #treeContainer.active { display: block; }
   #treeContainer:not(.active) { display: none; }
+
+  #layerSearch {
+    width: 100%;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  #layerCount { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .layerRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: var(--bg);
+  }
+  .layerRow.filteredOut { display: none; }
+  .layerRow.isGroup { border-left: 3px solid var(--accent); }
+  .layerRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    flex-wrap: wrap;
+  }
+  .layerRowHead input[type="text"] {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .layerRowHead input.layerName { width: 150px; }
+  .layerRowHead input.layerTitle { width: 150px; }
+  .layerRowHead input.layerType { width: 90px; }
+  .layerRowHead input.layerGroup { width: 90px; }
+  .layerRowHead input.layerSource { width: 100px; }
+  .layerRowHead input.layerStyle { width: 90px; }
+  .layerRowHead input.layerOpacity { width: 55px; }
+  .layerRowHead select { font: inherit; font-size: 12.5px; padding: 4px; border: 1px solid var(--border); border-radius: 5px; }
+  .layerRowHead input.unknownName { border-color: #f59e0b; background: #fffbeb; }
+  .layerRowBody { border-top: 1px solid var(--border); padding: 6px 8px; }
+  .layerRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .layerSubList { margin-left: 22px; margin-top: 8px; padding-left: 10px; border-left: 2px dashed var(--border); }
+  .miniLabel { font-size: 10.5px; color: var(--muted); }
 
   .controlRow {
     border: 1px solid var(--border);
@@ -351,10 +398,12 @@
       <button id="tabStructure" class="active">Structure</button>
       <button id="tabSettings">Basic Settings</button>
       <button id="tabControls">Controls</button>
+      <button id="tabLayers">Layers</button>
     </div>
     <div id="treeContainer" class="active"></div>
     <div id="settingsForm"></div>
     <div id="controlsForm"></div>
+    <div id="layersForm"></div>
   </div>
   <div id="rawPane">
     <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
@@ -782,6 +831,266 @@
     }).filter(c => c.name !== '');
   }
 
+  // --- Layers tab (Phase 4) -----------------------------------------------
+  // Core fields get typed inputs; everything type-specific (attributes,
+  // filter, geometryType, minScale/maxScale, abstract, clusterStyle, ...)
+  // goes into a per-row "advanced" raw-JSON blob, same defensive
+  // last-valid-JSON handling as Controls' options. GROUP nesting is
+  // handled by recursing the same row builder into a sub-layer list -
+  // that section is always present (not gated on type==="GROUP") so you
+  // can add sub-layers while still typing the type field.
+  //
+  // No virtualization: rows are collapsed-by-default (advanced/nested
+  // sections are <details>), so even ~150 flat rows stays lightweight.
+  // The search box narrows what's visible for large real-world files.
+
+  const KNOWN_LAYER_TYPES = [
+    'GEOJSON', 'GPX', 'TOPOJSON', 'WFS', 'AGS_FEATURE', 'VECTORTILE',
+    'WMS', 'WMTS', 'XYZ', 'AGS_MAP', 'OSM', 'GROUP', 'COG'
+  ];
+  const KNOWN_LAYER_FIELDS = ['name', 'title', 'type', 'group', 'source', 'style', 'visible', 'queryable', 'opacity', 'layers'];
+
+  const tabLayers = document.getElementById('tabLayers');
+  const layersFormEl = document.getElementById('layersForm');
+
+  layersFormEl.innerHTML = `
+    <p class="disabledNote" id="layersDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <datalist id="layerTypesList">${KNOWN_LAYER_TYPES.map(n => `<option value="${n}">`).join('')}</datalist>
+    <datalist id="groupNamesList"></datalist>
+    <datalist id="sourceNamesList"></datalist>
+    <datalist id="styleNamesList"></datalist>
+    <input type="text" id="layerSearch" placeholder="Filter by name or title…">
+    <div id="layerCount"></div>
+    <div id="layersList"></div>
+    <button type="button" class="miniBtn" id="btnAddLayer">+ Add layer</button>
+  `;
+  const layersDisabledNote = document.getElementById('layersDisabledNote');
+  const layersList = document.getElementById('layersList');
+  const layerSearch = document.getElementById('layerSearch');
+  const layerCountEl = document.getElementById('layerCount');
+
+  function setLayersFormEnabled(enabled) {
+    layersFormEl.classList.toggle('stale', !enabled);
+    layersDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function flattenGroupNames(groups) {
+    let names = [];
+    (groups || []).forEach(g => {
+      names.push(g.name);
+      if (Array.isArray(g.groups)) names = names.concat(flattenGroupNames(g.groups));
+    });
+    return names;
+  }
+
+  function refreshLayerDatalists(parsed) {
+    const groupNames = flattenGroupNames(parsed.groups).concat(['root', 'none']);
+    document.getElementById('groupNamesList').innerHTML = groupNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
+    document.getElementById('sourceNamesList').innerHTML = Object.keys(parsed.source || {}).map(n => `<option value="${escapeHtml(n)}">`).join('');
+    document.getElementById('styleNamesList').innerHTML = Object.keys(parsed.styles || {}).map(n => `<option value="${escapeHtml(n)}">`).join('');
+  }
+
+  function countLayersRecursive(layers) {
+    let n = 0;
+    (layers || []).forEach(l => { n += 1; if (Array.isArray(l.layers)) n += countLayersRecursive(l.layers); });
+    return n;
+  }
+
+  function makeLayerRow(layer) {
+    const row = document.createElement('div');
+    row.className = 'layerRow';
+    const isGroupType = (layer.type || '').toUpperCase() === 'GROUP';
+    if (isGroupType) row.classList.add('isGroup');
+
+    const advanced = {};
+    Object.keys(layer).forEach(k => { if (!KNOWN_LAYER_FIELDS.includes(k)) advanced[k] = layer[k]; });
+    const hasAdvanced = Object.keys(advanced).length > 0;
+    row.dataset.lastValidAdvanced = hasAdvanced ? JSON.stringify(advanced) : '';
+
+    const subLayers = Array.isArray(layer.layers) ? layer.layers : [];
+
+    row.innerHTML = `
+      <div class="layerRowHead">
+        <input type="text" class="layerName" placeholder="name" value="${escapeHtml(layer.name || '')}">
+        <input type="text" class="layerTitle" placeholder="title" value="${escapeHtml(layer.title || '')}">
+        <input type="text" class="layerType" list="layerTypesList" placeholder="type" value="${escapeHtml(layer.type || '')}">
+        <span class="unknownBadge">unrecognized type</span>
+        <input type="text" class="layerGroup" list="groupNamesList" placeholder="group" value="${escapeHtml(layer.group || '')}">
+        <input type="text" class="layerSource" list="sourceNamesList" placeholder="source" value="${escapeHtml(layer.source || '')}">
+        <input type="text" class="layerStyle" list="styleNamesList" placeholder="style" value="${escapeHtml(layer.style || '')}">
+        <select class="layerVisible" title="visible">
+          <option value="">visible: —</option>
+          <option value="true">visible: true</option>
+          <option value="false">visible: false</option>
+        </select>
+        <select class="layerQueryable" title="queryable">
+          <option value="">queryable: —</option>
+          <option value="true">queryable: true</option>
+          <option value="false">queryable: false</option>
+        </select>
+        <input type="number" class="layerOpacity" placeholder="opacity" step="0.05" value="${layer.opacity ?? ''}">
+        <button type="button" class="miniBtn layerUp" title="Move up">↑</button>
+        <button type="button" class="miniBtn layerDown" title="Move down">↓</button>
+        <button type="button" class="miniBtn layerRemove">✕</button>
+      </div>
+      <div class="layerRowBody">
+        <details ${hasAdvanced ? 'open' : ''}>
+          <summary>advanced (attributes, filter, geometryType, minScale/maxScale, abstract, ...)</summary>
+          <textarea class="advancedText optionsText" placeholder="{}" spellcheck="false">${hasAdvanced ? escapeHtml(JSON.stringify(advanced, null, 2)) : ''}</textarea>
+          <div class="advancedStatus optionsStatus muted">${hasAdvanced ? 'Valid.' : 'No extra properties.'}</div>
+        </details>
+        <details class="subLayersDetails" ${subLayers.length ? 'open' : ''}>
+          <summary>nested layers (for GROUP type) — ${subLayers.length}</summary>
+          <div class="layerSubList"></div>
+          <button type="button" class="miniBtn addSubLayer">+ Add sub-layer</button>
+        </details>
+      </div>
+    `;
+
+    row.querySelector('.layerVisible').value = layer.visible === true ? 'true' : layer.visible === false ? 'false' : '';
+    row.querySelector('.layerQueryable').value = layer.queryable === true ? 'true' : layer.queryable === false ? 'false' : '';
+
+    const nameInput = row.querySelector('.layerName');
+    const titleInput = row.querySelector('.layerTitle');
+    row.dataset.layerName = (layer.name || '').toLowerCase();
+    row.dataset.layerTitle = (layer.title || '').toLowerCase();
+    nameInput.addEventListener('input', () => { row.dataset.layerName = nameInput.value.toLowerCase(); applyLayerSearchFilter(); applyFormChange(); });
+    titleInput.addEventListener('input', () => { row.dataset.layerTitle = titleInput.value.toLowerCase(); applyLayerSearchFilter(); applyFormChange(); });
+
+    const typeInput = row.querySelector('.layerType');
+    const badge = row.querySelector('.unknownBadge');
+    function refreshTypeState() {
+      const val = typeInput.value.trim().toUpperCase();
+      const known = KNOWN_LAYER_TYPES.includes(val);
+      const empty = val === '';
+      typeInput.classList.toggle('unknownName', !known && !empty);
+      badge.classList.toggle('shown', !known && !empty);
+      row.classList.toggle('isGroup', val === 'GROUP');
+    }
+    refreshTypeState();
+    typeInput.addEventListener('input', () => { refreshTypeState(); applyFormChange(); });
+
+    row.querySelectorAll('.layerGroup, .layerSource, .layerStyle, .layerOpacity').forEach(el => {
+      el.addEventListener('input', applyFormChange);
+    });
+    row.querySelector('.layerVisible').addEventListener('change', applyFormChange);
+    row.querySelector('.layerQueryable').addEventListener('change', applyFormChange);
+
+    const advancedText = row.querySelector('.advancedText');
+    const advancedStatus = row.querySelector('.advancedStatus');
+    function refreshAdvancedStatus() {
+      const text = advancedText.value.trim();
+      if (text === '') {
+        advancedText.classList.remove('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus muted';
+        advancedStatus.textContent = 'No extra properties.';
+        row.dataset.lastValidAdvanced = '';
+        return;
+      }
+      try {
+        const parsedAdvanced = JSON.parse(text);
+        advancedText.classList.remove('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus muted';
+        advancedStatus.textContent = 'Valid.';
+        row.dataset.lastValidAdvanced = JSON.stringify(parsedAdvanced);
+      } catch (e) {
+        advancedText.classList.add('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus err';
+        advancedStatus.textContent = 'Invalid JSON — keeping last valid properties until fixed.';
+      }
+    }
+    advancedText.addEventListener('input', () => { refreshAdvancedStatus(); applyFormChange(); });
+
+    row.querySelector('.layerRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelector('.layerUp').addEventListener('click', () => {
+      const prev = row.previousElementSibling;
+      if (prev) { row.parentElement.insertBefore(row, prev); applyFormChange(); }
+    });
+    row.querySelector('.layerDown').addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next) { row.parentElement.insertBefore(next, row); applyFormChange(); }
+    });
+
+    const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+    subLayers.forEach(sub => subList.appendChild(makeLayerRow(sub)));
+    row.querySelector(':scope > .layerRowBody > .subLayersDetails > .addSubLayer').addEventListener('click', () => {
+      subList.appendChild(makeLayerRow({ name: '', type: '' }));
+    });
+
+    return row;
+  }
+
+  function collectLayerRow(row) {
+    const g = sel => row.querySelector(':scope > .layerRowHead > ' + sel);
+    const name = g('.layerName').value.trim();
+    const title = g('.layerTitle').value.trim();
+    const type = g('.layerType').value.trim();
+    const group = g('.layerGroup').value.trim();
+    const source = g('.layerSource').value.trim();
+    const style = g('.layerStyle').value.trim();
+    const visible = g('.layerVisible').value;
+    const queryable = g('.layerQueryable').value;
+    const opacity = g('.layerOpacity').value;
+
+    const entry = { name };
+    if (title) entry.title = title;
+    if (type) entry.type = type;
+    if (group) entry.group = group;
+    if (source) entry.source = source;
+    if (style) entry.style = style;
+    if (visible !== '') entry.visible = visible === 'true';
+    if (queryable !== '') entry.queryable = queryable === 'true';
+    if (opacity !== '') {
+      const n = parseFloat(opacity);
+      if (!Number.isNaN(n)) entry.opacity = n;
+    }
+
+    const lastAdvanced = row.dataset.lastValidAdvanced;
+    if (lastAdvanced) Object.assign(entry, JSON.parse(lastAdvanced));
+
+    const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+    const subLayers = subList ? Array.from(subList.children).map(collectLayerRow).filter(l => l.name !== '') : [];
+    if (subLayers.length) entry.layers = subLayers;
+
+    return entry;
+  }
+
+  function collectLayersFromDOM() {
+    return Array.from(layersList.children).map(collectLayerRow).filter(l => l.name !== '');
+  }
+
+  document.getElementById('btnAddLayer').addEventListener('click', () => {
+    layersList.appendChild(makeLayerRow({ name: '', type: '' }));
+  });
+
+  function applyLayerSearchFilter() {
+    const q = layerSearch.value.trim().toLowerCase();
+    function filterContainer(container) {
+      let anyVisible = false;
+      Array.from(container.children).forEach(row => {
+        if (!row.classList || !row.classList.contains('layerRow')) return;
+        const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+        const childMatch = subList ? filterContainer(subList) : false;
+        const selfMatch = q === '' || row.dataset.layerName.includes(q) || row.dataset.layerTitle.includes(q);
+        const show = selfMatch || childMatch;
+        row.classList.toggle('filteredOut', !show);
+        if (show) anyVisible = true;
+      });
+      return anyVisible;
+    }
+    filterContainer(layersList);
+  }
+  layerSearch.addEventListener('input', applyLayerSearchFilter);
+
+  function populateLayersForm(parsed) {
+    if (layersFormEl.contains(document.activeElement)) return; // don't clobber in-progress typing
+    refreshLayerDatalists(parsed);
+    layersList.innerHTML = '';
+    (parsed.layers || []).forEach(layer => layersList.appendChild(makeLayerRow(layer)));
+    layerCountEl.textContent = `${countLayersRecursive(parsed.layers)} layer(s) total.`;
+    applyLayerSearchFilter();
+  }
+
   function collectFormValues() {
     const next = JSON.parse(JSON.stringify(currentParsed));
     const g = id => document.getElementById(id).value;
@@ -836,6 +1145,7 @@
     if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
 
     next.controls = collectControlsFromDOM();
+    next.layers = collectLayersFromDOM();
 
     return next;
   }
@@ -855,16 +1165,20 @@
     tabStructure.classList.toggle('active', tab === 'structure');
     tabSettings.classList.toggle('active', tab === 'settings');
     tabControls.classList.toggle('active', tab === 'controls');
+    tabLayers.classList.toggle('active', tab === 'layers');
     treeContainer.classList.toggle('active', tab === 'structure');
     settingsForm.classList.toggle('active', tab === 'settings');
     controlsForm.classList.toggle('active', tab === 'controls');
+    layersFormEl.classList.toggle('active', tab === 'layers');
   }
   tabStructure.addEventListener('click', () => switchTab('structure'));
   tabSettings.addEventListener('click', () => switchTab('settings'));
   tabControls.addEventListener('click', () => switchTab('controls'));
+  tabLayers.addEventListener('click', () => switchTab('layers'));
 
   setSettingsFormEnabled(false);
   setControlsFormEnabled(false);
+  setLayersFormEnabled(false);
 
   let currentParsed = null;
 
@@ -878,6 +1192,7 @@
       currentParsed = null;
       setSettingsFormEnabled(false);
       setControlsFormEnabled(false);
+      setLayersFormEnabled(false);
       return;
     }
     let parsed;
@@ -889,6 +1204,7 @@
       treeContainer.classList.add('stale');
       setSettingsFormEnabled(false);
       setControlsFormEnabled(false);
+      setLayersFormEnabled(false);
       return;
     }
     statusBar.className = 'ok';
@@ -900,8 +1216,10 @@
     currentParsed = parsed;
     setSettingsFormEnabled(true);
     setControlsFormEnabled(true);
+    setLayersFormEnabled(true);
     populateSettingsForm(parsed);
     populateControlsForm(parsed);
+    populateLayersForm(parsed);
   }
 
   rawText.addEventListener('input', () => {
