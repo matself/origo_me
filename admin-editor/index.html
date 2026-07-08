@@ -641,8 +641,8 @@
     const row = document.createElement('div');
     row.className = 'dynRow';
     row.innerHTML = `
-      <input type="text" class="srcName" placeholder="name" value="${escapeHtml(name || '')}">
-      <input type="text" class="srcUrl" placeholder="url" value="${escapeHtml(url || '')}">
+      <input type="text" class="srcName" placeholder="source key" value="${escapeHtml(name || '')}">
+      <input type="text" class="srcUrl" placeholder="service endpoint" value="${escapeHtml(url || '')}">
       <button type="button" class="miniBtn srcRemove">✕</button>
     `;
     row.querySelector('.srcRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
@@ -931,7 +931,7 @@
 
     row.innerHTML = `
       <div class="layerRowHead">
-        <input type="text" class="layerName" placeholder="name" value="${escapeHtml(layer.name || '')}">
+        <input type="text" class="layerName" placeholder="layer id" value="${escapeHtml(layer.name || '')}">
         <input type="text" class="layerTitle" placeholder="title" value="${escapeHtml(layer.title || '')}">
         <input type="text" class="layerType" list="layerTypesList" placeholder="type" value="${escapeHtml(layer.type || '')}">
         <span class="unknownBadge">unrecognized type</span>
