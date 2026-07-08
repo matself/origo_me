@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Origo Config Editor</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --panel: #ffffff;
+    --border: #d8dce1;
+    --text: #1c2128;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --ok: #16a34a;
+    --err: #dc2626;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 12px 0 0;
+    white-space: nowrap;
+  }
+  button {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+  }
+  button:hover { background: #eef1f5; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  button.primary:hover { background: #1d4ed8; }
+  #filename {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #filename .dirty { color: var(--err); font-weight: 600; }
+  #fsAccessWarning {
+    display: none;
+    font-size: 12px;
+    color: var(--err);
+    padding: 4px 14px;
+    background: #fef2f2;
+    border-bottom: 1px solid var(--border);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+  #treePane, #rawPane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+  }
+  #rawPane { border-right: none; }
+  .paneHeader {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #treeContainer {
+    flex: 1;
+    overflow: auto;
+    padding: 8px 10px;
+    background: var(--panel);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  #treeContainer.stale { opacity: 0.4; }
+  #rawText {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    tab-size: 2;
+    background: var(--panel);
+    color: var(--text);
+  }
+  #statusBar {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-family: var(--mono);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--panel);
+  }
+  #statusBar.ok { color: var(--ok); }
+  #statusBar.err { color: var(--err); }
+  #statusBar.idle { color: var(--muted); }
+
+  details.node { margin-left: 14px; }
+  details.node > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+  details.node > summary::-webkit-details-marker { display: none; }
+  details.node > summary::before {
+    content: '\25b8';
+    display: inline-block;
+    width: 10px;
+    color: var(--muted);
+    transition: transform 0.1s;
+  }
+  details.node[open] > summary::before { transform: rotate(90deg); }
+  .key { color: #a626a4; }
+  .type-count { color: var(--muted); font-size: 11px; }
+  .leaf { margin-left: 14px; display: flex; gap: 6px; }
+  .val-string { color: #50a14f; }
+  .val-number { color: #986801; }
+  .val-boolean { color: #0184bc; }
+  .val-null { color: var(--muted); font-style: italic; }
+  .leafRoot { margin-left: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Origo Config Editor</h1>
+  <button id="btnOpen">Open…</button>
+  <button id="btnSave" disabled>Save</button>
+  <button id="btnSaveAs" disabled>Save As…</button>
+  <span id="filename">No file open</span>
+</header>
+<div id="fsAccessWarning">
+  This browser doesn't support the File System Access API — Save will download a new file instead of writing back in place. Use Chrome or Edge for direct save-to-disk.
+</div>
+
+<main>
+  <div id="treePane">
+    <div class="paneHeader">Structure</div>
+    <div id="treeContainer"></div>
+  </div>
+  <div id="rawPane">
+    <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
+    <textarea id="rawText" spellcheck="false" placeholder="Open an Origo config JSON file to begin…"></textarea>
+    <div id="statusBar" class="idle">No file loaded.</div>
+  </div>
+</main>
+
+<input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+
+<script>
+(function () {
+  const hasFSAccess = 'showOpenFilePicker' in window;
+  document.getElementById('fsAccessWarning').style.display = hasFSAccess ? 'none' : 'block';
+
+  const rawText = document.getElementById('rawText');
+  const treeContainer = document.getElementById('treeContainer');
+  const statusBar = document.getElementById('statusBar');
+  const filenameEl = document.getElementById('filename');
+  const btnOpen = document.getElementById('btnOpen');
+  const btnSave = document.getElementById('btnSave');
+  const btnSaveAs = document.getElementById('btnSaveAs');
+  const fileInput = document.getElementById('fileInput');
+
+  let fileHandle = null;
+  let currentFileName = null;
+  let savedText = null;
+  let parseDebounce = null;
+
+  function stripJSONComments(jsonstring) {
+    const json = jsonstring.split('');
+    let ix = 0;
+    const lastindex = json.length - 1;
+    while (ix < lastindex) {
+      if (json[ix] === '"') {
+        ix += 1;
+        while (json[ix] !== '"' && ix < lastindex) {
+          if (json[ix] === '\\') ix += 1;
+          ix += 1;
+        }
+      } else if (json[ix] === '/' && json[ix + 1] === '/') {
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 2;
+        while (json[ix] !== '\n' && json[ix] !== '\r' && ix <= lastindex) {
+          json[ix] = ' '; ix += 1;
+        }
+      } else if (json[ix] === '/' && json[ix + 1] === '*') {
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 2;
+        while (!(json[ix] === '*' && json[ix + 1] === '/') && ix <= lastindex) {
+          if (json[ix] !== '\n' && json[ix] !== '\r') json[ix] = ' ';
+          ix += 1;
+        }
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 1;
+      }
+      ix += 1;
+    }
+    return json.join('');
+  }
+
+  function locateError(source, message) {
+    const posMatch = message.match(/position (\d+)/);
+    if (!posMatch) return message;
+    const pos = parseInt(posMatch[1], 10);
+    const upToError = source.substring(0, pos);
+    const line = (upToError.match(/\n/g) || []).length + 1;
+    const col = pos - upToError.lastIndexOf('\n');
+    return `${message} (line ${line}, column ${col})`;
+  }
+
+  function setDirty() {
+    const dirty = rawText.value !== savedText;
+    filenameEl.innerHTML = currentFileName
+      ? `${dirty ? '<span class="dirty">● </span>' : ''}${currentFileName}`
+      : 'No file open';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function buildLeafHtml(value) {
+    if (value === null) return `<span class="val-null">null</span>`;
+    if (typeof value === 'string') return `<span class="val-string">"${escapeHtml(value)}"</span>`;
+    if (typeof value === 'number') return `<span class="val-number">${value}</span>`;
+    if (typeof value === 'boolean') return `<span class="val-boolean">${value}</span>`;
+    return '';
+  }
+
+  function buildTreeNode(key, value, isRoot) {
+    const isArray = Array.isArray(value);
+    const isObject = value !== null && typeof value === 'object' && !isArray;
+
+    if (!isArray && !isObject) {
+      const div = document.createElement('div');
+      div.className = isRoot ? 'leaf leafRoot' : 'leaf';
+      div.innerHTML = `${key !== null ? `<span class="key">${escapeHtml(key)}:</span>` : ''} ${buildLeafHtml(value)}`;
+      return div;
+    }
+
+    const entries = isArray ? value.map((v, i) => [i, v]) : Object.entries(value);
+    const details = document.createElement('details');
+    details.className = 'node';
+    if (isRoot) details.open = true;
+
+    const summary = document.createElement('summary');
+    const label = key !== null ? `<span class="key">${escapeHtml(key)}:</span>` : '';
+    const typeLabel = isArray ? `Array` : `Object`;
+    summary.innerHTML = `${label} <span class="type-count">${typeLabel}[${entries.length}]</span>`;
+    details.appendChild(summary);
+
+    let built = false;
+    function buildChildren() {
+      if (built) return;
+      built = true;
+      entries.forEach(([k, v]) => {
+        details.appendChild(buildTreeNode(isArray ? null : k, v, false));
+      });
+    }
+
+    if (isRoot || entries.length <= 20) {
+      buildChildren();
+    } else {
+      details.addEventListener('toggle', function onToggle() {
+        if (details.open) {
+          buildChildren();
+          details.removeEventListener('toggle', onToggle);
+        }
+      });
+    }
+
+    return details;
+  }
+
+  function renderTree(parsed) {
+    treeContainer.innerHTML = '';
+    treeContainer.appendChild(buildTreeNode(null, parsed, true));
+  }
+
+  function parseAndRender() {
+    const text = rawText.value;
+    if (text.trim() === '') {
+      statusBar.className = 'idle';
+      statusBar.textContent = 'No file loaded.';
+      treeContainer.innerHTML = '';
+      treeContainer.classList.remove('stale');
+      return;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(stripJSONComments(text));
+    } catch (e) {
+      statusBar.className = 'err';
+      statusBar.textContent = 'Invalid JSON: ' + locateError(text, e.message);
+      treeContainer.classList.add('stale');
+      return;
+    }
+    statusBar.className = 'ok';
+    const controlCount = Array.isArray(parsed.controls) ? parsed.controls.length : 0;
+    const layerCount = Array.isArray(parsed.layers) ? parsed.layers.length : 0;
+    statusBar.textContent = `Valid JSON — ${controlCount} controls, ${layerCount} top-level layers.`;
+    treeContainer.classList.remove('stale');
+    renderTree(parsed);
+  }
+
+  rawText.addEventListener('input', () => {
+    setDirty();
+    clearTimeout(parseDebounce);
+    parseDebounce = setTimeout(parseAndRender, 250);
+  });
+
+  function loadText(text, name, handle) {
+    rawText.value = text;
+    savedText = text;
+    currentFileName = name;
+    fileHandle = handle || null;
+    btnSave.disabled = false;
+    btnSaveAs.disabled = false;
+    setDirty();
+    parseAndRender();
+  }
+
+  async function openFile() {
+    if (hasFSAccess) {
+      let handles;
+      try {
+        handles = await window.showOpenFilePicker({
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+      } catch (e) {
+        return; // user cancelled
+      }
+      const handle = handles[0];
+      const file = await handle.getFile();
+      const text = await file.text();
+      loadText(text, file.name, handle);
+    } else {
+      fileInput.click();
+    }
+  }
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => loadText(reader.result, file.name, null);
+    reader.readAsText(file);
+  });
+
+  function downloadFallback(text, name) {
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name || 'config.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function saveFile() {
+    const text = rawText.value;
+    if (fileHandle) {
+      const writable = await fileHandle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      savedText = text;
+      setDirty();
+      statusBar.className = 'ok';
+      statusBar.textContent = `Saved to ${currentFileName}.`;
+      return;
+    }
+    if (hasFSAccess) {
+      await saveAsFile();
+      return;
+    }
+    downloadFallback(text, currentFileName);
+    savedText = text;
+    setDirty();
+  }
+
+  async function saveAsFile() {
+    const text = rawText.value;
+    if (hasFSAccess) {
+      let handle;
+      try {
+        handle = await window.showSaveFilePicker({
+          suggestedName: currentFileName || 'config.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+      } catch (e) {
+        return; // user cancelled
+      }
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      fileHandle = handle;
+      const file = await handle.getFile();
+      currentFileName = file.name;
+      savedText = text;
+      setDirty();
+      statusBar.className = 'ok';
+      statusBar.textContent = `Saved to ${currentFileName}.`;
+      return;
+    }
+    const name = prompt('File name', currentFileName || 'config.json');
+    if (name === null) return;
+    downloadFallback(text, name);
+    currentFileName = name;
+    savedText = text;
+    setDirty();
+  }
+
+  btnOpen.addEventListener('click', openFile);
+  btnSave.addEventListener('click', saveFile);
+  btnSaveAs.addEventListener('click', saveAsFile);
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (!btnSave.disabled) saveFile();
+    }
+  });
+
+  window.addEventListener('beforeunload', (e) => {
+    if (savedText !== null && rawText.value !== savedText) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
