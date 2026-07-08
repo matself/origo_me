@@ -155,15 +155,15 @@
   .tabs button:hover { background: #eef1f5; }
   .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  #settingsForm, #controlsForm, #layersForm {
+  #settingsForm, #controlsForm, #layersForm, #stylesForm {
     flex: 1;
     overflow: auto;
     padding: 12px 14px;
     background: var(--panel);
     display: none;
   }
-  #settingsForm.active, #controlsForm.active, #layersForm.active { display: block; }
-  #settingsForm.stale, #controlsForm.stale, #layersForm.stale { opacity: 0.4; pointer-events: none; }
+  #settingsForm.active, #controlsForm.active, #layersForm.active, #stylesForm.active { display: block; }
+  #settingsForm.stale, #controlsForm.stale, #layersForm.stale, #stylesForm.stale { opacity: 0.4; pointer-events: none; }
   #treeContainer.active { display: block; }
   #treeContainer:not(.active) { display: none; }
 
@@ -213,6 +213,51 @@
   .layerRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
   .layerSubList { margin-left: 22px; margin-top: 8px; padding-left: 10px; border-left: 2px dashed var(--border); }
   .miniLabel { font-size: 10.5px; color: var(--muted); }
+
+  #missingStylesWarning {
+    display: none;
+    font-size: 12px;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 5px;
+    padding: 7px 9px;
+    margin-bottom: 10px;
+  }
+  #missingStylesWarning.shown { display: block; }
+  .styleRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--bg);
+  }
+  .styleRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+  }
+  .styleRowHead input.styleName {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .usageBadge {
+    font-size: 10.5px;
+    color: #1e40af;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 4px;
+    padding: 2px 5px;
+    white-space: nowrap;
+  }
+  .usageBadge.zero { color: var(--muted); background: transparent; border-color: var(--border); }
+  .styleRowBody { padding: 6px 8px 8px 8px; }
+  .styleRow textarea.optionsText { min-height: 90px; }
 
   .controlRow {
     border: 1px solid var(--border);
@@ -399,11 +444,13 @@
       <button id="tabSettings">Basic Settings</button>
       <button id="tabControls">Controls</button>
       <button id="tabLayers">Layers</button>
+      <button id="tabStyles">Styles</button>
     </div>
     <div id="treeContainer" class="active"></div>
     <div id="settingsForm"></div>
     <div id="controlsForm"></div>
     <div id="layersForm"></div>
+    <div id="stylesForm"></div>
   </div>
   <div id="rawPane">
     <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
@@ -1112,6 +1159,139 @@
     applyLayerSearchFilter();
   }
 
+  // --- Styles tab (Phase 5) -----------------------------------------------
+  // Origo styles are arrays-of-arrays of rule objects (fill/stroke/circle/
+  // text/icon/filter/minScale/maxScale/hidden/header/geometry) - too
+  // irregular to map onto typed fields the way controls/layers core
+  // properties do. Each style gets one raw-JSON sub-editor for its whole
+  // value (same last-known-good defensive handling as the other tabs),
+  // plus a live "used by N layer(s)" cross-reference and a warning if any
+  // layer references a style name that isn't defined here at all.
+
+  const tabStyles = document.getElementById('tabStyles');
+  const stylesFormEl = document.getElementById('stylesForm');
+
+  stylesFormEl.innerHTML = `
+    <p class="disabledNote" id="stylesDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <div id="missingStylesWarning"></div>
+    <div id="stylesList"></div>
+    <button type="button" class="miniBtn" id="btnAddStyle">+ Add style</button>
+  `;
+  suppressAutofill(stylesFormEl);
+  const stylesDisabledNote = document.getElementById('stylesDisabledNote');
+  const missingStylesWarning = document.getElementById('missingStylesWarning');
+  const stylesList = document.getElementById('stylesList');
+
+  function setStylesFormEnabled(enabled) {
+    stylesFormEl.classList.toggle('stale', !enabled);
+    stylesDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function computeStyleUsage(layers) {
+    const counts = {};
+    function walk(list) {
+      (list || []).forEach(l => {
+        if (l.style) counts[l.style] = (counts[l.style] || 0) + 1;
+        if (l.clusterStyle) counts[l.clusterStyle] = (counts[l.clusterStyle] || 0) + 1;
+        if (Array.isArray(l.layers)) walk(l.layers);
+      });
+    }
+    walk(layers);
+    return counts;
+  }
+
+  let currentStyleUsage = {};
+
+  function makeStyleRow(name, valueArr) {
+    const row = document.createElement('div');
+    row.className = 'styleRow';
+    const text = JSON.stringify(valueArr, null, 2);
+    row.dataset.lastValidValue = text;
+
+    row.innerHTML = `
+      <div class="styleRowHead">
+        <input type="text" class="styleName" placeholder="style name" value="${escapeHtml(name || '')}">
+        <span class="usageBadge">used by 0</span>
+        <button type="button" class="miniBtn styleRemove">✕</button>
+      </div>
+      <div class="styleRowBody">
+        <textarea class="styleText optionsText" spellcheck="false">${escapeHtml(text)}</textarea>
+        <div class="styleStatus optionsStatus muted">Valid.</div>
+      </div>
+    `;
+
+    const nameInput = row.querySelector('.styleName');
+    const badge = row.querySelector('.usageBadge');
+    function refreshUsageBadge() {
+      const count = currentStyleUsage[nameInput.value.trim()] || 0;
+      badge.textContent = `used by ${count} layer${count === 1 ? '' : 's'}`;
+      badge.classList.toggle('zero', count === 0);
+    }
+    refreshUsageBadge();
+    nameInput.addEventListener('input', () => { refreshUsageBadge(); applyFormChange(); });
+
+    const styleText = row.querySelector('.styleText');
+    const styleStatus = row.querySelector('.styleStatus');
+    function refreshStyleStatus() {
+      const val = styleText.value.trim();
+      if (val === '') {
+        styleText.classList.add('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus err';
+        styleStatus.textContent = 'Empty — keeping last valid style until fixed.';
+        return;
+      }
+      try {
+        const parsedVal = JSON.parse(val);
+        styleText.classList.remove('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus muted';
+        styleStatus.textContent = 'Valid.';
+        row.dataset.lastValidValue = JSON.stringify(parsedVal);
+      } catch (e) {
+        styleText.classList.add('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus err';
+        styleStatus.textContent = 'Invalid JSON — keeping last valid style until fixed.';
+      }
+    }
+    styleText.addEventListener('input', () => { refreshStyleStatus(); applyFormChange(); });
+
+    row.querySelector('.styleRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+
+    suppressAutofill(row);
+    return row;
+  }
+
+  document.getElementById('btnAddStyle').addEventListener('click', () => {
+    stylesList.appendChild(makeStyleRow('', [[{}]]));
+  });
+
+  function populateStylesForm(parsed) {
+    if (stylesFormEl.contains(document.activeElement)) return; // don't clobber in-progress typing
+    currentStyleUsage = computeStyleUsage(parsed.layers);
+    stylesList.innerHTML = '';
+    Object.entries(parsed.styles || {}).forEach(([name, valueArr]) => {
+      stylesList.appendChild(makeStyleRow(name, valueArr));
+    });
+    const definedNames = new Set(Object.keys(parsed.styles || {}));
+    const missing = Object.keys(currentStyleUsage).filter(n => !definedNames.has(n));
+    if (missing.length) {
+      missingStylesWarning.textContent = `${missing.length} layer(s) reference undefined style(s): ${missing.join(', ')}`;
+      missingStylesWarning.classList.add('shown');
+    } else {
+      missingStylesWarning.classList.remove('shown');
+    }
+  }
+
+  function collectStylesFromDOM() {
+    const styles = {};
+    stylesList.querySelectorAll('.styleRow').forEach(row => {
+      const name = row.querySelector('.styleName').value.trim();
+      if (!name) return;
+      const lastValid = row.dataset.lastValidValue;
+      if (lastValid) styles[name] = JSON.parse(lastValid);
+    });
+    return styles;
+  }
+
   function collectFormValues() {
     const next = JSON.parse(JSON.stringify(currentParsed));
     const g = id => document.getElementById(id).value;
@@ -1167,6 +1347,7 @@
 
     next.controls = collectControlsFromDOM();
     next.layers = collectLayersFromDOM();
+    next.styles = collectStylesFromDOM();
 
     return next;
   }
@@ -1187,19 +1368,23 @@
     tabSettings.classList.toggle('active', tab === 'settings');
     tabControls.classList.toggle('active', tab === 'controls');
     tabLayers.classList.toggle('active', tab === 'layers');
+    tabStyles.classList.toggle('active', tab === 'styles');
     treeContainer.classList.toggle('active', tab === 'structure');
     settingsForm.classList.toggle('active', tab === 'settings');
     controlsForm.classList.toggle('active', tab === 'controls');
     layersFormEl.classList.toggle('active', tab === 'layers');
+    stylesFormEl.classList.toggle('active', tab === 'styles');
   }
   tabStructure.addEventListener('click', () => switchTab('structure'));
   tabSettings.addEventListener('click', () => switchTab('settings'));
   tabControls.addEventListener('click', () => switchTab('controls'));
   tabLayers.addEventListener('click', () => switchTab('layers'));
+  tabStyles.addEventListener('click', () => switchTab('styles'));
 
   setSettingsFormEnabled(false);
   setControlsFormEnabled(false);
   setLayersFormEnabled(false);
+  setStylesFormEnabled(false);
 
   let currentParsed = null;
 
@@ -1214,6 +1399,7 @@
       setSettingsFormEnabled(false);
       setControlsFormEnabled(false);
       setLayersFormEnabled(false);
+      setStylesFormEnabled(false);
       return;
     }
     let parsed;
@@ -1226,6 +1412,7 @@
       setSettingsFormEnabled(false);
       setControlsFormEnabled(false);
       setLayersFormEnabled(false);
+      setStylesFormEnabled(false);
       return;
     }
     statusBar.className = 'ok';
@@ -1238,9 +1425,11 @@
     setSettingsFormEnabled(true);
     setControlsFormEnabled(true);
     setLayersFormEnabled(true);
+    setStylesFormEnabled(true);
     populateSettingsForm(parsed);
     populateControlsForm(parsed);
     populateLayersForm(parsed);
+    populateStylesForm(parsed);
   }
 
   rawText.addEventListener('input', () => {
