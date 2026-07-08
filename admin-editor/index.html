@@ -155,17 +155,77 @@
   .tabs button:hover { background: #eef1f5; }
   .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  #settingsForm {
+  #settingsForm, #controlsForm {
     flex: 1;
     overflow: auto;
     padding: 12px 14px;
     background: var(--panel);
     display: none;
   }
-  #settingsForm.active { display: block; }
-  #settingsForm.stale { opacity: 0.4; pointer-events: none; }
+  #settingsForm.active, #controlsForm.active { display: block; }
+  #settingsForm.stale, #controlsForm.stale { opacity: 0.4; pointer-events: none; }
   #treeContainer.active { display: block; }
   #treeContainer:not(.active) { display: none; }
+
+  .controlRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--bg);
+  }
+  .controlRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+  }
+  .controlRowHead input[type="text"] {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .controlRowHead input.unknownName { border-color: #f59e0b; background: #fffbeb; }
+  .unknownBadge {
+    font-size: 10.5px;
+    color: #92400e;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 4px;
+    padding: 2px 5px;
+    white-space: nowrap;
+    display: none;
+  }
+  .unknownBadge.shown { display: inline-block; }
+  .controlRow details {
+    border-top: 1px solid var(--border);
+    padding: 6px 8px;
+  }
+  .controlRow details summary {
+    cursor: pointer;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .controlRow textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .controlRow textarea.optionsText.invalidJson { border-color: var(--err); }
+  .optionsStatus { font-size: 11px; margin-top: 3px; }
+  .optionsStatus.err { color: var(--err); }
+  .optionsStatus.muted { color: var(--muted); }
 
   #reformatNote {
     display: none;
@@ -290,9 +350,11 @@
     <div class="tabs">
       <button id="tabStructure" class="active">Structure</button>
       <button id="tabSettings">Basic Settings</button>
+      <button id="tabControls">Controls</button>
     </div>
     <div id="treeContainer" class="active"></div>
     <div id="settingsForm"></div>
+    <div id="controlsForm"></div>
   </div>
   <div id="rawPane">
     <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
@@ -595,6 +657,131 @@
     });
   }
 
+  // --- Controls tab (Phase 3) --------------------------------------------
+  // Names are checked against the exact set Origo's initControls() can
+  // resolve via origoControls[titleCase(name)] (src/controls.js barrel).
+  // Anything outside this list is either a typo or a third-party plugin
+  // control supplied separately via Origo(config, { controls: {...} }) -
+  // either way it's flagged, not blocked, since plugin controls are a
+  // legitimate and common case (see PLUGINS.md).
+
+  const KNOWN_CONTROLS = [
+    'about', 'attribution', 'bookmarks', 'draganddrop', 'draw', 'editor',
+    'externalurl', 'fullscreen', 'geoposition', 'home', 'legend', 'link',
+    'localization', 'mapmenu', 'measure', 'position', 'print', 'progressbar',
+    'rotate', 'scale', 'scaleline', 'scalepicker', 'search', 'sharemap',
+    'splash', 'zoom'
+  ];
+
+  const tabControls = document.getElementById('tabControls');
+  const controlsForm = document.getElementById('controlsForm');
+
+  controlsForm.innerHTML = `
+    <p class="disabledNote" id="controlsDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <datalist id="controlNamesList">${KNOWN_CONTROLS.map(n => `<option value="${n}">`).join('')}</datalist>
+    <div id="controlsList"></div>
+    <button type="button" class="miniBtn" id="btnAddControl">+ Add control</button>
+  `;
+  const controlsList = document.getElementById('controlsList');
+  const controlsDisabledNote = document.getElementById('controlsDisabledNote');
+
+  function setControlsFormEnabled(enabled) {
+    controlsForm.classList.toggle('stale', !enabled);
+    controlsDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function makeControlRow(name, optionsObj) {
+    const row = document.createElement('div');
+    row.className = 'controlRow';
+    const hasOptions = optionsObj !== undefined;
+    row.dataset.lastValidOptions = hasOptions ? JSON.stringify(optionsObj) : '';
+
+    row.innerHTML = `
+      <div class="controlRowHead">
+        <input type="text" class="ctrlName" list="controlNamesList" placeholder="control name" value="${escapeHtml(name || '')}">
+        <span class="unknownBadge">unrecognized name</span>
+        <button type="button" class="miniBtn ctrlUp" title="Move up">↑</button>
+        <button type="button" class="miniBtn ctrlDown" title="Move down">↓</button>
+        <button type="button" class="miniBtn ctrlRemove">✕</button>
+      </div>
+      <details ${hasOptions ? 'open' : ''}>
+        <summary>options</summary>
+        <textarea class="optionsText" placeholder="{}" spellcheck="false">${hasOptions ? escapeHtml(JSON.stringify(optionsObj, null, 2)) : ''}</textarea>
+        <div class="optionsStatus muted">No options set for this control.</div>
+      </details>
+    `;
+
+    const nameInput = row.querySelector('.ctrlName');
+    const badge = row.querySelector('.unknownBadge');
+    function refreshNameState() {
+      const known = KNOWN_CONTROLS.includes(nameInput.value.trim());
+      const empty = nameInput.value.trim() === '';
+      nameInput.classList.toggle('unknownName', !known && !empty);
+      badge.classList.toggle('shown', !known && !empty);
+    }
+    refreshNameState();
+    nameInput.addEventListener('input', () => { refreshNameState(); applyFormChange(); });
+
+    const optionsText = row.querySelector('.optionsText');
+    const optionsStatus = row.querySelector('.optionsStatus');
+    function refreshOptionsStatus() {
+      const text = optionsText.value.trim();
+      if (text === '') {
+        optionsText.classList.remove('invalidJson');
+        optionsStatus.className = 'optionsStatus muted';
+        optionsStatus.textContent = 'No options set for this control.';
+        row.dataset.lastValidOptions = '';
+        return;
+      }
+      try {
+        const parsedOptions = JSON.parse(text);
+        optionsText.classList.remove('invalidJson');
+        optionsStatus.className = 'optionsStatus muted';
+        optionsStatus.textContent = 'Valid.';
+        row.dataset.lastValidOptions = JSON.stringify(parsedOptions);
+      } catch (e) {
+        optionsText.classList.add('invalidJson');
+        optionsStatus.className = 'optionsStatus err';
+        optionsStatus.textContent = 'Invalid JSON — keeping last valid options until fixed.';
+      }
+    }
+    optionsText.addEventListener('input', () => { refreshOptionsStatus(); applyFormChange(); });
+
+    row.querySelector('.ctrlRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelector('.ctrlUp').addEventListener('click', () => {
+      const prev = row.previousElementSibling;
+      if (prev) { controlsList.insertBefore(row, prev); applyFormChange(); }
+    });
+    row.querySelector('.ctrlDown').addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next) { controlsList.insertBefore(next, row); applyFormChange(); }
+    });
+
+    return row;
+  }
+
+  document.getElementById('btnAddControl').addEventListener('click', () => {
+    controlsList.appendChild(makeControlRow('', undefined));
+  });
+
+  function populateControlsForm(parsed) {
+    if (controlsForm.contains(document.activeElement)) return; // don't clobber in-progress typing
+    controlsList.innerHTML = '';
+    (parsed.controls || []).forEach(control => {
+      controlsList.appendChild(makeControlRow(control.name, control.options));
+    });
+  }
+
+  function collectControlsFromDOM() {
+    return Array.from(controlsList.querySelectorAll('.controlRow')).map(row => {
+      const name = row.querySelector('.ctrlName').value.trim();
+      const entry = { name };
+      const lastValid = row.dataset.lastValidOptions;
+      if (lastValid) entry.options = JSON.parse(lastValid);
+      return entry;
+    }).filter(c => c.name !== '');
+  }
+
   function collectFormValues() {
     const next = JSON.parse(JSON.stringify(currentParsed));
     const g = id => document.getElementById(id).value;
@@ -648,6 +835,8 @@
     });
     if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
 
+    next.controls = collectControlsFromDOM();
+
     return next;
   }
 
@@ -663,16 +852,19 @@
   }
 
   function switchTab(tab) {
-    const showSettings = tab === 'settings';
-    tabStructure.classList.toggle('active', !showSettings);
-    tabSettings.classList.toggle('active', showSettings);
-    treeContainer.classList.toggle('active', !showSettings);
-    settingsForm.classList.toggle('active', showSettings);
+    tabStructure.classList.toggle('active', tab === 'structure');
+    tabSettings.classList.toggle('active', tab === 'settings');
+    tabControls.classList.toggle('active', tab === 'controls');
+    treeContainer.classList.toggle('active', tab === 'structure');
+    settingsForm.classList.toggle('active', tab === 'settings');
+    controlsForm.classList.toggle('active', tab === 'controls');
   }
   tabStructure.addEventListener('click', () => switchTab('structure'));
   tabSettings.addEventListener('click', () => switchTab('settings'));
+  tabControls.addEventListener('click', () => switchTab('controls'));
 
   setSettingsFormEnabled(false);
+  setControlsFormEnabled(false);
 
   let currentParsed = null;
 
@@ -685,6 +877,7 @@
       treeContainer.classList.remove('stale');
       currentParsed = null;
       setSettingsFormEnabled(false);
+      setControlsFormEnabled(false);
       return;
     }
     let parsed;
@@ -695,6 +888,7 @@
       statusBar.textContent = 'Invalid JSON: ' + locateError(text, e.message);
       treeContainer.classList.add('stale');
       setSettingsFormEnabled(false);
+      setControlsFormEnabled(false);
       return;
     }
     statusBar.className = 'ok';
@@ -705,7 +899,9 @@
     renderTree(parsed);
     currentParsed = parsed;
     setSettingsFormEnabled(true);
+    setControlsFormEnabled(true);
     populateSettingsForm(parsed);
+    populateControlsForm(parsed);
   }
 
   rawText.addEventListener('input', () => {
