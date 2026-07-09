@@ -34,6 +34,8 @@ Den råa JSON-panelen är alltid kommentarssäker — redigerar du bara där bev
 - **Close without saving** återställer till senast sparade version.
 - Osparade ändringar visas som en röd prick vid filnamnet i headern.
 
+Det finns ingen "Ny fil"-knapp. Vill du starta en ny konfiguration, öppna en befintlig fil, rensa ut det du inte behöver, och spara med **Save As…** under ett nytt namn.
+
 ## Kortkommandon
 
 - `Ctrl/Cmd + S` — Spara
