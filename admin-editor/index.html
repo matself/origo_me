@@ -1604,7 +1604,9 @@
     // (top-level key added/removed, or a changed key can't be located).
     let serialized = null;
     try {
-      serialized = patchRawPreservingComments(rawText.value, currentParsed, next);
+      // Diff against the baseline reconstruction, not the parsed file, so
+      // only sections the user actually changed get rewritten.
+      serialized = patchRawPreservingComments(rawText.value, baselineCollected || currentParsed, next);
     } catch (e) {
       serialized = null;
     }
@@ -1638,6 +1640,14 @@
   setStylesFormEnabled(false);
 
   let currentParsed = null;
+  // A reconstruction of the form state right after a fresh load, produced by
+  // the very same (slightly lossy) collect* path as a live edit. Diffing an
+  // edit against THIS - rather than against the parsed file - means an
+  // untouched section always compares equal to its own baseline, so quirks
+  // like collectLayerRow dropping an empty-string source:"" on a GROUP layer
+  // don't make an unedited section look changed and needlessly rewrite it
+  // (destroying its comments). Only genuinely user-touched sections differ.
+  let baselineCollected = null;
 
   function parseAndRender() {
     const text = rawText.value;
@@ -1683,6 +1693,9 @@
     populateLayersForm(parsed);
     populateStylesForm(parsed);
     updateCommentWarning();
+    // Snapshot the reconstructed form state so the next edit diffs against
+    // a like-for-like baseline (see baselineCollected declaration).
+    baselineCollected = collectFormValues();
   }
 
   rawText.addEventListener('input', () => {
