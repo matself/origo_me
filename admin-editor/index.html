@@ -83,14 +83,20 @@
     display: flex;
     min-height: 0;
   }
-  #treePane, #rawPane {
-    flex: 1;
+  #treePane {
+    flex: 1.2;
     display: flex;
     flex-direction: column;
     min-width: 0;
     border-right: 1px solid var(--border);
   }
-  #rawPane { border-right: none; }
+  #rawPane { 
+    flex: 0.8; 
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: none; 
+  }
   .paneHeader {
     padding: 6px 12px;
     font-size: 12px;
@@ -123,6 +129,8 @@
     tab-size: 2;
     background: var(--panel);
     color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
   }
   #statusBar {
     padding: 6px 12px;
@@ -167,7 +175,7 @@
   #treeContainer.active { display: block; }
   #treeContainer:not(.active) { display: none; }
 
-  #layerSearch, #styleSearch {
+  #layerSearch {
     width: 100%;
     font: inherit;
     font-size: 12.5px;
@@ -176,6 +184,34 @@
     border-radius: 6px;
     margin-bottom: 10px;
   }
+  
+  .filterRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  #styleSearch {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .checkboxLabel {
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text);
+    user-select: none;
+    white-space: nowrap;
+  }
+
   #layerCount, #styleCount { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
   .styleRow.filteredOut { display: none; }
   .styleRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
@@ -202,17 +238,28 @@
     border-radius: 5px;
     min-width: 0;
   }
-  .layerRowHead input.layerName { width: 150px; }
-  .layerRowHead input.layerTitle { width: 150px; }
-  .layerRowHead input.layerType { width: 90px; }
-  .layerRowHead input.layerGroup { width: 90px; }
-  .layerRowHead input.layerSource { width: 100px; }
-  .layerRowHead input.layerStyle { width: 90px; }
-  .layerRowHead input.layerOpacity { width: 55px; }
+  .layerRowHead input.layerName { width: 190px; }
+  .layerRowHead input.layerTitle { width: 220px; }
+  .layerRowHead input.layerType { width: 110px; }
+  .layerRowHead input.layerGroup { width: 110px; }
+  .layerRowHead input.layerSource { width: 140px; }
+  .layerRowHead input.layerStyle { width: 110px; }
+  .layerRowHead input.layerOpacity { width: 65px; }
   .layerRowHead select { font: inherit; font-size: 12.5px; padding: 4px; border: 1px solid var(--border); border-radius: 5px; }
   .layerRowHead input.unknownName { border-color: #f59e0b; background: #fffbeb; }
   .layerRowBody { border-top: 1px solid var(--border); padding: 6px 8px; }
   .layerRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .layerRowBody textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 90px;
+  }
   .layerSubList { margin-left: 22px; margin-top: 8px; padding-left: 10px; border-left: 2px dashed var(--border); }
   .miniLabel { font-size: 10.5px; color: var(--muted); }
 
@@ -259,7 +306,17 @@
   }
   .usageBadge.zero { color: var(--muted); background: transparent; border-color: var(--border); }
   .styleRowBody { padding: 6px 8px 8px 8px; }
-  .styleRow textarea.optionsText { min-height: 90px; }
+  .styleRow textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 120px;
+  }
 
   .controlRow {
     border: 1px solid var(--border);
@@ -431,6 +488,7 @@
 <header>
   <h1>Origo Config Editor</h1>
   <button id="btnOpen">Open…</button>
+  <button id="btnBailout" disabled>Close without saving</button>
   <button id="btnSave" disabled>Save</button>
   <button id="btnSaveAs" disabled>Save As…</button>
   <span id="filename">No file open</span>
@@ -474,6 +532,7 @@
   const statusBar = document.getElementById('statusBar');
   const filenameEl = document.getElementById('filename');
   const btnOpen = document.getElementById('btnOpen');
+  const btnBailout = document.getElementById('btnBailout');
   const btnSave = document.getElementById('btnSave');
   const btnSaveAs = document.getElementById('btnSaveAs');
   const fileInput = document.getElementById('fileInput');
@@ -523,16 +582,6 @@
     return `${message} (line ${line}, column ${col})`;
   }
 
-  // --- Comment-preserving section-scoped save (Option B + A) --------------
-  // Forms normally reserialize the whole document via JSON.stringify, which
-  // destroys any // or /* */ comments. These helpers let a form edit rewrite
-  // only the top-level key(s) that actually changed, splicing the new value
-  // into the existing raw text and leaving every other section - including
-  // its comments and the comment banners between sections - byte-for-byte
-  // intact. Add/remove of a whole top-level key falls back to full reserialize.
-
-  // True if the byte range [start,end) contains a real // or /* comment,
-  // ignoring anything inside string literals (so "https://..." is not a hit).
   function rangeHasComment(source, start, end) {
     let i = start;
     while (i < end) {
@@ -552,8 +601,6 @@
     return false;
   }
 
-  // Locate each top-level key's value span (and the key's line indent),
-  // string- and comment-aware. Returns {} if the root isn't a plain object.
   function scanTopLevelKeySpans(source) {
     const spans = {};
     const n = source.length;
@@ -567,7 +614,7 @@
         break;
       }
     }
-    function readString() { // assumes source[i] === '"'; advances past closing quote
+    function readString() {
       i++;
       while (i < n) {
         if (source[i] === '\\') { i += 2; continue; }
@@ -592,7 +639,7 @@
         }
         return;
       }
-      while (i < n) { // primitive: read until a delimiter
+      while (i < n) {
         const ch = source[i];
         if (ch === ',' || ch === '}' || ch === ']' || ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') break;
         if (ch === '/' && (source[i + 1] === '/' || source[i + 1] === '*')) break;
@@ -635,10 +682,6 @@
     return s.split('\n').map((line, idx) => (idx === 0 ? line : indent + line)).join('\n');
   }
 
-  // Order-insensitive for object keys (cosmetic), order-sensitive for arrays
-  // (layer order is meaningful). Used so that a section the collect* code
-  // merely re-key-ordered isn't mistaken for a real change and needlessly
-  // rewritten (which would drop that section's comments).
   function deepEqual(a, b) {
     if (a === b) return true;
     if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
@@ -656,25 +699,23 @@
     return true;
   }
 
-  // Returns patched source, or null if it can't be done safely (caller then
-  // falls back to a full reserialize).
   function patchRawPreservingComments(rawSource, currentObj, nextObj) {
     const keys = new Set([...Object.keys(currentObj || {}), ...Object.keys(nextObj || {})]);
     for (const k of keys) {
       const inCur = Object.prototype.hasOwnProperty.call(currentObj, k);
       const inNext = Object.prototype.hasOwnProperty.call(nextObj, k);
-      if (inCur !== inNext) return null; // top-level add/remove -> fall back
+      if (inCur !== inNext) return null;
     }
     const spans = scanTopLevelKeySpans(rawSource);
     const edits = [];
     for (const k of Object.keys(nextObj)) {
-      if (deepEqual(currentObj[k], nextObj[k])) continue; // unchanged
+      if (deepEqual(currentObj[k], nextObj[k])) continue;
       const span = spans[k];
-      if (!span) return null; // couldn't locate the key -> fall back
+      if (!span) return null;
       edits.push({ start: span.valueStart, end: span.valueEnd, text: serializeTopLevelValue(nextObj[k], span.indent) });
     }
     if (!edits.length) return rawSource;
-    edits.sort((a, b) => b.start - a.start); // apply right-to-left so offsets stay valid
+    edits.sort((a, b) => b.start - a.start);
     let out = rawSource;
     for (const e of edits) out = out.slice(0, e.start) + e.text + out.slice(e.end);
     return out;
@@ -685,6 +726,7 @@
     filenameEl.innerHTML = currentFileName
       ? `${dirty ? '<span class="dirty">● </span>' : ''}${currentFileName}`
       : 'No file open';
+    btnBailout.disabled = !currentFileName || !dirty;
   }
 
   function escapeHtml(s) {
@@ -693,9 +735,6 @@
     }[c]));
   }
 
-  // Config field values (names, URLs, titles) routinely look like login-form
-  // data to password managers. These attributes are the standard opt-outs
-  // for LastPass, 1Password, Bitwarden and Chrome/Edge's built-in autofill.
   function suppressAutofill(root) {
     root.querySelectorAll('input, textarea').forEach(el => {
       el.setAttribute('autocomplete', 'off');
@@ -764,11 +803,6 @@
     treeContainer.appendChild(buildTreeNode(null, parsed, true));
   }
 
-  // --- Basic Settings form (Phase 2) -----------------------------------
-  // Editing here regenerates the whole document via JSON.stringify, so
-  // any hand-written comments are lost the first time it's used to make
-  // a change. The raw JSON pane remains the only comment-safe editor.
-
   const settingsForm = document.getElementById('settingsForm');
   const tabStructure = document.getElementById('tabStructure');
   const tabSettings = document.getElementById('tabSettings');
@@ -830,8 +864,6 @@
   const commentWarning = document.getElementById('commentWarning');
   const formDisabledNote = document.getElementById('formDisabledNote');
 
-  // Option A: tell the user, per file, exactly which sections have comments
-  // that a form edit would rewrite. Clean files get no banner at all.
   function updateCommentWarning() {
     const src = rawText.value;
     if (!rangeHasComment(src, 0, src.length)) { commentWarning.classList.remove('shown'); return; }
@@ -859,10 +891,6 @@
   function makeSourceRow(name, sourceObj) {
     const row = document.createElement('div');
     row.className = 'dynRow';
-    // A source is a full object, not just a url - real configs carry
-    // version, type, filterType, matrixIdsPrefix, strategy,
-    // capabilitiesURL etc. The form only exposes url, so stash the whole
-    // original object and re-merge on collect so those extra keys survive.
     const src = sourceObj && typeof sourceObj === 'object' ? sourceObj : {};
     row.dataset.extraProps = JSON.stringify(
       Object.fromEntries(Object.entries(src).filter(([k]) => k !== 'url'))
@@ -914,7 +942,7 @@
   document.getElementById('f_embedded').addEventListener('change', applyFormChange);
 
   function populateSettingsForm(parsed) {
-    if (settingsForm.contains(document.activeElement)) return; // don't clobber in-progress typing
+    if (settingsForm.contains(document.activeElement)) return;
     const g = id => document.getElementById(id);
     g('f_projectionCode').value = parsed.projectionCode || '';
     const pe = parsed.projectionExtent || [];
@@ -950,14 +978,6 @@
       paletteList.appendChild(makeColorRow(color));
     });
   }
-
-  // --- Controls tab (Phase 3) --------------------------------------------
-  // Names are checked against the exact set Origo's initControls() can
-  // resolve via origoControls[titleCase(name)] (src/controls.js barrel).
-  // Anything outside this list is either a typo or a third-party plugin
-  // control supplied separately via Origo(config, { controls: {...} }) -
-  // either way it's flagged, not blocked, since plugin controls are a
-  // legitimate and common case (see PLUGINS.md).
 
   const KNOWN_CONTROLS = [
     'about', 'attribution', 'bookmarks', 'draganddrop', 'draw', 'editor',
@@ -1009,11 +1029,6 @@
     const nameInput = row.querySelector('.ctrlName');
     const badge = row.querySelector('.unknownBadge');
     function refreshNameState() {
-      // Origo resolves controls via origoControls[titleCase(name)], where
-      // titleCase lowercases the whole string then capitalizes the first
-      // char - so scalePicker / SCALEPICKER / scalepicker are all the same
-      // control. Match case-insensitively to avoid false "unrecognized"
-      // flags on valid mixed-case names (e.g. tomelilla's "scalePicker").
       const val = nameInput.value.trim().toLowerCase();
       const known = KNOWN_CONTROLS.includes(val);
       const empty = val === '';
@@ -1067,7 +1082,7 @@
   });
 
   function populateControlsForm(parsed) {
-    if (controlsForm.contains(document.activeElement)) return; // don't clobber in-progress typing
+    if (controlsForm.contains(document.activeElement)) return;
     controlsList.innerHTML = '';
     (parsed.controls || []).forEach(control => {
       controlsList.appendChild(makeControlRow(control.name, control.options));
@@ -1083,19 +1098,6 @@
       return entry;
     }).filter(c => c.name !== '');
   }
-
-  // --- Layers tab (Phase 4) -----------------------------------------------
-  // Core fields get typed inputs; everything type-specific (attributes,
-  // filter, geometryType, minScale/maxScale, abstract, clusterStyle, ...)
-  // goes into a per-row "advanced" raw-JSON blob, same defensive
-  // last-valid-JSON handling as Controls' options. GROUP nesting is
-  // handled by recursing the same row builder into a sub-layer list -
-  // that section is always present (not gated on type==="GROUP") so you
-  // can add sub-layers while still typing the type field.
-  //
-  // No virtualization: rows are collapsed-by-default (advanced/nested
-  // sections are <details>), so even ~150 flat rows stays lightweight.
-  // The search box narrows what's visible for large real-world files.
 
   const KNOWN_LAYER_TYPES = [
     'GEOJSON', 'GPX', 'TOPOJSON', 'WFS', 'AGS_FEATURE', 'VECTORTILE',
@@ -1338,7 +1340,7 @@
   layerSearch.addEventListener('input', applyLayerSearchFilter);
 
   function populateLayersForm(parsed) {
-    if (layersFormEl.contains(document.activeElement)) return; // don't clobber in-progress typing
+    if (layersFormEl.contains(document.activeElement)) return;
     refreshLayerDatalists(parsed);
     layersList.innerHTML = '';
     (parsed.layers || []).forEach(layer => layersList.appendChild(makeLayerRow(layer)));
@@ -1346,22 +1348,18 @@
     applyLayerSearchFilter();
   }
 
-  // --- Styles tab (Phase 5) -----------------------------------------------
-  // Origo styles are arrays-of-arrays of rule objects (fill/stroke/circle/
-  // text/icon/filter/minScale/maxScale/hidden/header/geometry) - too
-  // irregular to map onto typed fields the way controls/layers core
-  // properties do. Each style gets one raw-JSON sub-editor for its whole
-  // value (same last-known-good defensive handling as the other tabs),
-  // plus a live "used by N layer(s)" cross-reference and a warning if any
-  // layer references a style name that isn't defined here at all.
-
   const tabStyles = document.getElementById('tabStyles');
   const stylesFormEl = document.getElementById('stylesForm');
 
   stylesFormEl.innerHTML = `
     <p class="disabledNote" id="stylesDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
     <div id="missingStylesWarning"></div>
-    <input type="text" id="styleSearch" placeholder="Filter by style name…">
+    <div class="filterRow">
+      <input type="text" id="styleSearch" placeholder="Filter by style name…">
+      <label class="checkboxLabel">
+        <input type="checkbox" id="styleUnusedFilter"> Unused only
+      </label>
+    </div>
     <div id="styleCount"></div>
     <div id="stylesList"></div>
     <button type="button" class="miniBtn" id="btnAddStyle">+ Add style</button>
@@ -1371,6 +1369,7 @@
   const missingStylesWarning = document.getElementById('missingStylesWarning');
   const stylesList = document.getElementById('stylesList');
   const styleSearch = document.getElementById('styleSearch');
+  const styleUnusedFilter = document.getElementById('styleUnusedFilter');
   const styleCountEl = document.getElementById('styleCount');
 
   function setStylesFormEnabled(enabled) {
@@ -1398,11 +1397,6 @@
     row.className = 'styleRow';
     const text = JSON.stringify(valueArr, null, 2);
     row.dataset.lastValidValue = text;
-    // An empty string is an unusual but legal style name (JSON object keys
-    // have no such restriction) - seen in real production configs. Only
-    // treat a blank name as "incomplete, drop it" for rows the user just
-    // added via the button; rows loaded from the file must survive even
-    // with a blank name, or a save would silently delete real data.
     row.dataset.fromFile = fromFile ? 'true' : 'false';
 
     row.innerHTML = `
@@ -1472,14 +1466,22 @@
 
   function applyStyleSearchFilter() {
     const q = styleSearch.value.trim().toLowerCase();
+    const showUnusedOnly = styleUnusedFilter.checked;
+    
     stylesList.querySelectorAll('.styleRow').forEach(row => {
-      row.classList.toggle('filteredOut', q !== '' && !row.dataset.styleName.includes(q));
+      const nameMatch = q === '' || row.dataset.styleName.includes(q);
+      const usageCount = currentStyleUsage[row.dataset.styleName] || 0;
+      const usageMatch = showUnusedOnly ? usageCount === 0 : true;
+      
+      row.classList.toggle('filteredOut', !(nameMatch && usageMatch));
     });
   }
+  
   styleSearch.addEventListener('input', applyStyleSearchFilter);
+  styleUnusedFilter.addEventListener('change', applyStyleSearchFilter);
 
   function populateStylesForm(parsed) {
-    if (stylesFormEl.contains(document.activeElement)) return; // don't clobber in-progress typing
+    if (stylesFormEl.contains(document.activeElement)) return;
     currentStyleUsage = computeStyleUsage(parsed.layers);
     stylesList.innerHTML = '';
     Object.entries(parsed.styles || {}).forEach(([name, valueArr]) => {
@@ -1501,7 +1503,7 @@
     const styles = {};
     stylesList.querySelectorAll('.styleRow').forEach(row => {
       const name = row.querySelector('.styleName').value.trim();
-      if (!name && row.dataset.fromFile !== 'true') return; // a genuinely new, still-unnamed row - drop it
+      if (!name && row.dataset.fromFile !== 'true') return;
       const lastValid = row.dataset.lastValidValue;
       if (lastValid) styles[name] = JSON.parse(lastValid);
     });
@@ -1531,9 +1533,6 @@
     if (resolutions.length) next.resolutions = resolutions; else delete next.resolutions;
 
     const footerImg = g('f_footerImg'), footerUrl = g('f_footerUrl'), footerText = g('f_footerText');
-    // Merge onto the existing footer rather than rebuilding it, so keys
-    // the form doesn't expose (e.g. urlText, used by several configs as
-    // the link label instead of text) survive an edit.
     const footer = Object.assign({}, (next.pageSettings && next.pageSettings.footer) || {});
     if (footerImg) footer.img = footerImg; else delete footer.img;
     if (footerUrl) footer.url = footerUrl; else delete footer.url;
@@ -1544,11 +1543,6 @@
     } else if (next.pageSettings) {
       delete next.pageSettings.footer;
     }
-    // Only emit mapGrid / mapInteractions if they already existed in the
-    // file or the user actually enabled them - don't force { ...: false }
-    // onto a file that never had the key. This keeps an untouched
-    // pageSettings byte-identical (so editing another section doesn't
-    // rewrite it) and avoids polluting configs with defaults they omitted.
     const origPage = currentParsed.pageSettings || {};
     const mapGridChecked = document.getElementById('f_mapGrid').checked;
     if (mapGridChecked || Object.prototype.hasOwnProperty.call(origPage, 'mapGrid')) {
@@ -1582,9 +1576,6 @@
     });
     if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
 
-    // Don't force an empty controls/layers/styles container onto a file
-    // that never had one (that would be a top-level add and defeat the
-    // comment-preserving splice); only emit if non-empty or already present.
     const ctrls = collectControlsFromDOM();
     if (ctrls.length || Object.prototype.hasOwnProperty.call(currentParsed, 'controls')) next.controls = ctrls; else delete next.controls;
     const lyrs = collectLayersFromDOM();
@@ -1599,13 +1590,8 @@
     if (!currentParsed) return;
     formTouchedThisSession = true;
     const next = collectFormValues();
-    // Prefer a section-scoped splice that keeps comments in untouched
-    // sections; fall back to a full reserialize when that isn't safe
-    // (top-level key added/removed, or a changed key can't be located).
     let serialized = null;
     try {
-      // Diff against the baseline reconstruction, not the parsed file, so
-      // only sections the user actually changed get rewritten.
       serialized = patchRawPreservingComments(rawText.value, baselineCollected || currentParsed, next);
     } catch (e) {
       serialized = null;
@@ -1640,13 +1626,6 @@
   setStylesFormEnabled(false);
 
   let currentParsed = null;
-  // A reconstruction of the form state right after a fresh load, produced by
-  // the very same (slightly lossy) collect* path as a live edit. Diffing an
-  // edit against THIS - rather than against the parsed file - means an
-  // untouched section always compares equal to its own baseline, so quirks
-  // like collectLayerRow dropping an empty-string source:"" on a GROUP layer
-  // don't make an unedited section look changed and needlessly rewrite it
-  // (destroying its comments). Only genuinely user-touched sections differ.
   let baselineCollected = null;
 
   function parseAndRender() {
@@ -1693,8 +1672,6 @@
     populateLayersForm(parsed);
     populateStylesForm(parsed);
     updateCommentWarning();
-    // Snapshot the reconstructed form state so the next edit diffs against
-    // a like-for-like baseline (see baselineCollected declaration).
     baselineCollected = collectFormValues();
   }
 
@@ -1706,9 +1683,6 @@
   });
 
   function loadText(text, name, handle) {
-    // Opening a file is the strongest possible "start fresh" signal - it
-    // should always supersede any in-progress edit in any tab, regardless
-    // of which field happens to still hold focus.
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     rawText.value = text;
     savedText = text;
@@ -1728,7 +1702,7 @@
           types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
         });
       } catch (e) {
-        return; // user cancelled
+        return;
       }
       const handle = handles[0];
       const file = await handle.getFile();
@@ -1736,6 +1710,17 @@
       loadText(text, file.name, handle);
     } else {
       fileInput.click();
+    }
+  }
+
+  function bailoutFile() {
+    if (!currentFileName || savedText === null) return;
+    if (confirm('Are you sure you want to discard your unsaved changes?')) {
+      rawText.value = savedText;
+      setDirty();
+      parseAndRender();
+      statusBar.className = 'idle';
+      statusBar.textContent = `Reverted changes. Viewing clean snapshot of ${currentFileName}.`;
     }
   }
 
@@ -1790,7 +1775,7 @@
           types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
         });
       } catch (e) {
-        return; // user cancelled
+        return;
       }
       const writable = await handle.createWritable();
       await writable.write(text);
@@ -1813,6 +1798,7 @@
   }
 
   btnOpen.addEventListener('click', openFile);
+  btnBailout.addEventListener('click', bailoutFile);
   btnSave.addEventListener('click', saveFile);
   btnSaveAs.addEventListener('click', saveAsFile);
 

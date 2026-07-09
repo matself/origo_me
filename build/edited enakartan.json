@@ -1,0 +1,7926 @@
+{
+  "controls": [
+    {
+      "name": "home"
+    },
+    {
+      "name": "mapmenu",
+      "options": {
+        "hideWhenEmbedded": true,
+        "isActive": false
+      }
+    },
+    {
+      "name": "about",
+      "options": {
+        "buttonText": "Om Enköpingkartan",
+        "title": "Om Enköpingskartan",
+        "content": "<p><hr><img src=img/png/enk_logo.png></p><p><b>Enköpingskartan</b> är framtagen av Enköpings kommun och här kan du hitta olika typer av samhällsinformation. </p><br><p>Har du frågor eller funderingar angående kartan? Kontakta gärna oss på: <a href='mailto:kartor@enkoping.se?Subject=Enakartan' target='_top'>kartor@enkoping.se</a></p><br><p style='font-style:italic;'>Fastighetsgränser och övrigt innehåll i kartan är inte rättsligt gällande och är av varierande kvalitet.</p><br><hr style='border-width: 1px 0px 0px 0px; border-style: solid; border-color: #CCCCCC; margin: 12px 0px 12px 0px;'><p style='font-size: 12px;font-style:italic;'>Kartan är skapad med Origo, ett ramverk för webbkartor byggt med öppen källkod. Projektet drivs och underhålls av ett antal svenska kommuner. Besök gärna <a href='https://github.com/origo-map/origo' target='_blank'>Origo på GitHub</a> för mer information.",
+        "hideWhenEmbedded": true
+      }
+    },
+    {
+      "name": "link",
+      "options": {
+        "title": "Enköpings kommun",
+        "url": "https://enkoping.se/"
+      }
+    },
+    {
+      "name": "sharemap",
+      "options": {
+        "title": "Dela karta",
+        "storeMethod": "saveStateToServer",
+        "serviceEndpoint": "https://karta.enkoping.se/mapstate"
+      }
+    },
+    {
+      "name": "geoposition",
+      "options": {
+        "hideWhenEmbedded": true
+      }
+    },
+    {
+      "name": "position",
+      "options": {
+        "title": "Sweref99 16 30",
+        "projections": {
+          "EPSG:4326": "WGS84",
+          "EPSG:3006": "Sweref99 TM"
+        }
+      }
+    },
+    {
+      "name": "print",
+      "options": {
+        "leftFooterText": "OBS: Gränserna är endast illustrativa och inte juridiskt bindande."
+      }
+    },
+    {
+      "name": "draw",
+      "options": {
+        "buttonText": "Rita",
+        "drawTools": {
+          "Polygon": [
+            "freehand",
+            "box",
+            "square",
+            "circle"
+          ],
+          "LineString": [
+            "freehand"
+          ]
+        },
+        "showAttributeButton": false,
+        "showDownloadButton": true,
+        "showSaveButton": false,
+        "multipleLayers": false,
+        "queryable": false,
+        "removable": true,
+        "exportable": true,
+        "placement": [
+          "menu"
+        ],
+        "layerTitle": "Ritlager",
+        "groupTitle": "Ritlåda",
+        "groupName": "rit"
+      }
+    },
+    {
+      "name": "search",
+      "options": {
+        "url": "https://karta.enkoping.se/origoserver/search2",
+        "layerNameAttribute": "TYPE",
+        "idAttribute": "GID",
+        "searchAttribute": "NAMN",
+        "geometryAttribute": "GEOM",
+        "hintText": "Sök adress eller fastighet...",
+        "groupSuggestions": true,
+        "titleAttribute": "TITLE"
+      }
+    },
+    {
+      "name": "legend",
+      "options": {
+        "expanded": true,
+        "hideWhenEmbedded": true,
+        "style": {
+          "width": "300px"
+        },
+        "contentStyle": {
+          "width": "300px"
+        }
+      }
+    },
+    {
+      "name": "draganddrop",
+      "options": {
+        "groupName": "drag-and-drop-layers",
+        "groupTitle": "Mina lager",
+        "showLegendButton": false
+      }
+    },
+    {
+      "name": "measure",
+      "options": {
+        "hideWhenEmbedded": true
+      }
+    }
+  ],
+  "pageSettings": {
+    "footer": {
+      "img": "img/png/logo.png",
+      "url": "https://www.enkoping.se",
+      "text": "Enköping kommun"
+    },
+    "mapGrid": {
+      "visible": true
+    },
+    "mapInteractions": {
+      "embedded": true
+    }
+  },
+  "projectionCode": "EPSG:3010",
+  "projectionExtent": [
+    -1678505.1838360203,
+    4665380,
+    2431912.7361639794,
+    8775797.92
+  ],
+  "proj4Defs": [
+    {
+      "code": "EPSG:3010",
+      "alias": "urn:ogc:def:crs:EPSG::3010",
+      "projection": "+proj=tmerc +lat_0=0 +lon_0=16.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+    },
+    {
+      "code": "EPSG:3006",
+      "projection": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+    }
+  ],
+  "palette": [
+    "rgb(0,0,0)",
+    "rgb(255,255,255)",
+    "rgb(245,245,245)",
+    "rgb(166,206,227)",
+    "rgb(31,120,180)",
+    "rgb(178,223,138)",
+    "rgb(51,160,44)",
+    "rgb(251,154,153)",
+    "rgb(227,26,28)",
+    "rgb(253,191,111)"
+  ],
+  "extent": [
+    -1678505.1838360203,
+    4665380,
+    2431912.7361639794,
+    8775797.92
+  ],
+  "center": [
+    185653,
+    6613775
+  ],
+  "zoom": 4,
+  "resolutions": [
+    1146.8799999999999,
+    573.4399999999999,
+    286.71999999999997,
+    143.35999999999999,
+    71.67999999999999,
+    35.839999999999996,
+    17.919999999999998,
+    8.959999999999999,
+    4.4799999999999995,
+    2.2399999999999998,
+    1.1199999999999999,
+    0.5599999999999999,
+    0.27999999999999997,
+    0.14
+  ],
+  "source": {
+    "local": {
+      "url": "https://karta.enkoping.se/geoserver/ena_extern/ows"
+    },
+    "geodatawms": {
+      "url": "https://geodata2.enkoping.se/geoserver/flygfoto/ows"
+    },
+    "geodatabasemap": {
+      "url": "https://geodata2.enkoping.se/geowebcache/service/wmts"
+    }
+  },
+  "groups": [
+    {
+      "name": "utbildning",
+      "title": "Förskola och skola",
+      "expanded": false
+    },
+    {
+      "name": "bygga",
+      "title": "Bygga, bo och leva hållbart",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "pdpl",
+          "title": "Pågående byggprojekt och planer",
+          "expanded": false
+        },
+        {
+          "name": "grundvattenkanslighet",
+          "title": "Grundvattenkänslighet",
+          "showAbstractInLegend": true,
+          "abstract": "Kartlagret beskriver hur känslig marken är för föroreningar som kan orsaka negativ påverkan på grundvattnet.",
+          "expanded": false
+        },
+        {
+          "name": "kommunalt_va_gp",
+          "title": "VA-Verksamhetsområde",
+          "showAbstractInLegend": true,
+          "abstract": "<font style='font-size:0.76rem;font-style: italic'>VA-Verksamhetsområde är det område där kommunen ansvarar för vatten och/eller avlopp och/eller dagvatten.</font>",
+          "expanded": false,
+          "groups": [
+            {
+              "name": "befintligt",
+              "title": " Befintligt",
+              "expanded": false
+            },
+            {
+              "name": "planerad",
+              "title": " Planerad",
+              "expanded": false
+            }
+          ]
+        },
+        {
+          "name": "vattenskyr_gp",
+          "title": "Vattenskyddsområden",
+          "expanded": false
+        },
+        {
+          "name": "arbete",
+          "title": "Företag och arbete",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "name": "trafik",
+      "title": "Trafik och gator",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "cykel_gp",
+          "title": "Cykel",
+          "expanded": false,
+          "groups": [
+            {
+              "name": "gc_vagar_gp",
+              "title": "Gång- och cykelvägar",
+              "showAbstractInLegend": true,
+              "abstract": "Gång- och cykelvägar som tillhör huvudnätet har högre prioritet av skötsel (såsom snöröjning) än lokalnätet. Klicka på önskad väg för att få fram uppgift om vem som ansvarar för den.",
+              "expanded": true
+            }
+          ]
+        },
+        {
+          "name": "lastplatser_gp1",
+          "title": "Ändamålsplats (Lastplatser m.fl.)",
+          "expanded": false
+        },
+        {
+          "name": "parkering_gp",
+          "title": "Parkering",
+          "expanded": false,
+          "groups": [
+            {
+              "name": "nyparkering_gp",
+              "title": "Parkeringsregler",
+              "expanded": false,
+              "showAbstractInLegend": true,
+              "abstract": "<font style='font-size:0.76rem;font-style: italic'>För att se mer detaljerad information för parkeringar zooma in i kartan.</font>",
+              "groups": [
+                {
+                  "name": "parkeringszoner",
+                  "title": " Parkeringszoner",
+                  "expanded": false
+                }
+              ]
+            },
+            {
+              "name": "tillstand_gp",
+              "title": "Parkeringstillstånd",
+              "expanded": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "uppleva",
+      "title": "Fritid och kultur",
+      "expanded": false
+    },
+    {
+      "name": "omsorg",
+      "title": "Omsorg och stöd",
+      "expanded": false
+    },
+    {
+      "name": "trygghet",
+      "title": "Trygghet och beredskap",
+      "expanded": false
+    },
+    {
+      "name": "kop",
+      "title": "Kommun och politik",
+      "expanded": false,
+      "groups": [
+        {
+          "name": "val_2026",
+          "title": "Val 2026",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "name": "background",
+      "title": "Bakgrundskartor",
+      "expanded": true
+    }
+  ],
+  "layers": [
+    {
+      "name": "registerenhetsomradesyta",
+      "title": "Fastigheter och samfälligheter",
+      "source": "local",
+      "group": "bygga",
+      "style": "fastighetsyta",
+      "type": "WFS",
+      "maxScale": 5000,
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Fastighetsgränserna är endast illustrativa och inte juridiskt bindande! Oftast mer osäkra på landsbygden än i tätorterna.</font>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "fastighet",
+          "title": "Fastighetsbeteckning: "
+        },
+        {
+          "html": "<i>Gränserna är endast illustrativa och inte juridiskt bindande.</i>"
+        }
+      ]
+    },
+    {
+      "name": "adressplats",
+      "title": "Adress",
+      "opacity": 0.15,
+      "source": "local",
+      "group": "none",
+      "queryable": true,
+      "style": "cirkel",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Belägenhetsadresser</font>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "ortnamn",
+      "title": "Ortnamn",
+      "opacity": 0.15,
+      "source": "local",
+      "group": "none",
+      "queryable": true,
+      "style": "cirkel",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Ortnamn inom Enköpings kommun. Från Lantmäteriet</font>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "fopomraden",
+      "title": "Fördjupad översiktsplan",
+      "source": "local",
+      "group": "bygga",
+      "style": "fopomraden",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>FÖP-områden (FÖP - fördjupad översiktsplan) med länkar till mer information. </font>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "http"
+        }
+      ]
+    },
+    {
+      "name": "forskolor",
+      "source": "local",
+      "title": "Förskolor",
+      "group": "utbildning",
+      "style": "forskola",
+      "clusterStyle": "forskola_cluster",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ],
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "oppen_forskola",
+      "source": "local",
+      "title": "Öppen förskola",
+      "group": "utbildning",
+      "style": "forskola",
+      "clusterStyle": "forskola_cluster",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ],
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "grundskolor",
+      "source": "local",
+      "title": "Grundskolor",
+      "group": "utbildning",
+      "style": "grundskola",
+      "clusterStyle": "grundskola_cluster",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ],
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "gymnasium",
+      "source": "local",
+      "group": "utbildning",
+      "style": "gymnasium",
+      "clusterStyle": "gymnasium_cluster",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ],
+      "title": "Gymnasium",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "fritidsgard",
+      "source": "local",
+      "style": "fritidsgard",
+      "clusterStyle": "fritidsgard_cluster",
+      "group": "utbildning",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ],
+      "title": "Fritidsgård",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "vuxenutbildning",
+      "source": "local",
+      "group": "utbildning",
+      "style": "vuxenutbildning",
+      "clusterStyle": "vuxenutbildning_cluster",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ],
+      "title": "Vuxenutbildning",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false
+    },
+    {
+      "name": "placeringsomraden",
+      "title": "Placeringsområden F-3",
+      "source": "local",
+      "style": "placeringsomraden_f_3",
+      "group": "utbildning",
+      "attributes": [
+        {
+          "name": "omra_f_3"
+        }
+      ],
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Områden som ligger till grund för skolplacering förskoleklass - årskurs 3</font>",
+      "visible": false
+    },
+    {
+      "name": "placeringsomraden__4_6",
+      "title": "Placeringsområden 4-6",
+      "source": "local",
+      "style": "placeringsomraden_4_6",
+      "group": "utbildning",
+      "attributes": [
+        {
+          "name": "omra_4_6"
+        }
+      ],
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Områden som ligger till grund för skolplacering för årskurs 4-6</font>",
+      "visible": false
+    },
+    {
+      "name": "placeringsomra_7_9_vy",
+      "source": "local",
+      "style": "placeringsomraden7_9",
+      "group": "utbildning",
+      "attributes": [
+        {
+          "name": "omra_7_9"
+        }
+      ],
+      "title": "Placeringsområden 7-9",
+      "type": "WFS",
+      "visible": false
+    },
+    {
+      "name": "forvaltningskontor__soc",
+      "title": "Socialförvaltningen",
+      "source": "local",
+      "group": "omsorg",
+      "style": "kommunsocpkt",
+      "type": "WFS",
+      "visible": false,
+      "filter": "namn = 'Socialförvaltningen'",
+      "attributes": [
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "omvardnadsboenden",
+      "title": "Omvårdnadsboenden",
+      "source": "local",
+      "group": "omsorg",
+      "style": "omvardnadsboenden",
+      "clusterStyle": "omvardnadsboenden_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "familjecentrum",
+      "title": "Familjecentrum",
+      "source": "local",
+      "group": "omsorg",
+      "style": "familjecentrum",
+      "clusterStyle": "familjecentrum_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "jobbstod",
+      "title": "Jobbstöd och sysselsättning",
+      "source": "local",
+      "group": "omsorg",
+      "style": "jobbcentrum",
+      "clusterStyle": "jobbcentrum_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "trygghet__punkt",
+      "title": "Trygghetspunkt",
+      "source": "local",
+      "group": "trygghet",
+      "style": "trygg_punkt",
+      "clusterStyle": "trygg_punkt_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "filter": "tryggpunkt = 'ja'",
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "trygghet__info",
+      "title": "Informationspunkt vid kris",
+      "source": "local",
+      "group": "trygghet",
+      "style": "trygg_info",
+      "clusterStyle": "trygg_info_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "filter": "infopunkt = 'ja'",
+      "attributes": [
+        {
+          "name": "namn"
+        }
+      ]
+    },
+    {
+      "name": "forvaltningskontor",
+      "title": "Kommunhuset",
+      "source": "local",
+      "group": "kop",
+      "style": "kommunpkt",
+      "type": "WFS",
+      "visible": false,
+      "filter": "namn = 'Kommunhuset'",
+      "attributes": [
+        {
+          "html": "<br><p><a href='https://enkoping.se/kontakt/besoka-kommunhuset.html' target='_blank'>{{info}}</a></p><br>"
+        }
+      ]
+    },
+    {
+      "name": "forvaltningskontor__kc",
+      "title": "Kontaktcenter",
+      "source": "local",
+      "group": "kop",
+      "style": "kommunkcpkt",
+      "type": "WFS",
+      "visible": false,
+      "filter": "namn = 'Kontaktcenter'",
+      "attributes": [
+        {
+          "html": "<br><p><a href='https://enkoping.se/kontakt.html' target='_blank'>{{info}}</a></p><br>"
+        }
+      ]
+    },
+    {
+      "name": "badplatser",
+      "title": "Bad",
+      "source": "local",
+      "group": "uppleva",
+      "style": "bad",
+      "clusterStyle": "bad_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "gasthamn",
+      "title": "Gästhamnar",
+      "source": "local",
+      "group": "uppleva",
+      "style": "gasthamn",
+      "clusterStyle": "gasthamn_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "bibliotek",
+      "title": "Bibliotek",
+      "source": "local",
+      "group": "uppleva",
+      "style": "bibliotek",
+      "clusterStyle": "bibliotek_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "adress",
+          "title": "Adress: "
+        }
+      ]
+    },
+    {
+      "name": "bokbuss",
+      "title": "Biblioteksbuss",
+      "source": "local",
+      "group": "uppleva",
+      "style": "bokbuss",
+      "clusterStyle": "bokbuss_cluster",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Fasta hållplatser och tider för bokbuss</font>",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "ny_tid",
+          "title": "Tider: "
+        },
+        {
+          "name": "ny_datum",
+          "title": "Datum: "
+        },
+        {
+          "name": "tur",
+          "title": "Tur: "
+        }
+      ]
+    },
+    {
+      "name": "idrottsanlaggning",
+      "title": "Idrottsanläggningar",
+      "source": "local",
+      "group": "uppleva",
+      "style": "idrottsanlaggning",
+      "clusterStyle": "idrottsanlaggning_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "img": "bild"
+        }
+      ]
+    },
+    {
+      "name": "mountainbikeled",
+      "title": "MTB-led",
+      "source": "local",
+      "group": "uppleva",
+      "style": "mountainbikeled",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true,
+      "abstract": "Mountainbike-led (MTB-led). Lederna är uppskyltade av Upplevelseförvaltningen tillsammans med Enköpings cykelklubb.",
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "beskrivning",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "cykelleden_uppland",
+      "title": "Cykelleden Uppland",
+      "source": "local",
+      "group": "uppleva",
+      "style": "cykelleden_uppland",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Cykelleden Uppland går från bad till bad, genom charmiga städer och landsbygdsorter, öppna landskap, historiska miljöer kantrad av entreprenörskap – en resa fylld av variation och upplevelser.</font>",
+      "visible": false,
+      "queryable": false
+    },
+    {
+      "name": "halsans_stig__all",
+      "source": "local",
+      "title": "Hälsans stig",
+      "group": "uppleva",
+      "style": "halsans_stig",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "halsans_stig",
+          "source": "local",
+          "title": "Hälsans stig",
+          "group": "uppleva",
+          "style": "halsans_stig",
+          "queryable": false,
+          "attributes": [
+            {
+              "name": "namn"
+            }
+          ],
+          "type": "WFS",
+          "visible": true
+        },
+        {
+          "name": "intressepunkter__halsansstig",
+          "source": "local",
+          "title": "Hälsans stig",
+          "group": "uppleva",
+          "style": "halsan",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            }
+          ],
+          "type": "WFS",
+          "filter": "halsansstig_pkt = 1",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "name": "konst",
+      "title": "Offentlig konst",
+      "source": "local",
+      "group": "uppleva",
+      "style": "konst",
+      "clusterStyle": "konst_cluster",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Kommunens offentliga konst. Förvaltas av museum och turism. I webbkartorna filtreras verk som är tillgängliga för allmänheten.</font>",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "img": "url",
+          "urlPrefix": "https://karta.enkoping.se/besokskartan/img/konst/",
+          "urlSuffix": ".jpg"
+        },
+        {
+          "name": "namn"
+        },
+        {
+          "name": "konstnar",
+          "title": "Konstnär: "
+        }
+      ]
+    },
+    {
+      "name": "lekplatser",
+      "title": "Lekplatser",
+      "source": "local",
+      "group": "uppleva",
+      "style": "lekplats",
+      "clusterStyle": "lekplats_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Här hittar du alla kommunens allmänna lekplatser. På kommunens lekplatser utförs regelbunden tillsyn och en årlig besiktning av all lekutrustning.</font>",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "beskrivning"
+        }
+      ]
+    },
+    {
+      "name": "hundrastgard",
+      "title": "Hundrastgård",
+      "source": "local",
+      "group": "uppleva",
+      "style": "hundgard",
+      "clusterStyle": "hundgard_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "adress"
+        }
+      ]
+    },
+    {
+      "name": "grillplats_vy__med_ved",
+      "title": "Grillplats med ved",
+      "source": "local",
+      "group": "uppleva",
+      "style": "grillplats_med_ved",
+      "clusterStyle": "grillplats_med_ved_cluster",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Kommunens grillplatser där kommunen regelbundet fyller på med ved.</font>",
+      "layerType": "cluster",
+      "filter": "ved_2021 = 'Ja'",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "omrade",
+          "title": "Område: "
+        },
+        {
+          "html": "<p>Grillplats där kommunen regelbundet fyller på med ved. Tänk på att du som tänder elden är ansvarig för den. Elda aldrig när brandrisk råder. <a href='https://www.msb.se/sv/rad-till-privatpersoner/brandsakerhet/brandsakerhet-i-skog-och-mark/sakerhet-vid-eldning-i-skog-och-mark/' target='_blank'>Läs mer om eldning och säkerhet på MSBs webbplats.</a></p>"
+        }
+      ]
+    },
+    {
+      "name": "grillplats_vy__utan_ved",
+      "title": "Grillplats utan ved",
+      "source": "local",
+      "group": "uppleva",
+      "style": "grillplats_utan_ved",
+      "clusterStyle": "grillplats_utan_ved_cluster",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Kommunens grillplatser där besökare får ta med egen ved.</font>",
+      "layerType": "cluster",
+      "filter": "ved_2021 = 'Nej'",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "omrade",
+          "title": "Område: "
+        },
+        {
+          "html": "<p>Grillplats där besökare får ta med egen ved. Tänk på att du som tänder elden är ansvarig för den. Elda aldrig när brandrisk råder. <a href='https://www.msb.se/sv/rad-till-privatpersoner/brandsakerhet/brandsakerhet-i-skog-och-mark/sakerhet-vid-eldning-i-skog-och-mark/' target='_blank'>Läs mer om eldning och säkerhet på MSBs webbplats.</a></p>"
+        }
+      ]
+    },
+    {
+      "name": "namngivna_parker_vy_punkt",
+      "title": "Parker",
+      "source": "local",
+      "group": "uppleva",
+      "style": "park",
+      "clusterStyle": "park_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "naturreservat",
+      "title": "Naturreservat",
+      "source": "local",
+      "group": "uppleva",
+      "style": "naturreservat",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "nvrid",
+          "title": "NVR-ID: "
+        },
+        {
+          "name": "namn",
+          "title": "Name: "
+        },
+        {
+          "name": "skyddstyp",
+          "title": "Skyddstyp: "
+        },
+        {
+          "name": "beslstatus",
+          "title": "Beslutsstatus: "
+        },
+        {
+          "name": "ursbestdat",
+          "title": "Beslutsdatum: "
+        },
+        {
+          "name": "ursgalldat",
+          "title": "Ursprungligt gällandedatum: "
+        },
+        {
+          "name": "sengalldat",
+          "title": "Senaste gällandedatum: "
+        },
+        {
+          "name": "lan",
+          "title": "Län: "
+        },
+        {
+          "name": "kommun",
+          "title": "Kommun: "
+        },
+        {
+          "name": "forvaltare",
+          "title": "förvaltare: "
+        },
+        {
+          "name": "iucnkat",
+          "title": "IUCN-kategori: "
+        },
+        {
+          "name": "forvaltare",
+          "title": "förvaltare: "
+        },
+        {
+          "name": "area_ha",
+          "title": "Area (ha): "
+        },
+        {
+          "name": "land_ha",
+          "title": "Land (ha): "
+        },
+        {
+          "name": "skog_ha",
+          "title": "Varav produktiv skogsmark (ha): "
+        },
+        {
+          "name": "vatten_ha",
+          "title": "Vatten (ha): "
+        },
+        {
+          "name": "diarienr",
+          "title": "Diarienummer: "
+        },
+        {
+          "name": "beslmynd",
+          "title": "Beslutsmyndighet: "
+        }
+      ]
+    },
+    {
+      "name": "fornminnen",
+      "title": "Fornminnen",
+      "style": "fornminne_punkt",
+      "group": "uppleva",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "group": "uppleva",
+          "name": "fornminne_punkt",
+          "source": "local",
+          "style": "fornminne_punkt",
+          "title": "Fornminnen, punkt",
+          "type": "WFS",
+          "visible": true,
+          "maxScale": 10000,
+          "attributes": [
+            {
+              "name": "lamningsnummer",
+              "url": "url"
+            },
+            {
+              "name": "lamningstyp"
+            }
+          ]
+        },
+        {
+          "group": "uppleva",
+          "name": "fornminne_linje",
+          "source": "local",
+          "style": "fornminne_linje",
+          "title": "Fornminnen, linje",
+          "type": "WFS",
+          "visible": true,
+          "maxScale": 10000,
+          "attributes": [
+            {
+              "name": "lamningsnummer",
+              "url": "url"
+            },
+            {
+              "name": "lamningstyp"
+            }
+          ]
+        },
+        {
+          "group": "uppleva",
+          "name": "fornminne_yta",
+          "source": "local",
+          "style": "fornminne_yta",
+          "title": "Fornminnen, yta",
+          "type": "WFS",
+          "visible": true,
+          "maxScale": 10000,
+          "attributes": [
+            {
+              "name": "lamningsnummer",
+              "url": "url"
+            },
+            {
+              "name": "lamningstyp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "verksamhetsomraden_vatten_vy",
+      "title": "Dricksvatten",
+      "source": "local",
+      "group": "befintligt",
+      "type": "WMS",
+      "queryable": true,
+      "style": "vatten",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "info"
+        },
+        {
+          "name": "status"
+        }
+      ]
+    },
+    {
+      "name": "verksamhetsomraden_va__spill",
+      "title": "Spillvatten",
+      "source": "local",
+      "group": "befintligt",
+      "style": "verksamhetsomraden_va_spill",
+      "abstract": "Avlopp från exempelvis toaletter, kök och badrum.",
+      "type": "WFS",
+      "visible": false,
+      "filter": "status='Befintligt' AND (typ='VS'OR typ='VSD')",
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "info"
+        },
+        {
+          "name": "status"
+        }
+      ]
+    },
+    {
+      "name": "verksamhetsomraden_va__dag",
+      "title": "Dagvatten",
+      "source": "local",
+      "group": "befintligt",
+      "style": "verksamhetsomraden_va_befintligt",
+      "abstract": "Regn- och smältvatten som rinner av från exempelvis gator och tak.",
+      "type": "WFS",
+      "visible": false,
+      "filter": "status='Befintligt' AND typ='VSD'",
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "info"
+        },
+        {
+          "name": "status"
+        }
+      ]
+    },
+    {
+      "name": "verksamhetsomraden_va__planerat",
+      "title": "Planerad",
+      "source": "local",
+      "group": "planerad",
+      "style": "verksamhetsomraden_va_planerat",
+      "type": "WFS",
+      "visible": false,
+      "filter": "status='Planerat'",
+      "attributes": [
+        {
+          "name": "namn"
+        },
+        {
+          "name": "info"
+        },
+        {
+          "name": "status"
+        }
+      ]
+    },
+    {
+      "name": "vattenskyddsomr__inre",
+      "title": "Inre skyddszon",
+      "source": "local",
+      "group": "vattenskyr_gp",
+      "style": "vattenskyddsomr_inre_yta",
+      "type": "WFS",
+      "visible": false,
+      "filter": "klass1 = '3'",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "vattenskyddsomr__yttre",
+      "title": "Yttre skyddszon",
+      "source": "local",
+      "group": "vattenskyr_gp",
+      "style": "vattenskyddsomr_yttre_yta",
+      "type": "WFS",
+      "visible": false,
+      "filter": "klass1 = '2'",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "vattenskyddsomr__lokal",
+      "title": "Lokal skyddszon",
+      "source": "local",
+      "group": "vattenskyr_gp",
+      "style": "vattenskyddsomr_lokal_yta",
+      "type": "WFS",
+      "visible": false,
+      "filter": "klass1 = '1'",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "ledig_naringsmark",
+      "title": "Ledig verksamhetsmark",
+      "source": "local",
+      "group": "arbete",
+      "style": "ledig_naringsmark",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "fastighet",
+          "title": "Fastighet: "
+        },
+        {
+          "name": "typ",
+          "title": "Typ: "
+        },
+        {
+          "name": "kont_pers",
+          "title": "Kontaktperson: "
+        },
+        {
+          "name": "kont_tele",
+          "title": "Telefonnummer: "
+        },
+        {
+          "name": "kont_epost",
+          "title": "Epost: "
+        },
+        {
+          "name": "fastighetagare",
+          "title": "Fastighetsägare: "
+        }
+      ]
+    },
+    {
+      "name": "grundvattenkanslighet__klass1o2",
+      "title": "Extrem och hög känslighet",
+      "source": "local",
+      "group": "grundvattenkanslighet",
+      "style": "kanslighetskarta_1o2",
+      "type": "WFS",
+      "filter": "klass = '1 och 2'",
+      "visible": false,
+      "abstract": "Klass 1 och 2: Extrem och hög känslighet för grundvattenpåverkan.",
+      "attributes": [
+        {
+          "html": "<b>Grundvattenkänslighet</b>"
+        },
+        {
+          "name": "klass",
+          "title": "Klass: "
+        }
+      ]
+    },
+    {
+      "name": "grundvattenkanslighet__klass3",
+      "title": "Måttlig känslighet",
+      "source": "local",
+      "group": "grundvattenkanslighet",
+      "style": "kanslighetskarta_3",
+      "type": "WFS",
+      "filter": "klass = '3'",
+      "visible": false,
+      "abstract": "Klass 3: Måttlig känslighet för grundvattenpåverkan.",
+      "attributes": [
+        {
+          "html": "<b>Grundvattenkänslighet</b>"
+        },
+        {
+          "name": "klass",
+          "title": "Klass: "
+        }
+      ]
+    },
+    {
+      "name": "grundvattenkanslighet__klass4",
+      "title": "Låg känslighet",
+      "source": "local",
+      "group": "grundvattenkanslighet",
+      "style": "kanslighetskarta_4",
+      "type": "WFS",
+      "filter": "klass = '4'",
+      "visible": false,
+      "abstract": "Klass 4: Låg känslighet för grundvattenpåverkan.",
+      "attributes": [
+        {
+          "html": "<b>Grundvattenkänslighet</b>"
+        },
+        {
+          "name": "klass",
+          "title": "Klass: "
+        }
+      ]
+    },
+    {
+      "name": "anslagstavlor",
+      "title": "Anslagstavlor",
+      "source": "local",
+      "group": "bygga",
+      "geometryType": "Point",
+      "queryable": true,
+      "style": "anslagstavlor",
+      "clusterStyle": "anslagstavlor_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Kommunens anslagstavlor för annonsering av politiska beslut samt annonsering från privata personer.</font>",
+      "attributes": [
+        {
+          "name": "placering",
+          "title": "Placering: "
+        },
+        {
+          "img": "bild"
+        }
+      ]
+    },
+    {
+      "name": "returtorg",
+      "title": "Returtorg",
+      "source": "local",
+      "group": "bygga",
+      "style": "retur",
+      "clusterStyle": "retur_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "name": "handikapparkering_vy",
+      "title": "Parkering för rörelseförhindrad",
+      "source": "local",
+      "group": "parkering_gp",
+      "queryable": true,
+      "style": "handikapparkering",
+      "clusterStyle": "handikapparkering_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        }
+      ]
+    },
+    {
+      "name": "bussparkering_vy",
+      "title": "Bussparkering",
+      "source": "local",
+      "group": "parkering_gp",
+      "queryable": true,
+      "style": "buss",
+      "clusterStyle": "buss_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "ptid",
+          "title": "Parkeringstider(ptid): "
+        },
+        {
+          "name": "gatafastig",
+          "title": "gatafastig: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt1",
+      "source": "local",
+      "title": "Lastplats Kl.6-11, p-förbud övriga tider",
+      "abstract": "Lastplats Kl.6-11, p-förbud övriga tider",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt1",
+      "clusterStyle": "lastplatser_punkt1_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt2",
+      "source": "local",
+      "title": "Lastplats Kl.6-11, parkering tillåten övriga tider",
+      "abstract": "Lastplats Kl.6-11, parkering tillåten övriga tider",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt2",
+      "clusterStyle": "lastplatser_punkt2_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt3",
+      "source": "local",
+      "title": "Lastplats Kl.6-18, p-förbud övriga tider",
+      "abstract": "Lastplats Kl.6-18, p-förbud övriga tider",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt3",
+      "clusterStyle": "lastplatser_punkt3_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt4",
+      "source": "local",
+      "title": "Lastplats dygnet runt",
+      "abstract": "Lastplats dygnet runt",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt4",
+      "clusterStyle": "lastplatser_punkt4_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt5",
+      "source": "local",
+      "title": "På- och avstigningsplats",
+      "abstract": "På- och avstigningsplats",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt5",
+      "clusterStyle": "lastplatser_punkt5_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "lastplats_punkt6",
+      "source": "local",
+      "title": "På- och avstigningsplats, vardagar 08 - 19. Avgift lördag och dag före helgdag 08-15",
+      "abstract": "På- och avstigningsplats, vardagar 08 - 19. Avgift lördag och dag före helgdag 08-15",
+      "group": "lastplatser_gp1",
+      "style": "lastplatser_punkt6",
+      "clusterStyle": "lastplatser_punkt6_cluster",
+      "layerType": "cluster",
+      "queryable": true,
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "lastplatser_ptid",
+          "title": "Info: "
+        }
+      ]
+    },
+    {
+      "name": "laddningsstationer",
+      "title": "Laddningsstationer",
+      "source": "local",
+      "group": "parkering_gp",
+      "style": "laddning",
+      "clusterStyle": "laddning_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "gata",
+          "title": "Gata: "
+        },
+        {
+          "name": "antal",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "typ",
+          "title": "Laddningstyp: "
+        },
+        {
+          "name": "avgift",
+          "title": "Avgift: "
+        }
+      ]
+    },
+    {
+      "name": "biljettautomater",
+      "title": "Biljettautomater",
+      "source": "local",
+      "group": "parkering_gp",
+      "style": "biljettautomater",
+      "clusterStyle": "biljettautomater_cluster",
+      "type": "WFS",
+      "layerType": "cluster",
+      "visible": false,
+      "queryable": false
+    },
+    {
+      "name": "parkeringspunkter_grupp",
+      "source": "local",
+      "title": "Större parkeringar",
+      "group": "nyparkering_gp",
+      "style": "parkering_punkt",
+      "type": "GROUP",
+      "visible": false,
+      "abstract": "Dessa parkeringsplatser gäller från maj 2021 och visar större parkeringsytor. Om du zoomar in i kartan ser du mer detaljerad information.",
+      "layers": [
+        {
+          "name": "parkeringspunkter",
+          "source": "local",
+          "title": "Parkeringspunkter",
+          "group": "nyparkering_gp",
+          "style": "parkering",
+          "clusterStyle": "parkering_cluster",
+          "attributes": [
+            {
+              "name": "namn",
+              "title": "Namn: "
+            },
+            {
+              "name": "ptid",
+              "title": "Parkeringstider(ptid): "
+            },
+            {
+              "name": "antal_plat",
+              "title": "Antal plats: "
+            },
+            {
+              "name": "boende",
+              "title": "Boendeparkering gäller: "
+            },
+            {
+              "name": "landsbygd",
+              "title": "Landsbygdsparkering gäller: "
+            }
+          ],
+          "type": "WFS",
+          "layerType": "cluster",
+          "visible": true,
+          "minScale": 10000
+        },
+        {
+          "name": "parkeringspunkter",
+          "source": "local",
+          "title": "Parkeringspunkter",
+          "group": "nyparkering_gp",
+          "style": "parkering",
+          "attributes": [
+            {
+              "name": "namn",
+              "title": "Namn: "
+            },
+            {
+              "name": "ptid",
+              "title": "Parkeringstider(ptid): "
+            },
+            {
+              "name": "antal_plat",
+              "title": "Antal plats: "
+            },
+            {
+              "name": "boende",
+              "title": "Boendeparkering gäller: "
+            },
+            {
+              "name": "landsbygd",
+              "title": "Landsbygdsparkering gäller: "
+            }
+          ],
+          "type": "WFS",
+          "visible": true,
+          "maxScale": 10000,
+          "minScale": 5000,
+          "queryable": true
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__7dygnavgift",
+      "title": "Max 7 dygn, 25kr/dygn",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 7 dygn, 25kr/dygn'",
+      "queryable": true,
+      "style": "parkeringsytor_dygn",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__24",
+      "title": "Max 24 tim, 6 kr/tim - max 25 kr/dygn",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 24 timmar, 6 kr/timme - max 25 kr/dygn' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_24",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        },
+        {
+          "name": "omradeskod",
+          "title": "Områdeskod: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__24avgift",
+      "title": "Max 24 tim, 25kr/dygn",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 24 timmar, 25kr/dygn'",
+      "queryable": true,
+      "style": "parkeringsytor_24timmaravgift",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__3",
+      "title": "Max 3 tim, 12 kr/tim",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 3 timmar, 12 kr/timme' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_3",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        },
+        {
+          "name": "zonkod",
+          "title": "Zonkod: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__24avgiftfri",
+      "source": "local",
+      "title": "Max 24 tim",
+      "filter": "symbol = 'Max 24 timmar, Avgiftsfri' AND visas ='Ja'",
+      "group": "nyparkering_gp",
+      "style": "parkeringsytor_24avgift",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__6a",
+      "title": "Max 6 tim",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 6 timmar, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_6a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__6_17",
+      "title": "Avgift kl 06-17, 6 kr/timme - max 25 kr/dygn",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Avgift kl 06-17, 6 kr/timme - max 25 kr/dygn' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_6_17",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__4a",
+      "title": "Max 4 tim",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 4 timmar, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_4a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__3a",
+      "title": "Max 3 tim",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 3 timmar, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_3a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__1a",
+      "title": "Max 1 tim",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 1 timme, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_1a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__30a",
+      "title": "Max 30 min",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 30 minuter, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_30a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__15a",
+      "title": "Max 15 min",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Max 15 minuter, Avgiftsfri' AND visas ='Ja'",
+      "queryable": true,
+      "style": "parkeringsytor_15a",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__ovrig",
+      "title": "Övrig",
+      "source": "local",
+      "group": "nyparkering_gp",
+      "filter": "symbol = 'Övrig'",
+      "queryable": true,
+      "style": "parkeringsytor_ovrig",
+      "type": "WFS",
+      "visible": false,
+      "maxScale": 5000,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        },
+        {
+          "name": "boende",
+          "title": "Boendeparkering gäller: "
+        },
+        {
+          "name": "landsbygd",
+          "title": "Landsbygdsparkering gäller: "
+        },
+        {
+          "name": "bussparkering",
+          "title": "Bussparkering: "
+        },
+        {
+          "name": "pendlarparkering",
+          "title": "Pendlarparkering: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringszon",
+      "title": "Zon A",
+      "source": "local",
+      "group": "parkeringszoner",
+      "geometryType": "Polygon",
+      "queryable": false,
+      "style": "zonA",
+      "type": "WFS",
+      "filter": " zon = 'Zon A'",
+      "abstract": "De flesta parkeringplatser i Zon A har regler max 3 timmar 12 kr i timme. Parkeringszonerna är synliga i utzoomningsläge.",
+      "minScale": 4000,
+      "visible": false,
+      "attributes": [
+        {
+          "name": "zon",
+          "title": "zonnamn: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringszon__ZonB",
+      "title": "Zon B",
+      "source": "local",
+      "group": "parkeringszoner",
+      "geometryType": "Polygon",
+      "queryable": false,
+      "style": "zonB",
+      "type": "WFS",
+      "filter": " zon = 'Zon B'",
+      "abstract": "De flesta parkeringplatser i Zon B har regler max 24 timmar 6 kr i timme(Max 24 kr per dygn). Parkeringszonerna är synliga i utzoomningsläge.",
+      "minScale": 4000,
+      "visible": false,
+      "attributes": [
+        {
+          "name": "zon",
+          "title": "zonnamn: "
+        }
+      ]
+    },
+    {
+      "name": "boendetillstand_vy",
+      "title": "Boendetillstånd",
+      "source": "local",
+      "group": "tillstand_gp",
+      "queryable": true,
+      "style": "boende",
+      "type": "WMS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        }
+      ]
+    },
+    {
+      "name": "parkeringsytor__landsbygd",
+      "title": "Landsbygdstillstånd",
+      "source": "local",
+      "group": "tillstand_gp",
+      "filter": "landsbygd = 'Ja'",
+      "queryable": true,
+      "style": "landsbygd",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Namn: "
+        },
+        {
+          "name": "foreskrif",
+          "title": "Föreskrift: "
+        },
+        {
+          "name": "info",
+          "title": "Info: "
+        },
+        {
+          "name": "symbol",
+          "title": "Parkeringstid, avgift: "
+        },
+        {
+          "name": "antal_plat",
+          "title": "Antal plats: "
+        }
+      ]
+    },
+    {
+      "name": "tillstand_pendlarparkering",
+      "title": "Pendlartillstånd beviljas inte",
+      "source": "local",
+      "group": "tillstand_gp",
+      "queryable": true,
+      "style": "pendlartillstand",
+      "abstract": "Avgränsning för beviljande av pendlartillstånd. Folkbokförda inom det röda området beviljas inte ett pendlartillstånd.",
+      "type": "WFS",
+      "visible": false
+    },
+    {
+      "name": "cykelparkering",
+      "title": "Cykelparkering",
+      "source": "local",
+      "group": "cykel_gp",
+      "geometryType": "Point",
+      "queryable": true,
+      "style": "cykelp",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "adress",
+          "title": "Adress: "
+        },
+        {
+          "name": "antal",
+          "title": "Antal cykelställ: "
+        },
+        {
+          "name": "ramlas",
+          "title": "Ramlås: "
+        },
+        {
+          "name": "kommunalmark",
+          "title": "Kommunalmark: "
+        },
+        {
+          "name": "datum",
+          "title": "Datum: "
+        },
+        {
+          "name": "beskrivning",
+          "title": "Beskrivning: "
+        },
+        {
+          "img": "bild"
+        }
+      ]
+    },
+    {
+      "name": "cykelpump",
+      "title": "Cykelpump",
+      "source": "local",
+      "group": "cykel_gp",
+      "geometryType": "Point",
+      "queryable": false,
+      "style": "cykelpump",
+      "type": "WFS",
+      "visible": false
+    },
+    {
+      "name": "gc_vagar",
+      "title": "Huvudnät",
+      "source": "local",
+      "group": "gc_vagar_gp",
+      "filter": "forbindelsekategori = 'Huvudcykelväg' OR forbindelsekategori = 'Regional cykelväg'",
+      "style": "cykelvagar_huvud",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true,
+      "attributes": [
+        {
+          "name": "vaghallarnamn",
+          "title": "Väghållare: "
+        }
+      ]
+    },
+    {
+      "name": "gc_vagar__lokal",
+      "title": "Lokalnät",
+      "source": "local",
+      "group": "gc_vagar_gp",
+      "filter": "forbindelsekategori = 'Lokal cykelväg'",
+      "style": "cykelvagar_lokal",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true,
+      "attributes": [
+        {
+          "name": "vaghallarnamn",
+          "title": "Väghållare: "
+        }
+      ]
+    },
+    {
+      "name": "gc_vagar__bland",
+      "title": "Cykling i blandtrafik",
+      "source": "local",
+      "group": "gc_vagar_gp",
+      "filter": "forbindelsekategori = 'Cykling i blandtrafik'",
+      "style": "cykelvagar_bland",
+      "type": "WFS",
+      "visible": false,
+      "queryable": true,
+      "attributes": [
+        {
+          "name": "vaghallarnamn",
+          "title": "Väghållare: "
+        }
+      ]
+    },
+    {
+      "name": "landskapsbildsskydd",
+      "title": "Landskapsbildsskydd",
+      "source": "local",
+      "group": "bygga",
+      "style": "landskapsbildsskydd",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "objektlank"
+        }
+      ]
+    },
+    {
+      "name": "kvarter",
+      "title": "Kvarter",
+      "source": "local",
+      "group": "bygga",
+      "style": "kvarter",
+      "type": "WFS",
+      "abstract": "<font style='font-size:0.76rem;font-style: italic'>Kvarter inom Enköping och Grillby tätorter.</font>",
+      "maxScale": 15000,
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "title": "Kvarter: "
+        }
+      ]
+    },
+    {
+      "_comment": "Denna finns kvar tillfälligt för att de inbäddade kartorna på Enköping växer ska funka. Visas egentligen inte i Enköpingskartan längre. ",
+      "name": "pagaende_planering",
+      "title": "Pågående detaljplaner",
+      "source": "local",
+      "group": "none",
+      "style": "pagaende_planering",
+      "type": "WFS",
+      "visible": false,
+      "filter": "status = 'Pågående'",
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        }
+      ]
+    },
+    {
+      "_comment": "Denna finns kvar tillfälligt för att de inbäddade kartorna på Enköping växer ska funka.  Visas egentligen inte i Enköpingskartan längre.",
+      "name": "byggprojekt",
+      "title": "Byggprojekt",
+      "source": "local",
+      "group": "none",
+      "style": "byggprojekt",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "name": "info"
+        }
+      ]
+    },
+    {
+      "name": "detaljplaner",
+      "title": "Gällande detaljplaner",
+      "source": "local",
+      "group": "bygga",
+      "style": "detaljplan",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "planbeteck",
+          "url": "http"
+        },
+        {
+          "name": "planavgift",
+          "title": "Planavgift: "
+        }
+      ]
+    },
+    {
+      "name": "pdpl_bostader",
+      "title": "Bostäder",
+      "style": "pdpl_bostader_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__bostader",
+          "source": "local",
+          "style": "pdpl_bostader_pkt",
+          "title": "Bostäder",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "bostader = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__bostader",
+          "source": "local",
+          "style": "pdpl_bostader",
+          "title": "Bostäder",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "bostader = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": " för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_butik",
+      "title": "Butik och kontor",
+      "style": "pdpl_butik_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__butik",
+          "source": "local",
+          "style": "pdpl_butik_pkt",
+          "title": "Butik och kontor",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "butik_kontor = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__butik",
+          "source": "local",
+          "style": "pdpl_butik",
+          "title": "Butik och kontor",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "butik_kontor = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_fritid",
+      "title": "Fritid, kultur och park",
+      "style": "pdpl_fritid_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__fritid",
+          "source": "local",
+          "style": "pdpl_fritid_pkt",
+          "title": "Fritid, kultur och park",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "fri_kult_park = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__fritid",
+          "source": "local",
+          "style": "pdpl_fritid",
+          "title": "Fritid, kultur och park",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "fri_kult_park = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_skola",
+      "title": "Förskola och skola",
+      "style": "pdpl_skola_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__skola",
+          "source": "local",
+          "style": "pdpl_skola_pkt",
+          "title": "Skola",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "skola = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__skola",
+          "source": "local",
+          "style": "pdpl_skola",
+          "title": "Skola",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "skola = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_hotell",
+      "title": "Hotell och konferens",
+      "style": "pdpl_hotell_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__hotell",
+          "source": "local",
+          "style": "pdpl_hotell_pkt",
+          "title": "Hotell och konferens",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "hotell_konferens = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__hotell",
+          "source": "local",
+          "style": "pdpl_hotell",
+          "title": "Hotell och konferens",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "hotell_konferens = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_industri",
+      "title": "Industri",
+      "style": "pdpl_industri_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__industri",
+          "source": "local",
+          "style": "pdpl_industri_pkt",
+          "title": "Industri",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "industri = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__industri",
+          "source": "local",
+          "style": "pdpl_industri",
+          "title": "Industri",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "industri = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_infrastruktur",
+      "title": "Infrastruktur",
+      "style": "pdpl_infrastruktur_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__infrastruktur",
+          "source": "local",
+          "style": "pdpl_infrastruktur_pkt",
+          "title": "Infrastruktur",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "infrastruktur = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__infrastruktur",
+          "source": "local",
+          "style": "pdpl_infrastruktur",
+          "title": "Infrastruktur",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "infrastruktur = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pdpl_lager",
+      "title": "Lager och logistik",
+      "style": "pdpl_lager_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__lager",
+          "source": "local",
+          "style": "pdpl_lager_pkt",
+          "title": "Lager och logistik",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "lager_logistik = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__lager",
+          "source": "local",
+          "style": "pdpl_lager",
+          "title": "Lager och logistik",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "lager_logistik = '1' and status = 'Pågående'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nya_stadsdelar",
+      "title": "Nya stadsdelar",
+      "source": "local",
+      "group": "pdpl",
+      "style": "stadsdelar",
+      "type": "WFS",
+      "queryable": true,
+      "visible": false,
+      "attributes": [
+        {
+          "name": "namn",
+          "url": "url"
+        },
+        {
+          "_comment": "för att visa namn även om det inte finns någon url",
+          "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+        }
+      ]
+    },
+    {
+      "name": "pdpl_vard",
+      "title": "Vård och omsorg",
+      "style": "pdpl_vard_pkt",
+      "group": "pdpl",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "name": "pagaende_byggprojekt_planer_pkt__vard",
+          "source": "local",
+          "style": "pdpl_vard_pkt",
+          "title": "Vård och omsorg",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "filter": "vard_omsorg = '1'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        },
+        {
+          "name": "pagaende_byggprojekt_planer__vard",
+          "source": "local",
+          "style": "pdpl_vard",
+          "title": "Vård och omsorg",
+          "group": "pdpl",
+          "type": "WFS",
+          "visible": true,
+          "queryable": true,
+          "filter": "vard_omsorg = '1'",
+          "attributes": [
+            {
+              "name": "namn",
+              "url": "url"
+            },
+            {
+              "_comment": "för att visa namn även om det inte finns någon url",
+              "html": "<div class='urltest' nourl='{{url}}'> {{namn}}</div>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vallokaler__fortid",
+      "title": "Röstningslokaler (förtid)",
+      "source": "local",
+      "group": "val_2026",
+      "style": "vallokal_fortid",
+      "filter": "typ == 'förtid'",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "vallokal",
+          "title": "Lokal: "
+        },
+        {
+          "name": "adress",
+          "title": "Adress: "
+        },
+        {
+          "name": "kommentar",
+          "title": "Öppentid: "
+        },
+        {
+          "html": "<br><a href='https://www.google.se/maps/dir//{{@center(EPSG:4326,reverse)}}' target='_blank'>Hitta hit</a>"
+        }
+      ]
+    },
+    {
+      "name": "vallokaler__valdagen",
+      "title": "Vallokaler (valdagen)",
+      "source": "local",
+      "group": "val_2026",
+      "style": "vallokal_valdagen",
+      "filter": "typ == 'ordinarie'",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "vallokal",
+          "title": "Lokal: "
+        },
+        {
+          "name": "adress",
+          "title": "Adress: "
+        },
+        {
+          "name": "valdistrikt",
+          "title": "För valdistrikt: "
+        },
+        {
+          "html": "<br><a href='https://www.google.se/maps/dir//{{@center(EPSG:4326,reverse)}}' target='_blank'>Hitta hit</a>"
+        }
+      ]
+    },
+    {
+      "name": "valdistrikt",
+      "title": "Valdistrikt",
+      "source": "local",
+      "group": "val_2026",
+      "style": "valdistrikt",
+      "type": "WFS",
+      "visible": false,
+      "attributes": [
+        {
+          "name": "vdnamn",
+          "title": "Namn: "
+        },
+        {
+          "name": "vallokaler",
+          "title": "Rösta i vallokal: ",
+          "url": "vallokal_url"
+        },
+        {
+          "name": "vallokaler_adress",
+          "title": "Vallokalens adress: "
+        }
+      ]
+    },
+    {
+      "name": "enkoping",
+      "opacity": 0.15,
+      "title": "Enköping",
+      "group": "none",
+      "queryable": false,
+      "source": "data/enkoping.geojson",
+      "style": "mask",
+      "type": "GEOJSON",
+      "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "topowebbkartan_nedtonad",
+      "source": "geodatabasemap",
+      "queryable": false,
+      "title": "Karta, grå",
+      "type": "WMTS",
+      "style": "karta_gra",
+      "visible": true
+    },
+    {
+      "attribution": "&copy Lantmäteriet Geodatasamverkan",
+      "format": "image/png",
+      "group": "background",
+      "name": "topowebbkartan",
+      "source": "geodatabasemap",
+      "queryable": false,
+      "title": "Karta, färg",
+      "type": "WMTS",
+      "style": "karta_farg",
+      "visible": false
+    },
+    {
+      "name": "flygfoto",
+      "title": "Flygfoto",
+      "style": "orto",
+      "group": "background",
+      "type": "GROUP",
+      "visible": false,
+      "layers": [
+        {
+          "attribution": "&copy Enköpings kommun och Lantmäteriet/Geodatasamverkan",
+          "format": "image/jpeg",
+          "group": "background",
+          "name": "orto016",
+          "source": "geodatawms",
+          "style": "orto",
+          "title": "Flygfoto",
+          "type": "WMS",
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "styles": {
+    "mask": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(0,0,0,1.0)"
+          },
+          "fill": {
+            "color": "rgba(0,0,0,1.0)"
+          }
+        }
+      ]
+    ],
+    "origo-logo": [
+      [
+        {
+          "circle": {
+            "radius": 16,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 5
+            },
+            "fill": {
+              "color": "rgba(255,255,255,0.9)"
+            }
+          }
+        },
+        {
+          "circle": {
+            "radius": 4,
+            "stroke": {
+              "color": "rgba(0,0,0,0)",
+              "width": 1
+            },
+            "fill": {
+              "color": "rgba(37,129,196,1)"
+            }
+          }
+        }
+      ]
+    ],
+    "cirkel": [
+      [
+        {
+          "circle": {
+            "radius": 6,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(0,0,0,0.5)"
+            }
+          }
+        }
+      ]
+    ],
+    "": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/forskola.png"
+          }
+        }
+      ]
+    ],
+    "fastighetsyta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,0,0,0)"
+          },
+          "stroke": {
+            "color": "rgba(166,56,0,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "ledig_naringsmark": [
+      [
+        {
+          "fill": {
+            "color": "rgba(76,153,0,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(6,0,0,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "kvarter": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,0,0,0)"
+          },
+          "stroke": {
+            "color": "rgba(91,125,249,1.0)",
+            "width": 2
+          },
+          "text": {
+            "font": "Bold 12px Arial",
+            "textAlign": "center",
+            "exceedLength": true,
+            "offsetX": -4,
+            "offsetY": 4,
+            "text": "{{namn}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ]
+    ],
+    "parkering_punkt": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        }
+      ]
+    ],
+    "parkering_punkt_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "zonA": [
+      [
+        {
+          "fill": {
+            "color": "rgba(5, 182, 182,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(5, 182, 182,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "zonB": [
+      [
+        {
+          "fill": {
+            "color": "rgba(182, 127, 127,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(182, 127, 127,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_bredsand": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,255,0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_15a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,255,251,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_24avgift": [
+      [
+        {
+          "fill": {
+            "color": "rgba(200,207,0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_24": [
+      [
+        {
+          "fill": {
+            "color": "rgba(237,0,3,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_24timmaravgift": [
+      [
+        {
+          "fill": {
+            "color": "rgba(128,64,0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_dygn": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,76,202,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_3": [
+      [
+        {
+          "fill": {
+            "color": "rgba(38,64,206,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_3a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(57,165,0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_4a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(187,255,0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_6a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(44,0,182,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_6_17": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,0,170,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_1a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(218,146,36,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_30a": [
+      [
+        {
+          "fill": {
+            "color": "rgba(163,70,255,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "parkeringsytor_ovrig": [
+      [
+        {
+          "fill": {
+            "color": "rgba(25,27,89,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "forskola": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/forskola.png"
+          }
+        }
+      ]
+    ],
+    "forskola_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/forskola.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "grundskola": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grundskola.png"
+          }
+        }
+      ]
+    ],
+    "grundskola_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grundskola.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "gymnasium": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/gymnasium.png"
+          }
+        }
+      ]
+    ],
+    "gymnasium_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/gymnasium.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "fritidsgard": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/fritidsgard.png"
+          }
+        }
+      ]
+    ],
+    "fritidsgard_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/fritidsgard.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vuxenutbildning": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vuxenutbildning.png"
+          }
+        }
+      ]
+    ],
+    "vuxenutbildning_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vuxenutbildning.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "placeringsomraden_f_3": [
+      [
+        {
+          "fill": {
+            "color": "rgba(166,206,227,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Bergvreten'",
+          "label": "Bergvreten"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(31, 120, 180,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Enögla'",
+          "label": "Enögla"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(178, 223, 138,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Fjärdhundra'",
+          "label": "Fjärdhundra"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(51, 160, 44,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Grillby'",
+          "label": "Grillby"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(251, 154, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Hummelsta'",
+          "label": "Hummelsta"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(227, 26, 28,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Korsängen'",
+          "label": "Korsängen"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(253, 191, 111,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Lillkyrka'",
+          "label": "Lillkyrka"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 127, 0,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Munksundet'",
+          "label": "Munksundet"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(202, 178, 214,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Romberga'",
+          "label": "Romberga"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(106, 61, 154,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Skolsta'",
+          "label": "Skolsta"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 255, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_3] == 'Örsundsbro'",
+          "label": "Örsundsbro"
+        }
+      ]
+    ],
+    "placeringsomraden_4_6": [
+      [
+        {
+          "fill": {
+            "color": "rgba(166,206,227,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Bergvreten'",
+          "label": "Bergvreten"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(31, 120, 180,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Enögla'",
+          "label": "Enögla"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(178, 223, 138,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Fjärdhundra'",
+          "label": "Fjärdhundra"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(51, 160, 44,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Grillby'",
+          "label": "Grillby"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(251, 154, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Hummelsta'",
+          "label": "Hummelsta"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(227, 26, 28,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Korsängen'",
+          "label": "Korsängen"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(253, 191, 111,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Lillkyrka'",
+          "label": "Lillkyrka"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 127, 0,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Munksundet'",
+          "label": "Munksundet"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(202, 178, 214,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'St Ilian'",
+          "label": "St Ilian"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(106, 61, 154,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Skolsta'",
+          "label": "Skolsta"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 255, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_4_6] == 'Örsundsbro'",
+          "label": "Örsundsbro"
+        }
+      ]
+    ],
+    "placeringsomraden": [
+      [
+        {
+          "fill": {
+            "color": "rgba(166,206,227,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Bergvreten'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(31, 120, 180,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Enögla'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(178, 223, 138,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Fjärdhundra'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(51, 160, 44,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Grillby'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(251, 154, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Hummelsta'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(227, 26, 28,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Korsängen'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(253, 191, 111,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Lillkyrka'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 127, 0,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Munksundet'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(202, 178, 214,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'F-3 Romberga, 4-6 St Ilian'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(106, 61, 154,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Skolsta'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 255, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_f_6] == 'Örsundsbro'"
+        }
+      ]
+    ],
+    "placeringsomraden7_9": [
+      [
+        {
+          "fill": {
+            "color": "rgba(101,24,122,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Enögla-/Lillsidanskolan'",
+          "label": "Enögla-/Lillsidanskolan"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(166,206,227,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Bergvreten'",
+          "label": "Bergvreten"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(31, 120, 180,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Enögla'",
+          "label": "Enögla"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(178, 223, 138,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Fjärdhundra'",
+          "label": "Fjärdhundra"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(251, 154, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'St Ilian'",
+          "label": "St Ilian"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(227, 26, 28,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Korsängen'",
+          "label": "Korsängen"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 255, 153,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[omra_7_9] == 'Örsundsbro'",
+          "label": "Örsundsbro"
+        }
+      ]
+    ],
+    "pagaende_planering": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(204,0,102,1.0)",
+            "lineDash": [
+              5,
+              5
+            ],
+            "width": 3
+          },
+          "fill": {
+            "color": "rgba(204,0,102,0.3)"
+          }
+        }
+      ]
+    ],
+    "verksamhetsomraden_va_spill": [
+      [
+        {
+          "fill": {
+            "color": "rgba(225,158,168,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(225,158,168,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "detaljplan": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(132,77,0,1.0)",
+            "width": 2
+          },
+          "fill": {
+            "color": "rgba(252,236,195,0.3)"
+          }
+        }
+      ]
+    ],
+    "fopomraden": [
+      [
+        {
+          "fill": {
+            "color": "rgba(232,78,27,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(232,78,27,1.0)",
+            "width": 3
+          }
+        }
+      ]
+    ],
+    "logistiketablering_omrade": [
+      [
+        {
+          "fill": {
+            "color": "rgba(182,55,228,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          },
+          "filter": "[omrade] == 'A'",
+          "label": "A",
+          "text": {
+            "font": "Bold 20px Arial",
+            "textAlign": "center",
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(35, 210, 160,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          },
+          "filter": "[omrade] == 'B'",
+          "label": "B",
+          "text": {
+            "font": "Bold 20px Arial",
+            "textAlign": "center",
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(72, 111, 219,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          },
+          "filter": "[omrade] == 'C'",
+          "label": "C",
+          "text": {
+            "font": "Bold 20px Arial",
+            "textAlign": "center",
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(226, 86, 126,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          },
+          "filter": "[omrade] == 'D'",
+          "label": "D",
+          "text": {
+            "font": "Bold 20px Arial",
+            "textAlign": "center",
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(114, 221, 71,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 1
+          },
+          "filter": "[omrade] == 'E'",
+          "label": "E",
+          "text": {
+            "font": "Bold 20px Arial",
+            "textAlign": "center",
+            "text": "{{omrade}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          }
+        }
+      ]
+    ],
+    "sveriges_narmaste_logistiklage": [
+      [
+        {
+          "fill": {
+            "color": "rgba(111,38,89,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 3
+          }
+        }
+      ]
+    ],
+    "byggprojekt": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/byggprojekt.png"
+          }
+        }
+      ]
+    ],
+    "byggprojekt_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/byggprojekt.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "verksamhetsomraden_va_befintligt": [
+      [
+        {
+          "fill": {
+            "color": "rgba(28, 80, 184,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(28, 80, 184,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "parkeringp": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        }
+      ]
+    ],
+    "parkeringp_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "verksamhetsomraden_va_planerat": [
+      [
+        {
+          "fill": {
+            "color": "rgba(222,235,247,0.5)"
+          },
+          "stroke": {
+            "color": "rgba(49,130,189,1.0)",
+            "lineDash": [
+              4,
+              4
+            ],
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "handikapparkering": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/handikapparkering.png"
+          }
+        }
+      ]
+    ],
+    "handikapparkering_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/handikapparkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "buss": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bussparkering.png"
+          }
+        }
+      ]
+    ],
+    "buss_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bussparkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "omvardnadsboenden": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/omvardnadsboenden.png"
+          }
+        }
+      ]
+    ],
+    "omvardnadsboenden_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/omvardnadsboenden.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "fornminne_punkt": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/fornminne.png"
+          }
+        }
+      ]
+    ],
+    "fornminne_linje": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(91,66,44,1.0)",
+            "width": 4
+          }
+        }
+      ]
+    ],
+    "fornminne_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(91,66,44,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(91,66,44,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "lekplats": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lekplats.png"
+          }
+        }
+      ]
+    ],
+    "lekplats_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lekplats.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "hundgard": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/hundrastgard.png"
+          }
+        }
+      ]
+    ],
+    "hundgard_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/hundrastgard.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "grillplats_med_ved": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grillplats_med_ved.png"
+          }
+        }
+      ]
+    ],
+    "grillplats_med_ved_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grillplats_med_ved.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "grillplats_utan_ved": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grillplats_utan_ved.png"
+          }
+        }
+      ]
+    ],
+    "grillplats_utan_ved_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/grillplats_utan_ved.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "park": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/park.png"
+          }
+        }
+      ]
+    ],
+    "park_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/park.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "naturreservat": [
+      [
+        {
+          "fill": {
+            "color": "rgba(105,167,66,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(105,167,66,1.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "konst": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/konst.png"
+          }
+        }
+      ]
+    ],
+    "konst_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/konst.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vattenskyddsomr_inre_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,0,0,0.7)"
+          },
+          "stroke": {
+            "color": "rgba(255,0,0,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "vattenskyddsomr_yttre_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(229,0,125,0.4)"
+          },
+          "stroke": {
+            "color": "rgba(229,0,125,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "vattenskyddsomr_lokal_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(229,0,125,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(229,0,125,1.0)",
+            "width": 1
+          }
+        }
+      ]
+    ],
+    "kanslighetskarta_1o2": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(255,127,0,0.6)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255,127,0,0.6)"
+          },
+          "label": "Klass 1 och 2"
+        }
+      ]
+    ],
+    "kanslighetskarta_3": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(251,255,1,0.6)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(251,255,1,0.6)"
+          },
+          "label": "Klass 3"
+        }
+      ]
+    ],
+    "kanslighetskarta_4": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(178,223,138,0.6)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(178,223,138,0.6)"
+          },
+          "label": "Klass 4"
+        }
+      ]
+    ],
+    "landskapsbildsskydd": [
+      [
+        {
+          "fill": {
+            "color": "rgba(0,141,54,0.1)"
+          },
+          "stroke": {
+            "color": "rgba(0,141,54,1.0)",
+            "width": 3
+          }
+        }
+      ]
+    ],
+    "smileys": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/smileys.png"
+          }
+        }
+      ]
+    ],
+    "smileys_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/smileys.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vagarbetenyta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(252,206,1,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(187,138,66,1.0)",
+            "width": 3
+          }
+        },
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vagarbeten.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ]
+    ],
+    "vagarbeten": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vagarbeten.png"
+          }
+        }
+      ]
+    ],
+    "vatten": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vatten.png"
+          }
+        }
+      ]
+    ],
+    "landsbygd": [
+      [
+        {
+          "fill": {
+            "color": "rgba(247, 64, 2,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          }
+        }
+      ]
+    ],
+    "pendlartillstand": [
+      [
+        {
+          "fill": {
+            "color": "rgba(247, 64, 2,0.0)"
+          },
+          "stroke": {
+            "color": "rgba(255,0,0,3.0)",
+            "width": 2
+          }
+        }
+      ]
+    ],
+    "boende": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/boende_legend.png"
+          }
+        }
+      ]
+    ],
+    "vagarbeten_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vagarbeten.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 9,
+            "offsetY": -9,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              16,
+              16
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vattenarbetenyta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(102,153,255,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(0,43,128,1.0)",
+            "width": 3
+          }
+        },
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vattenarbeten.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ]
+    ],
+    "vattenarbeten": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vattenarbeten.png"
+          }
+        }
+      ]
+    ],
+    "vattenarbeten_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vattenarbeten.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "cykelvagar_huvud": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(219,117,49,1.0)",
+            "width": 2.5
+          }
+        }
+      ]
+    ],
+    "cykelvagar_lokal": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(219,117,49,1.0)",
+            "lineDash": [
+              6,
+              3
+            ],
+            "width": 1.5
+          }
+        }
+      ]
+    ],
+    "cykelvagar_bland": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(126,67,12,1.0)",
+            "lineDash": [
+              10,
+              3
+            ],
+            "width": 1.5
+          }
+        }
+      ]
+    ],
+    "cykelp": [
+      [
+        {
+          "circle": {
+            "radius": 5,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(108,122,109,0.5)"
+            }
+          }
+        }
+      ]
+    ],
+    "cykelpump": [
+      [
+        {
+          "circle": {
+            "radius": 5,
+            "stroke": {
+              "color": "rgba(0,0,0,1)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(153,255,51,0.5)"
+            }
+          }
+        }
+      ]
+    ],
+    "bad": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bad.png"
+          }
+        }
+      ]
+    ],
+    "bad_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bad.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "mountainbikeled": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(34,90,232,1.0)",
+            "width": 2.5
+          }
+        }
+      ]
+    ],
+    "cykelleden_uppland": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(74,119,41,1.0)",
+            "width": 3
+          }
+        }
+      ]
+    ],
+    "halsans_stig": [
+      [
+        {
+          "stroke": {
+            "color": "rgba(74,119,41,1.0)",
+            "width": 2.5,
+            "lineDash": [
+              9,
+              5
+            ]
+          }
+        }
+      ]
+    ],
+    "halsan": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vandra.png"
+          }
+        }
+      ]
+    ],
+    "halsan_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vandra.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "gasthamn": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/gasthamn.png"
+          }
+        }
+      ]
+    ],
+    "gasthamn_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/gasthamn.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "bibliotek": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bibliotek.png"
+          }
+        }
+      ]
+    ],
+    "bibliotek_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bibliotek.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "bokbuss": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bokbuss.png"
+          }
+        }
+      ]
+    ],
+    "bokbuss_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/bokbuss.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "idrottsanlaggning": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/motionsspar.png"
+          }
+        }
+      ]
+    ],
+    "idrottsanlaggning_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/motionsspar.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "parkering_yta": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 153, 0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '1 Gratis 8-18'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(153, 77, 0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '1 Gratis 8-22'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(0, 102, 255,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '3 10 8-18'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 0, 0,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '12 10 8-18'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(51, 204, 51,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '12 Gratis 8-18'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(255, 255, 153,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '24 5 8-18'"
+        }
+      ],
+      [
+        {
+          "fill": {
+            "color": "rgba(59, 240, 255,0.6)"
+          },
+          "stroke": {
+            "color": "rgba(96,96,96,0.6)",
+            "width": 0.5
+          },
+          "filter": "[symbol] == '3 10 8-22'"
+        }
+      ]
+    ],
+    "anslagstavlor": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/anslagstavlor.png"
+          }
+        }
+      ]
+    ],
+    "anslagstavlor_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/anslagstavlor.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "retur": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/retur.png"
+          }
+        }
+      ]
+    ],
+    "retur_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/retur.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "familjecentrum": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/familjecentrum.png"
+          }
+        }
+      ]
+    ],
+    "familjecentrum_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/familjecentrum.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "jobbcentrum": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/jobbcentrum.png"
+          }
+        }
+      ]
+    ],
+    "jobbcentrum_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/jobbcentrum.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "trygg_punkt": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/trygg_punkt.png"
+          }
+        }
+      ]
+    ],
+    "trygg_punkt_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/trygg_punkt.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "trygg_info": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/trygg_info.png"
+          }
+        }
+      ]
+    ],
+    "trygg_info_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/trygg_info.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "parkering": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        }
+      ]
+    ],
+    "parkering_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/parkering.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt1": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_1.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt1_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_1.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt2": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_2.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt2_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_2.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt3": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_3.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt3_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_3.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt4": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_4.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt4_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/lastplats2_4.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt5": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/andamalsplats_avstigning.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt5_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/andamalsplats_avstigning.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt6": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/andamalsplats_avstigning_lor.png"
+          }
+        }
+      ]
+    ],
+    "lastplatser_punkt6_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/andamalsplats_avstigning_lor.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "laddning": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/laddstation.png"
+          }
+        }
+      ]
+    ],
+    "laddning_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/laddstation.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "biljettautomater": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/biljettautomater.png"
+          }
+        }
+      ]
+    ],
+    "biljettautomater_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/biljettautomater.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ]
+    ],
+    "vallokal_fortid": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd_mork_rod.png"
+          },
+          "text": {
+            "font": "Bold 16px Myriad Pro",
+            "textAlign": "left",
+            "offsetX": 15,
+            "offsetY": -15,
+            "text": "{{vallokal}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.8)",
+              "width": 1
+            }
+          },
+          "hidden": true,
+          "minScale": 10000
+        }
+      ],
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd_mork_rod.png"
+          },
+          "header": true,
+          "maxScale": 10000
+        }
+      ]
+    ],
+    "vallokal_fortid_cluster": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd_mork_rod.png"
+          }
+        },
+        {
+          "text": {
+            "font": "Bold 9px Arial",
+            "textAlign": "center",
+            "offsetX": 13,
+            "offsetY": -13,
+            "text": "size",
+            "fill": {
+              "color": "rgba(255,255,255,1.0)"
+            }
+          },
+          "icon": {
+            "size": [
+              14,
+              14
+            ],
+            "anchor": [
+              20,
+              20
+            ],
+            "anchorXUnits": "pixels",
+            "anchorYUnits": "pixels",
+            "anchorOrigin": "top-right",
+            "src": "data/png/Svart_14.png",
+            "opacity": 0.65
+          }
+        }
+      ],
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd_mork_rod.png"
+          },
+          "hidden": true,
+          "maxScale": 10000
+        }
+      ]
+    ],
+    "vallokal_valdagen": [
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd.png"
+          },
+          "text": {
+            "font": "Bold 16px Myriad Pro",
+            "textAlign": "left",
+            "offsetX": 15,
+            "offsetY": -15,
+            "text": "{{vallokal}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.8)",
+              "width": 1
+            }
+          },
+          "hidden": true,
+          "minScale": 10000
+        }
+      ],
+      [
+        {
+          "icon": {
+            "size": [
+              32,
+              32
+            ],
+            "src": "data/png/vallokal_mynd.png"
+          },
+          "header": true,
+          "maxScale": 10000
+        }
+      ]
+    ],
+    "valdistrikt": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,255,255,0.3)"
+          },
+          "stroke": {
+            "color": "rgba(20,20,20,0.8)",
+            "width": 2
+          },
+          "text": {
+            "font": "Bold 16px Myriad Pro",
+            "textAlign": "center",
+            "text": "{{vdnamn}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.8)",
+              "width": 1
+            }
+          }
+        }
+      ]
+    ],
+    "kommunpkt": [
+      [
+        {
+          "circle": {
+            "radius": 8,
+            "stroke": {
+              "color": "rgba(96,96,96,0.7)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(51, 160, 44,0.7)"
+            }
+          }
+        }
+      ]
+    ],
+    "kommunkcpkt": [
+      [
+        {
+          "circle": {
+            "radius": 8,
+            "stroke": {
+              "color": "rgba(225,158,168,0.7)",
+              "width": 2
+            },
+            "fill": {
+              "color": "rgba(225,158,168,0.9)"
+            }
+          }
+        }
+      ]
+    ],
+    "kommunsocpkt": [
+      [
+        {
+          "circle": {
+            "radius": 8,
+            "stroke": {
+              "color": "rgba(96,96,96,0.9)",
+              "width": 1
+            },
+            "fill": {
+              "color": "rgba(225,255,0,0.9)"
+            }
+          }
+        }
+      ]
+    ],
+    "stadsdelar": [
+      [
+        {
+          "fill": {
+            "color": "rgba(255,0,0,0.2)"
+          },
+          "stroke": {
+            "color": "rgba(255,0,0,0.4)",
+            "width": 2
+          },
+          "text": {
+            "font": "Bold 12px Arial",
+            "textAlign": "center",
+            "exceedLength": true,
+            "offsetX": -8,
+            "offsetY": -25,
+            "text": "{{namn}}",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            },
+            "stroke": {
+              "color": "rgba(255,255,255,0.7)",
+              "width": 2
+            }
+          },
+          "label": "Stadsdelar"
+        }
+      ]
+    ],
+    "pdpl_bostader": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[bostader] != '1'",
+          "stroke": {
+            "color": "rgba(255, 255,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255, 255,0,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gul.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[bostader] == '1'",
+          "stroke": {
+            "color": "rgba(255, 255,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255, 255,0,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gul.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 4,
+            "textAlign": "center",
+            "text": "Bostäder",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_bostader_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gul.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_butik": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[butik_kontor] != '1'",
+          "stroke": {
+            "color": "rgba(80,66,27,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(80,66,27,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_brun.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[butik_kontor] == '1'",
+          "stroke": {
+            "color": "rgba(80,66,27,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(80,66,27,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_brun.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": -5,
+            "textAlign": "center",
+            "text": "Butik och kontor",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_butik_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_brun.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_fritid": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[fri_kult_park] != '1'",
+          "stroke": {
+            "color": "rgba(40,175,66,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(40,175,66,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gron.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[fri_kult_park] == '1'",
+          "stroke": {
+            "color": "rgba(40,175,66,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(40,175,66,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gron.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 37,
+            "textAlign": "center",
+            "text": "Fritid, kultur och park",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_fritid_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_gron.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_skola": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[skola] != '1'",
+          "stroke": {
+            "color": "rgba(255,0,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255,0,0,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rod.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[skola] == '1'",
+          "stroke": {
+            "color": "rgba(255,0,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255,0,0,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rod.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 12,
+            "textAlign": "center",
+            "text": "Skola",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_skola_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rod.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_infrastruktur": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[infrastruktur] != '1'",
+          "stroke": {
+            "color": "rgba(100,100,100,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(100,100,100,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_ljusgra.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[infrastruktur] == '1'",
+          "stroke": {
+            "color": "rgba(100,100,100,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(100,100,100,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_ljusgra.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 30,
+            "textAlign": "center",
+            "text": "Infrastruktur",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_infrastruktur_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_ljusgra.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_hotell": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[hotell_konferens] != '1'",
+          "stroke": {
+            "color": "rgba(255,115,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255,115,0,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_orange.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[hotell_konferens] == '1'",
+          "stroke": {
+            "color": "rgba(255,115,0,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(255,115,0,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_orange.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 21,
+            "textAlign": "center",
+            "text": "Hotell och konferens",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_hotell_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_orange.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_industri": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[industri] != '1'",
+          "stroke": {
+            "color": "rgba(0,0,255,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(0,0,255,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_bla.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[industri] == '1'",
+          "stroke": {
+            "color": "rgba(0,0,255,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(0,0,255,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_bla.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 12,
+            "textAlign": "center",
+            "text": "Industri",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_industri_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_bla.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_vard": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[vard_omsorg] != '1'",
+          "stroke": {
+            "color": "rgba(229,83,234,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(229,83,234,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rosa.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[vard_omsorg] == '1'",
+          "stroke": {
+            "color": "rgba(229,83,234,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(229,83,234,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rosa.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 12,
+            "textAlign": "center",
+            "text": "Vård och omsorg",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_vard_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_rosa.png"
+          }
+        }
+      ]
+    ],
+    "pdpl_lager": [
+      [
+        {
+          "minScale": 30000,
+          "filter": "[lager_logistik] != '1'",
+          "stroke": {
+            "color": "rgba(229,173,136,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(229,173,136,0.1)"
+          }
+        },
+        {
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_beige.png"
+          },
+          "geometry": "centerPoint"
+        }
+      ],
+      [
+        {
+          "minScale": 30000,
+          "filter": "[lager_logistik] == '1'",
+          "stroke": {
+            "color": "rgba(229,173,136,1.0)",
+            "width": 1
+          },
+          "fill": {
+            "color": "rgba(229,173,136,0.1)"
+          }
+        },
+        {
+          "_icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_beige.png"
+          },
+          "geometry": "centerPoint",
+          "text": {
+            "font": "Bold 10px Arial",
+            "offsetY": 21,
+            "textAlign": "center",
+            "text": "Lager och logistik",
+            "fill": {
+              "color": "rgba(0,0,0,1.0)"
+            }
+          }
+        }
+      ]
+    ],
+    "pdpl_lager_pkt": [
+      [
+        {
+          "maxScale": 30000,
+          "icon": {
+            "fit": "cover",
+            "size": [
+              23,
+              36
+            ],
+            "src": "img/png/droppe_beige.png"
+          }
+        }
+      ]
+    ],
+    "karta_gra": [
+      [
+        {
+          "image": {
+            "src": "img/png/gra.png"
+          }
+        }
+      ]
+    ],
+    "karta_farg": [
+      [
+        {
+          "image": {
+            "src": "img/png/farg.png"
+          }
+        }
+      ]
+    ],
+    "orto": [
+      [
+        {
+          "image": {
+            "src": "img/png/orto.png"
+          }
+        }
+      ]
+    ]
+  }
+}
