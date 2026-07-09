@@ -686,9 +686,18 @@
     return Number.isNaN(n) ? undefined : n;
   }
 
-  function makeSourceRow(name, url) {
+  function makeSourceRow(name, sourceObj) {
     const row = document.createElement('div');
     row.className = 'dynRow';
+    // A source is a full object, not just a url - real configs carry
+    // version, type, filterType, matrixIdsPrefix, strategy,
+    // capabilitiesURL etc. The form only exposes url, so stash the whole
+    // original object and re-merge on collect so those extra keys survive.
+    const src = sourceObj && typeof sourceObj === 'object' ? sourceObj : {};
+    row.dataset.extraProps = JSON.stringify(
+      Object.fromEntries(Object.entries(src).filter(([k]) => k !== 'url'))
+    );
+    const url = src.url || '';
     row.innerHTML = `
       <input type="text" class="srcName" placeholder="source key" value="${escapeHtml(name || '')}">
       <input type="text" class="srcUrl" placeholder="service endpoint" value="${escapeHtml(url || '')}">
@@ -717,7 +726,7 @@
   }
 
   document.getElementById('btnAddSource').addEventListener('click', () => {
-    sourceList.appendChild(makeSourceRow('', ''));
+    sourceList.appendChild(makeSourceRow('', {}));
   });
   document.getElementById('btnAddColor').addEventListener('click', () => {
     paletteList.appendChild(makeColorRow(''));
@@ -763,7 +772,7 @@
 
     sourceList.innerHTML = '';
     Object.entries(parsed.source || {}).forEach(([name, def]) => {
-      sourceList.appendChild(makeSourceRow(name, def && def.url));
+      sourceList.appendChild(makeSourceRow(name, def));
     });
 
     paletteList.innerHTML = '';
@@ -830,8 +839,14 @@
     const nameInput = row.querySelector('.ctrlName');
     const badge = row.querySelector('.unknownBadge');
     function refreshNameState() {
-      const known = KNOWN_CONTROLS.includes(nameInput.value.trim());
-      const empty = nameInput.value.trim() === '';
+      // Origo resolves controls via origoControls[titleCase(name)], where
+      // titleCase lowercases the whole string then capitalizes the first
+      // char - so scalePicker / SCALEPICKER / scalepicker are all the same
+      // control. Match case-insensitively to avoid false "unrecognized"
+      // flags on valid mixed-case names (e.g. tomelilla's "scalePicker").
+      const val = nameInput.value.trim().toLowerCase();
+      const known = KNOWN_CONTROLS.includes(val);
+      const empty = val === '';
       nameInput.classList.toggle('unknownName', !known && !empty);
       badge.classList.toggle('shown', !known && !empty);
     }
@@ -1346,12 +1361,16 @@
     if (resolutions.length) next.resolutions = resolutions; else delete next.resolutions;
 
     const footerImg = g('f_footerImg'), footerUrl = g('f_footerUrl'), footerText = g('f_footerText');
-    if (footerImg || footerUrl || footerText) {
+    // Merge onto the existing footer rather than rebuilding it, so keys
+    // the form doesn't expose (e.g. urlText, used by several configs as
+    // the link label instead of text) survive an edit.
+    const footer = Object.assign({}, (next.pageSettings && next.pageSettings.footer) || {});
+    if (footerImg) footer.img = footerImg; else delete footer.img;
+    if (footerUrl) footer.url = footerUrl; else delete footer.url;
+    if (footerText) footer.text = footerText; else delete footer.text;
+    if (Object.keys(footer).length) {
       next.pageSettings = next.pageSettings || {};
-      next.pageSettings.footer = {};
-      if (footerImg) next.pageSettings.footer.img = footerImg;
-      if (footerUrl) next.pageSettings.footer.url = footerUrl;
-      if (footerText) next.pageSettings.footer.text = footerText;
+      next.pageSettings.footer = footer;
     } else if (next.pageSettings) {
       delete next.pageSettings.footer;
     }
@@ -1366,7 +1385,9 @@
     sourceList.querySelectorAll('.dynRow').forEach(row => {
       const name = row.querySelector('.srcName').value.trim();
       const url = row.querySelector('.srcUrl').value.trim();
-      if (name) nextSource[name] = { url };
+      if (!name) return;
+      const extra = row.dataset.extraProps ? JSON.parse(row.dataset.extraProps) : {};
+      nextSource[name] = Object.assign({}, url ? { url } : {}, extra);
     });
     if (Object.keys(nextSource).length) next.source = nextSource; else delete next.source;
 
