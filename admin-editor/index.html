@@ -896,13 +896,20 @@
     const row = document.createElement('div');
     row.className = 'dynRow';
     const src = sourceObj && typeof sourceObj === 'object' ? sourceObj : {};
+    const knownSourceFields = ['url', 'projection', 'crossOrigin', 'workspace'];
     row.dataset.extraProps = JSON.stringify(
-      Object.fromEntries(Object.entries(src).filter(([k]) => k !== 'url'))
+      Object.fromEntries(Object.entries(src).filter(([k]) => !knownSourceFields.includes(k)))
     );
     const url = src.url || '';
+    const projection = src.projection || '';
+    const crossOrigin = src.crossOrigin || '';
+    const workspace = src.workspace || '';
     row.innerHTML = `
       <input type="text" class="srcName" placeholder="source key" value="${escapeHtml(name || '')}">
       <input type="text" class="srcUrl" placeholder="service endpoint" value="${escapeHtml(url || '')}">
+      <input type="text" class="srcProjection" placeholder="EPSG:3857 (optional)" value="${escapeHtml(projection || '')}">
+      <input type="text" class="srcCrossOrigin" placeholder="crossOrigin (e.g. anonymous)" value="${escapeHtml(crossOrigin || '')}">
+      <input type="text" class="srcWorkspace" placeholder="workspace (WFS)" value="${escapeHtml(workspace || '')}">
       <button type="button" class="miniBtn srcRemove">✕</button>
     `;
     row.querySelector('.srcRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
@@ -1577,9 +1584,19 @@
     sourceList.querySelectorAll('.dynRow').forEach(row => {
       const name = row.querySelector('.srcName').value.trim();
       const url = row.querySelector('.srcUrl').value.trim();
+      const projection = row.querySelector('.srcProjection').value.trim();
+      const crossOrigin = row.querySelector('.srcCrossOrigin').value.trim();
+      const workspace = row.querySelector('.srcWorkspace').value.trim();
       if (!name) return;
       const extra = row.dataset.extraProps ? JSON.parse(row.dataset.extraProps) : {};
-      nextSource[name] = Object.assign({}, url ? { url } : {}, extra);
+      nextSource[name] = Object.assign(
+        {},
+        url ? { url } : {},
+        projection ? { projection } : {},
+        crossOrigin ? { crossOrigin } : {},
+        workspace ? { workspace } : {},
+        extra
+      );
     });
     if (Object.keys(nextSource).length) next.source = nextSource; else delete next.source;
 
