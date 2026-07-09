@@ -321,17 +321,17 @@
   .optionsStatus.err { color: var(--err); }
   .optionsStatus.muted { color: var(--muted); }
 
-  #reformatNote {
+  #commentWarning {
     display: none;
     font-size: 11.5px;
     color: #92400e;
     background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 5px;
-    padding: 6px 8px;
-    margin-bottom: 12px;
+    border-bottom: 1px solid #fde68a;
+    padding: 7px 12px;
+    flex-shrink: 0;
   }
-  #reformatNote.shown { display: block; }
+  #commentWarning.shown { display: block; }
+  #commentWarning code { background: rgba(0,0,0,0.05); padding: 0 3px; border-radius: 3px; }
 
   .formSection { margin-bottom: 18px; }
   .formSection > h3 {
@@ -448,6 +448,7 @@
       <button id="tabLayers">Layers</button>
       <button id="tabStyles">Styles</button>
     </div>
+    <div id="commentWarning"></div>
     <div id="treeContainer" class="active"></div>
     <div id="settingsForm"></div>
     <div id="controlsForm"></div>
@@ -520,6 +521,163 @@
     const line = (upToError.match(/\n/g) || []).length + 1;
     const col = pos - upToError.lastIndexOf('\n');
     return `${message} (line ${line}, column ${col})`;
+  }
+
+  // --- Comment-preserving section-scoped save (Option B + A) --------------
+  // Forms normally reserialize the whole document via JSON.stringify, which
+  // destroys any // or /* */ comments. These helpers let a form edit rewrite
+  // only the top-level key(s) that actually changed, splicing the new value
+  // into the existing raw text and leaving every other section - including
+  // its comments and the comment banners between sections - byte-for-byte
+  // intact. Add/remove of a whole top-level key falls back to full reserialize.
+
+  // True if the byte range [start,end) contains a real // or /* comment,
+  // ignoring anything inside string literals (so "https://..." is not a hit).
+  function rangeHasComment(source, start, end) {
+    let i = start;
+    while (i < end) {
+      const c = source[i];
+      if (c === '"') {
+        i++;
+        while (i < end) {
+          if (source[i] === '\\') { i += 2; continue; }
+          if (source[i] === '"') { i++; break; }
+          i++;
+        }
+        continue;
+      }
+      if (c === '/' && (source[i + 1] === '/' || source[i + 1] === '*')) return true;
+      i++;
+    }
+    return false;
+  }
+
+  // Locate each top-level key's value span (and the key's line indent),
+  // string- and comment-aware. Returns {} if the root isn't a plain object.
+  function scanTopLevelKeySpans(source) {
+    const spans = {};
+    const n = source.length;
+    let i = 0;
+    function skipWsAndComments() {
+      while (i < n) {
+        const c = source[i];
+        if (c === ' ' || c === '\t' || c === '\n' || c === '\r') { i++; continue; }
+        if (c === '/' && source[i + 1] === '/') { i += 2; while (i < n && source[i] !== '\n') i++; continue; }
+        if (c === '/' && source[i + 1] === '*') { i += 2; while (i < n && !(source[i] === '*' && source[i + 1] === '/')) i++; i += 2; continue; }
+        break;
+      }
+    }
+    function readString() { // assumes source[i] === '"'; advances past closing quote
+      i++;
+      while (i < n) {
+        if (source[i] === '\\') { i += 2; continue; }
+        if (source[i] === '"') { i++; return; }
+        i++;
+      }
+    }
+    function skipValue() {
+      const c = source[i];
+      if (c === '"') { readString(); return; }
+      if (c === '{' || c === '[') {
+        const open = c; const close = c === '{' ? '}' : ']';
+        let depth = 0;
+        while (i < n) {
+          const ch = source[i];
+          if (ch === '"') { readString(); continue; }
+          if (ch === '/' && source[i + 1] === '/') { i += 2; while (i < n && source[i] !== '\n') i++; continue; }
+          if (ch === '/' && source[i + 1] === '*') { i += 2; while (i < n && !(source[i] === '*' && source[i + 1] === '/')) i++; i += 2; continue; }
+          if (ch === open) { depth++; i++; continue; }
+          if (ch === close) { depth--; i++; if (depth === 0) return; continue; }
+          i++;
+        }
+        return;
+      }
+      while (i < n) { // primitive: read until a delimiter
+        const ch = source[i];
+        if (ch === ',' || ch === '}' || ch === ']' || ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') break;
+        if (ch === '/' && (source[i + 1] === '/' || source[i + 1] === '*')) break;
+        i++;
+      }
+    }
+    function lineIndentOf(pos) {
+      let s = pos;
+      while (s > 0 && source[s - 1] !== '\n') s--;
+      let ind = '';
+      while (s < n && (source[s] === ' ' || source[s] === '\t')) { ind += source[s]; s++; }
+      return ind;
+    }
+    skipWsAndComments();
+    if (source[i] !== '{') return spans;
+    i++;
+    while (i < n) {
+      skipWsAndComments();
+      if (source[i] === '}' || source[i] !== '"') break;
+      const keyStart = i;
+      readString();
+      let keyName;
+      try { keyName = JSON.parse(source.slice(keyStart, i)); } catch (e) { break; }
+      skipWsAndComments();
+      if (source[i] !== ':') break;
+      i++;
+      skipWsAndComments();
+      const valueStart = i;
+      skipValue();
+      spans[keyName] = { valueStart, valueEnd: i, indent: lineIndentOf(keyStart) };
+      skipWsAndComments();
+      if (source[i] === ',') { i++; continue; }
+    }
+    return spans;
+  }
+
+  function serializeTopLevelValue(value, indent) {
+    const s = JSON.stringify(value, null, 2);
+    if (!s.includes('\n')) return s;
+    return s.split('\n').map((line, idx) => (idx === 0 ? line : indent + line)).join('\n');
+  }
+
+  // Order-insensitive for object keys (cosmetic), order-sensitive for arrays
+  // (layer order is meaningful). Used so that a section the collect* code
+  // merely re-key-ordered isn't mistaken for a real change and needlessly
+  // rewritten (which would drop that section's comments).
+  function deepEqual(a, b) {
+    if (a === b) return true;
+    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
+      return true;
+    }
+    const ka = Object.keys(a); const kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    for (const k of ka) {
+      if (!Object.prototype.hasOwnProperty.call(b, k) || !deepEqual(a[k], b[k])) return false;
+    }
+    return true;
+  }
+
+  // Returns patched source, or null if it can't be done safely (caller then
+  // falls back to a full reserialize).
+  function patchRawPreservingComments(rawSource, currentObj, nextObj) {
+    const keys = new Set([...Object.keys(currentObj || {}), ...Object.keys(nextObj || {})]);
+    for (const k of keys) {
+      const inCur = Object.prototype.hasOwnProperty.call(currentObj, k);
+      const inNext = Object.prototype.hasOwnProperty.call(nextObj, k);
+      if (inCur !== inNext) return null; // top-level add/remove -> fall back
+    }
+    const spans = scanTopLevelKeySpans(rawSource);
+    const edits = [];
+    for (const k of Object.keys(nextObj)) {
+      if (deepEqual(currentObj[k], nextObj[k])) continue; // unchanged
+      const span = spans[k];
+      if (!span) return null; // couldn't locate the key -> fall back
+      edits.push({ start: span.valueStart, end: span.valueEnd, text: serializeTopLevelValue(nextObj[k], span.indent) });
+    }
+    if (!edits.length) return rawSource;
+    edits.sort((a, b) => b.start - a.start); // apply right-to-left so offsets stay valid
+    let out = rawSource;
+    for (const e of edits) out = out.slice(0, e.start) + e.text + out.slice(e.end);
+    return out;
   }
 
   function setDirty() {
@@ -617,7 +775,6 @@
   let formTouchedThisSession = false;
 
   settingsForm.innerHTML = `
-    <div id="reformatNote">Editing here rewrites the whole file with standard formatting. Any <code>//</code> or <code>/* */</code> comments in the file will be removed the moment you change a field below. Edit the raw JSON pane instead if you need to preserve them.</div>
     <p class="disabledNote" id="formDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
 
     <div class="formSection">
@@ -670,8 +827,21 @@
   `;
   suppressAutofill(settingsForm);
 
-  const reformatNote = document.getElementById('reformatNote');
+  const commentWarning = document.getElementById('commentWarning');
   const formDisabledNote = document.getElementById('formDisabledNote');
+
+  // Option A: tell the user, per file, exactly which sections have comments
+  // that a form edit would rewrite. Clean files get no banner at all.
+  function updateCommentWarning() {
+    const src = rawText.value;
+    if (!rangeHasComment(src, 0, src.length)) { commentWarning.classList.remove('shown'); return; }
+    const spans = scanTopLevelKeySpans(src);
+    const fragile = Object.keys(spans).filter(k => rangeHasComment(src, spans[k].valueStart, spans[k].valueEnd));
+    let msg = 'This file has comments. Editing via these forms keeps comments in the sections you don’t touch, but rewrites the one you do. The raw JSON pane is always comment-safe.';
+    if (fragile.length) msg += ` Comments live in: <code>${fragile.join('</code> <code>')}</code> — editing those sections here will drop their inline comments.`;
+    commentWarning.innerHTML = msg;
+    commentWarning.classList.add('shown');
+  }
   const sourceList = document.getElementById('sourceList');
   const paletteList = document.getElementById('paletteList');
 
@@ -1374,12 +1544,27 @@
     } else if (next.pageSettings) {
       delete next.pageSettings.footer;
     }
+    // Only emit mapGrid / mapInteractions if they already existed in the
+    // file or the user actually enabled them - don't force { ...: false }
+    // onto a file that never had the key. This keeps an untouched
+    // pageSettings byte-identical (so editing another section doesn't
+    // rewrite it) and avoids polluting configs with defaults they omitted.
+    const origPage = currentParsed.pageSettings || {};
     const mapGridChecked = document.getElementById('f_mapGrid').checked;
-    next.pageSettings = next.pageSettings || {};
-    next.pageSettings.mapGrid = { visible: mapGridChecked };
+    if (mapGridChecked || Object.prototype.hasOwnProperty.call(origPage, 'mapGrid')) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.mapGrid = { visible: mapGridChecked };
+    } else if (next.pageSettings) {
+      delete next.pageSettings.mapGrid;
+    }
     const embeddedChecked = document.getElementById('f_embedded').checked;
-    next.pageSettings.mapInteractions = { embedded: embeddedChecked };
-    if (Object.keys(next.pageSettings).length === 0) delete next.pageSettings;
+    if (embeddedChecked || Object.prototype.hasOwnProperty.call(origPage, 'mapInteractions')) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.mapInteractions = { embedded: embeddedChecked };
+    } else if (next.pageSettings) {
+      delete next.pageSettings.mapInteractions;
+    }
+    if (next.pageSettings && Object.keys(next.pageSettings).length === 0) delete next.pageSettings;
 
     const nextSource = {};
     sourceList.querySelectorAll('.dynRow').forEach(row => {
@@ -1397,9 +1582,15 @@
     });
     if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
 
-    next.controls = collectControlsFromDOM();
-    next.layers = collectLayersFromDOM();
-    next.styles = collectStylesFromDOM();
+    // Don't force an empty controls/layers/styles container onto a file
+    // that never had one (that would be a top-level add and defeat the
+    // comment-preserving splice); only emit if non-empty or already present.
+    const ctrls = collectControlsFromDOM();
+    if (ctrls.length || Object.prototype.hasOwnProperty.call(currentParsed, 'controls')) next.controls = ctrls; else delete next.controls;
+    const lyrs = collectLayersFromDOM();
+    if (lyrs.length || Object.prototype.hasOwnProperty.call(currentParsed, 'layers')) next.layers = lyrs; else delete next.layers;
+    const stys = collectStylesFromDOM();
+    if (Object.keys(stys).length || Object.prototype.hasOwnProperty.call(currentParsed, 'styles')) next.styles = stys; else delete next.styles;
 
     return next;
   }
@@ -1407,9 +1598,17 @@
   function applyFormChange() {
     if (!currentParsed) return;
     formTouchedThisSession = true;
-    reformatNote.classList.add('shown');
     const next = collectFormValues();
-    const serialized = JSON.stringify(next, null, 2);
+    // Prefer a section-scoped splice that keeps comments in untouched
+    // sections; fall back to a full reserialize when that isn't safe
+    // (top-level key added/removed, or a changed key can't be located).
+    let serialized = null;
+    try {
+      serialized = patchRawPreservingComments(rawText.value, currentParsed, next);
+    } catch (e) {
+      serialized = null;
+    }
+    if (serialized === null) serialized = JSON.stringify(next, null, 2);
     const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
     setter.call(rawText, serialized);
     rawText.dispatchEvent(new Event('input', { bubbles: true }));
@@ -1452,6 +1651,7 @@
       setControlsFormEnabled(false);
       setLayersFormEnabled(false);
       setStylesFormEnabled(false);
+      commentWarning.classList.remove('shown');
       return;
     }
     let parsed;
@@ -1482,6 +1682,7 @@
     populateControlsForm(parsed);
     populateLayersForm(parsed);
     populateStylesForm(parsed);
+    updateCommentWarning();
   }
 
   rawText.addEventListener('input', () => {
