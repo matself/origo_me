@@ -806,6 +806,10 @@
   const settingsForm = document.getElementById('settingsForm');
   const tabStructure = document.getElementById('tabStructure');
   const tabSettings = document.getElementById('tabSettings');
+  const tabControls = document.getElementById('tabControls');
+  const tabLayers = document.getElementById('tabLayers');
+  const tabStyles = document.getElementById('tabStyles');
+  
   let formTouchedThisSession = false;
 
   settingsForm.innerHTML = `
@@ -924,10 +928,14 @@
   }
 
   document.getElementById('btnAddSource').addEventListener('click', () => {
-    sourceList.appendChild(makeSourceRow('', {}));
+    const row = makeSourceRow('', {});
+    sourceList.appendChild(row);
+    row.querySelector('input').focus();
   });
   document.getElementById('btnAddColor').addEventListener('click', () => {
-    paletteList.appendChild(makeColorRow(''));
+    const row = makeColorRow('');
+    paletteList.appendChild(row);
+    row.querySelector('input').focus();
   });
 
   const scalarFieldIds = [
@@ -987,7 +995,6 @@
     'splash', 'zoom'
   ];
 
-  const tabControls = document.getElementById('tabControls');
   const controlsForm = document.getElementById('controlsForm');
 
   controlsForm.innerHTML = `
@@ -1078,7 +1085,9 @@
   }
 
   document.getElementById('btnAddControl').addEventListener('click', () => {
-    controlsList.appendChild(makeControlRow('', undefined));
+    const row = makeControlRow('', undefined);
+    controlsList.appendChild(row);
+    row.querySelector('input').focus();
   });
 
   function populateControlsForm(parsed) {
@@ -1105,7 +1114,6 @@
   ];
   const KNOWN_LAYER_FIELDS = ['name', 'title', 'type', 'group', 'source', 'style', 'visible', 'queryable', 'opacity', 'layers'];
 
-  const tabLayers = document.getElementById('tabLayers');
   const layersFormEl = document.getElementById('layersForm');
 
   layersFormEl.innerHTML = `
@@ -1270,7 +1278,9 @@
     const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
     subLayers.forEach(sub => subList.appendChild(makeLayerRow(sub)));
     row.querySelector(':scope > .layerRowBody > .subLayersDetails > .addSubLayer').addEventListener('click', () => {
-      subList.appendChild(makeLayerRow({ name: '', type: '' }));
+      const subRow = makeLayerRow({ name: '', type: '' });
+      subList.appendChild(subRow);
+      subRow.querySelector('input').focus();
     });
 
     suppressAutofill(row);
@@ -1317,7 +1327,9 @@
   }
 
   document.getElementById('btnAddLayer').addEventListener('click', () => {
-    layersList.appendChild(makeLayerRow({ name: '', type: '' }));
+    const row = makeLayerRow({ name: '', type: '' });
+    layersList.appendChild(row);
+    row.querySelector('input').focus();
   });
 
   function applyLayerSearchFilter() {
@@ -1348,7 +1360,6 @@
     applyLayerSearchFilter();
   }
 
-  const tabStyles = document.getElementById('tabStyles');
   const stylesFormEl = document.getElementById('stylesForm');
 
   stylesFormEl.innerHTML = `
@@ -1406,7 +1417,7 @@
         <button type="button" class="miniBtn styleRemove">✕</button>
       </div>
       <div class="styleRowBody">
-        <details>
+        <details open>
           <summary>style rules</summary>
           <textarea class="styleText optionsText" spellcheck="false">${escapeHtml(text)}</textarea>
           <div class="styleStatus optionsStatus muted">Valid.</div>
@@ -1461,7 +1472,9 @@
   }
 
   document.getElementById('btnAddStyle').addEventListener('click', () => {
-    stylesList.appendChild(makeStyleRow('', [[{}]]));
+    const row = makeStyleRow('', [[{}]]);
+    stylesList.appendChild(row);
+    row.querySelector('input').focus();
   });
 
   function applyStyleSearchFilter() {
@@ -1682,6 +1695,19 @@
     parseDebounce = setTimeout(parseAndRender, 250);
   });
 
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (!btnSave.disabled) saveFile();
+    }
+    // Tab switching hotkeys
+    if (e.altKey && e.key >= '1' && e.key <= '5') {
+        e.preventDefault();
+        const tabs = ['structure', 'settings', 'controls', 'layers', 'styles'];
+        switchTab(tabs[parseInt(e.key) - 1]);
+    }
+  });
+
   function loadText(text, name, handle) {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     rawText.value = text;
@@ -1801,13 +1827,6 @@
   btnBailout.addEventListener('click', bailoutFile);
   btnSave.addEventListener('click', saveFile);
   btnSaveAs.addEventListener('click', saveAsFile);
-
-  window.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      e.preventDefault();
-      if (!btnSave.disabled) saveFile();
-    }
-  });
 
   window.addEventListener('beforeunload', (e) => {
     if (savedText !== null && rawText.value !== savedText) {
