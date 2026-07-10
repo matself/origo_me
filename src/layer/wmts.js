@@ -27,10 +27,11 @@ const wmts = function wmts(layerOptions, viewer) {
     layerType: 'tile',
     featureinfoLayer: undefined
   };
+  const resolvedMatrixSet = layerOptions.matrixSet || viewer.getProjectionCode();
   const sourceDefault = {
     crossOrigin: 'anonymous',
-    matrixSet: layerOptions.matrixSet || viewer.getProjectionCode(),
-    matrixIdsPrefix: layerOptions.matrixIdsPrefix === false ? '' : `${viewer.getProjectionCode()}:`,
+    matrixSet: resolvedMatrixSet,
+    matrixIdsPrefix: layerOptions.matrixIdsPrefix === false ? '' : `${resolvedMatrixSet}:`,
     format: 'image/png',
     resolutions: JSON.parse(JSON.stringify(viewer.getResolutions())),
     tileSize: [256, 256]
