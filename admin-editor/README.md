@@ -9,7 +9,7 @@ Verktyget läser in en Origo-konfigurationsfil (`.json`) och visar den på två 
 - **Rå JSON-panel** till höger — den redigerbara sanningskällan. Det som står här är det som sparas.
 - **Formulär-flikar** till vänster — ett mer lättanvänt sätt att ändra samma data:
   - **Structure** — ett expanderbart träd som visar hela filens struktur, skrivskyddat.
-  - **Basic Settings** — projektion, extent, center, zoom, resolutions, footer, source och färgpalett.
+  - **Basic Settings** — projektion, extent, center, zoom, resolutions, footer, source, färgpalett och `proj4Defs` (med ett inbyggt bibliotek av svenska SWEREF99-zoner och RT90 att lägga till med ett klick).
   - **Controls** — Origo-kontroller (t.ex. `home`, `zoom`, `legend`) med options som fritext-JSON.
   - **Layers** — lager med typ, grupp, källa, stil, synlighet m.m., inklusive nästlade grupper.
   - **Styles** — stilregler per namn, med sökfilter och en "endast oanvända"-vy.
@@ -35,6 +35,12 @@ Den råa JSON-panelen är alltid kommentarssäker — redigerar du bara där bev
 - Osparade ändringar visas som en röd prick vid filnamnet i headern.
 
 Det finns ingen "Ny fil"-knapp. Vill du starta en ny konfiguration, öppna en befintlig fil, rensa ut det du inte behöver, och spara med **Save As…** under ett nytt namn.
+
+## Om proj4Defs
+
+Origo har inga inbyggda projektionsdefinitioner — varje konfigurationsfil måste själv lista varje EPSG-kod (utöver `EPSG:3857`/`EPSG:4326`, som stöds direkt) den använder, i sin egen `proj4Defs`-array. Det gäller även EPSG-koder som bara används av en enskild källa eller ett enskilt lager, inte bara kartans egen `projectionCode`. Saknas definitionen misslyckas omprojicering tyst.
+
+I **Basic Settings** kan du lägga till vanliga svenska projektioner (SWEREF99-zonerna och RT90 2.5 gon V) direkt från en rullista, istället för att leta upp proj4-strängar för hand.
 
 ## Kortkommandon
 

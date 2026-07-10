@@ -184,6 +184,19 @@
     border-radius: 6px;
     margin-bottom: 10px;
   }
+
+  #proj4List .dynRow input.proj4Code { width: 100px; flex: none; }
+  #proj4List .dynRow input.proj4Alias { width: 190px; flex: none; }
+  .proj4LibraryRow { display: flex; gap: 6px; margin-top: 4px; }
+  .proj4LibraryRow select {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
   
   .filterRow {
     display: flex;
@@ -824,6 +837,17 @@
         <input type="number" id="f_projExtent2" placeholder="maxX">
         <input type="number" id="f_projExtent3" placeholder="maxY">
       </div>
+      <div class="formRow" style="align-items:flex-start;"><label>proj4Defs</label>
+        <div style="flex:1; min-width:0;">
+          <div id="proj4List"></div>
+          <div class="proj4LibraryRow">
+            <button type="button" class="miniBtn" id="btnAddProj4">+ Add custom</button>
+            <select id="proj4Library">
+              <option value="">Add from library (Swedish SWEREF99 / RT90)…</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="formSection">
@@ -945,6 +969,65 @@
     row.querySelector('input').focus();
   });
 
+  const KNOWN_SWEDISH_PROJECTIONS = [
+    { code: 'EPSG:3006', label: 'SWEREF99 TM', projection: '+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3007', label: 'SWEREF99 12 00', projection: '+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3008', label: 'SWEREF99 13 30', projection: '+proj=tmerc +lat_0=0 +lon_0=13.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3009', label: 'SWEREF99 15 00', projection: '+proj=tmerc +lat_0=0 +lon_0=15 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3010', label: 'SWEREF99 16 30', projection: '+proj=tmerc +lat_0=0 +lon_0=16.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3011', label: 'SWEREF99 18 00', projection: '+proj=tmerc +lat_0=0 +lon_0=18 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3012', label: 'SWEREF99 14 15', projection: '+proj=tmerc +lat_0=0 +lon_0=14.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3013', label: 'SWEREF99 15 45', projection: '+proj=tmerc +lat_0=0 +lon_0=15.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3014', label: 'SWEREF99 17 15', projection: '+proj=tmerc +lat_0=0 +lon_0=17.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3015', label: 'SWEREF99 18 45', projection: '+proj=tmerc +lat_0=0 +lon_0=18.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3016', label: 'SWEREF99 20 15', projection: '+proj=tmerc +lat_0=0 +lon_0=20.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3017', label: 'SWEREF99 21 45', projection: '+proj=tmerc +lat_0=0 +lon_0=21.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3018', label: 'SWEREF99 23 15', projection: '+proj=tmerc +lat_0=0 +lon_0=23.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3021', label: 'RT90 2.5 gon V', projection: '+proj=tmerc +lat_0=0 +lon_0=15.80827777777778 +k=1 +x_0=1500000 +y_0=0 +ellps=bessel +units=m +no_defs' }
+  ];
+
+  function makeProj4Row(def) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    const d = def && typeof def === 'object' ? def : {};
+    row.innerHTML = `
+      <input type="text" class="proj4Code" placeholder="EPSG:3010" value="${escapeHtml(d.code || '')}">
+      <input type="text" class="proj4Alias" placeholder="alias (optional)" value="${escapeHtml(d.alias || '')}">
+      <input type="text" class="proj4Proj" placeholder="+proj=... proj4 string" value="${escapeHtml(d.projection || '')}">
+      <button type="button" class="miniBtn proj4Remove">✕</button>
+    `;
+    row.querySelector('.proj4Remove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelectorAll('input').forEach(el => el.addEventListener('input', applyFormChange));
+    suppressAutofill(row);
+    return row;
+  }
+
+  const proj4List = document.getElementById('proj4List');
+  const proj4Library = document.getElementById('proj4Library');
+  KNOWN_SWEDISH_PROJECTIONS.forEach((def, i) => {
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent = `${def.code} — ${def.label}`;
+    proj4Library.appendChild(opt);
+  });
+
+  document.getElementById('btnAddProj4').addEventListener('click', () => {
+    const row = makeProj4Row({});
+    proj4List.appendChild(row);
+    row.querySelector('input').focus();
+  });
+  proj4Library.addEventListener('change', () => {
+    const idx = proj4Library.value;
+    proj4Library.value = '';
+    if (idx === '') return;
+    const def = KNOWN_SWEDISH_PROJECTIONS[Number(idx)];
+    const existing = Array.from(proj4List.querySelectorAll('.proj4Code')).map(el => el.value.trim().toUpperCase());
+    if (existing.includes(def.code.toUpperCase())) return;
+    const row = makeProj4Row(def);
+    proj4List.appendChild(row);
+    applyFormChange();
+  });
+
   const scalarFieldIds = [
     'f_projectionCode', 'f_projExtent0', 'f_projExtent1', 'f_projExtent2', 'f_projExtent3',
     'f_extent0', 'f_extent1', 'f_extent2', 'f_extent3', 'f_center0', 'f_center1', 'f_zoom',
@@ -991,6 +1074,11 @@
     paletteList.innerHTML = '';
     (parsed.palette || []).forEach(color => {
       paletteList.appendChild(makeColorRow(color));
+    });
+
+    proj4List.innerHTML = '';
+    (parsed.proj4Defs || []).forEach(def => {
+      proj4List.appendChild(makeProj4Row(def));
     });
   }
 
@@ -1605,6 +1693,18 @@
       if (input.value.trim()) nextPalette.push(input.value.trim());
     });
     if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
+
+    const nextProj4Defs = [];
+    proj4List.querySelectorAll('.dynRow').forEach(row => {
+      const code = row.querySelector('.proj4Code').value.trim();
+      const alias = row.querySelector('.proj4Alias').value.trim();
+      const projectionStr = row.querySelector('.proj4Proj').value.trim();
+      if (!code || !projectionStr) return;
+      const entry = { code, projection: projectionStr };
+      if (alias) entry.alias = alias;
+      nextProj4Defs.push(entry);
+    });
+    if (nextProj4Defs.length || Object.prototype.hasOwnProperty.call(currentParsed, 'proj4Defs')) next.proj4Defs = nextProj4Defs; else delete next.proj4Defs;
 
     const ctrls = collectControlsFromDOM();
     if (ctrls.length || Object.prototype.hasOwnProperty.call(currentParsed, 'controls')) next.controls = ctrls; else delete next.controls;
