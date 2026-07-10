@@ -6,3 +6,7 @@
 *.txt eol=lf
 *.json eol=lf
 *.md eol=lf
+
+# Built bundles are generated output; collapse them in PR diffs
+build/js/origo.js linguist-generated=true
+build/js/origo.min.js linguist-generated=true
