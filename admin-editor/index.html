@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Origo Config Editor</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --panel: #ffffff;
+    --border: #d8dce1;
+    --text: #1c2128;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --ok: #16a34a;
+    --err: #dc2626;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 12px 0 0;
+    white-space: nowrap;
+  }
+  button {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+  }
+  button:hover { background: #eef1f5; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  button.primary:hover { background: #1d4ed8; }
+  #filename {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #filename .dirty { color: var(--err); font-weight: 600; }
+  #fsAccessWarning {
+    display: none;
+    font-size: 12px;
+    color: var(--err);
+    padding: 4px 14px;
+    background: #fef2f2;
+    border-bottom: 1px solid var(--border);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+  #treePane {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+  }
+  #rawPane { 
+    flex: 0.8; 
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: none; 
+  }
+  .paneHeader {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #treeContainer {
+    flex: 1;
+    overflow: auto;
+    padding: 8px 10px;
+    background: var(--panel);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  #treeContainer.stale { opacity: 0.4; }
+  #rawText {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    tab-size: 2;
+    background: var(--panel);
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  #statusBar {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-family: var(--mono);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--panel);
+  }
+  #statusBar.ok { color: var(--ok); }
+  #statusBar.err { color: var(--err); }
+  #statusBar.idle { color: var(--muted); }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+  }
+  .tabs button {
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .tabs button:hover { background: #eef1f5; }
+  .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  #settingsForm, #controlsForm, #layersForm, #stylesForm {
+    flex: 1;
+    overflow: auto;
+    padding: 12px 14px;
+    background: var(--panel);
+    display: none;
+  }
+  #settingsForm.active, #controlsForm.active, #layersForm.active, #stylesForm.active { display: block; }
+  #settingsForm.stale, #controlsForm.stale, #layersForm.stale, #stylesForm.stale { opacity: 0.4; pointer-events: none; }
+  #treeContainer.active { display: block; }
+  #treeContainer:not(.active) { display: none; }
+
+  #layerSearch {
+    width: 100%;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+
+  #proj4List .dynRow input.proj4Code { width: 100px; flex: none; }
+  #proj4List .dynRow input.proj4Alias { width: 190px; flex: none; }
+  .proj4LibraryRow { display: flex; gap: 6px; margin-top: 4px; }
+  .proj4LibraryRow select {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  
+  .filterRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  #styleSearch {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .checkboxLabel {
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text);
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  #layerCount, #styleCount { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .styleRow.filteredOut { display: none; }
+  .styleRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .layerRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: var(--bg);
+  }
+  .layerRow.filteredOut { display: none; }
+  .layerRow.isGroup { border-left: 3px solid var(--accent); }
+  .layerRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    flex-wrap: wrap;
+  }
+  .layerRowHead input[type="text"] {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .layerRowHead input.layerName { width: 190px; }
+  .layerRowHead input.layerTitle { width: 220px; }
+  .layerRowHead input.layerType { width: 110px; }
+  .layerRowHead input.layerGroup { width: 110px; }
+  .layerRowHead input.layerSource { width: 140px; }
+  .layerRowHead input.layerStyle { width: 110px; }
+  .layerRowHead input.layerOpacity { width: 65px; }
+  .layerRowHead select { font: inherit; font-size: 12.5px; padding: 4px; border: 1px solid var(--border); border-radius: 5px; }
+  .layerRowHead input.unknownName { border-color: #f59e0b; background: #fffbeb; }
+  .layerRowBody { border-top: 1px solid var(--border); padding: 6px 8px; }
+  .layerRowBody summary { cursor: pointer; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .layerRowBody textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 90px;
+  }
+  .layerSubList { margin-left: 22px; margin-top: 8px; padding-left: 10px; border-left: 2px dashed var(--border); }
+  .miniLabel { font-size: 10.5px; color: var(--muted); }
+
+  #missingStylesWarning {
+    display: none;
+    font-size: 12px;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 5px;
+    padding: 7px 9px;
+    margin-bottom: 10px;
+  }
+  #missingStylesWarning.shown { display: block; }
+  .styleRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--bg);
+  }
+  .styleRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+  }
+  .styleRowHead input.styleName {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .usageBadge {
+    font-size: 10.5px;
+    color: #1e40af;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 4px;
+    padding: 2px 5px;
+    white-space: nowrap;
+  }
+  .usageBadge.zero { color: var(--muted); background: transparent; border-color: var(--border); }
+  .styleRowBody { padding: 6px 8px 8px 8px; }
+  .styleRow textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .controlRow {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--bg);
+  }
+  .controlRowHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+  }
+  .controlRowHead input[type="text"] {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .controlRowHead input.unknownName { border-color: #f59e0b; background: #fffbeb; }
+  .unknownBadge {
+    font-size: 10.5px;
+    color: #92400e;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 4px;
+    padding: 2px 5px;
+    white-space: nowrap;
+    display: none;
+  }
+  .unknownBadge.shown { display: inline-block; }
+  .controlRow details {
+    border-top: 1px solid var(--border);
+    padding: 6px 8px;
+  }
+  .controlRow details summary {
+    cursor: pointer;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .controlRow textarea.optionsText {
+    width: 100%;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .controlRow textarea.optionsText.invalidJson { border-color: var(--err); }
+  .optionsStatus { font-size: 11px; margin-top: 3px; }
+  .optionsStatus.err { color: var(--err); }
+  .optionsStatus.muted { color: var(--muted); }
+
+  #commentWarning {
+    display: none;
+    font-size: 11.5px;
+    color: #92400e;
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+    padding: 7px 12px;
+    flex-shrink: 0;
+  }
+  #commentWarning.shown { display: block; }
+  #commentWarning code { background: rgba(0,0,0,0.05); padding: 0 3px; border-radius: 3px; }
+
+  .formSection { margin-bottom: 18px; }
+  .formSection > h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 8px 0;
+  }
+  .formRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .formRow label {
+    font-size: 12.5px;
+    width: 150px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+  .formRow input[type="text"],
+  .formRow input[type="number"],
+  .formRow textarea {
+    flex: 1;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 0;
+  }
+  .formRow textarea { font-family: var(--mono); resize: vertical; }
+  .formRow input[type="checkbox"] { margin: 0; }
+  .quad input { width: 0; }
+  .dynRow {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .dynRow input {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    flex: 1;
+    min-width: 0;
+  }
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .miniBtn {
+    padding: 3px 8px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  #settingsForm > p.disabledNote {
+    color: var(--err);
+    font-size: 12.5px;
+  }
+
+  details.node { margin-left: 14px; }
+  details.node > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+  details.node > summary::-webkit-details-marker { display: none; }
+  details.node > summary::before {
+    content: '\25b8';
+    display: inline-block;
+    width: 10px;
+    color: var(--muted);
+    transition: transform 0.1s;
+  }
+  details.node[open] > summary::before { transform: rotate(90deg); }
+  .key { color: #a626a4; }
+  .type-count { color: var(--muted); font-size: 11px; }
+  .leaf { margin-left: 14px; display: flex; gap: 6px; }
+  .val-string { color: #50a14f; }
+  .val-number { color: #986801; }
+  .val-boolean { color: #0184bc; }
+  .val-null { color: var(--muted); font-style: italic; }
+  .leafRoot { margin-left: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Origo Config Editor</h1>
+  <button id="btnOpen">Open…</button>
+  <button id="btnBailout" disabled>Close without saving</button>
+  <button id="btnSave" disabled>Save</button>
+  <button id="btnSaveAs" disabled>Save As…</button>
+  <span id="filename">No file open</span>
+</header>
+<div id="fsAccessWarning">
+  This browser doesn't support the File System Access API — Save will download a new file instead of writing back in place. Use Chrome or Edge for direct save-to-disk.
+</div>
+
+<main>
+  <div id="treePane">
+    <div class="tabs">
+      <button id="tabStructure" class="active">Structure</button>
+      <button id="tabSettings">Basic Settings</button>
+      <button id="tabControls">Controls</button>
+      <button id="tabLayers">Layers</button>
+      <button id="tabStyles">Styles</button>
+    </div>
+    <div id="commentWarning"></div>
+    <div id="treeContainer" class="active"></div>
+    <div id="settingsForm"></div>
+    <div id="controlsForm"></div>
+    <div id="layersForm"></div>
+    <div id="stylesForm"></div>
+  </div>
+  <div id="rawPane">
+    <div class="paneHeader">Raw JSON (source of truth — edits here are what gets saved)</div>
+    <textarea id="rawText" spellcheck="false" placeholder="Open an Origo config JSON file to begin…"></textarea>
+    <div id="statusBar" class="idle">No file loaded.</div>
+  </div>
+</main>
+
+<input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+
+<script>
+(function () {
+  const hasFSAccess = 'showOpenFilePicker' in window;
+  document.getElementById('fsAccessWarning').style.display = hasFSAccess ? 'none' : 'block';
+
+  const rawText = document.getElementById('rawText');
+  const treeContainer = document.getElementById('treeContainer');
+  const statusBar = document.getElementById('statusBar');
+  const filenameEl = document.getElementById('filename');
+  const btnOpen = document.getElementById('btnOpen');
+  const btnBailout = document.getElementById('btnBailout');
+  const btnSave = document.getElementById('btnSave');
+  const btnSaveAs = document.getElementById('btnSaveAs');
+  const fileInput = document.getElementById('fileInput');
+  suppressAutofill(rawText.parentElement);
+
+  let fileHandle = null;
+  let currentFileName = null;
+  let savedText = null;
+  let parseDebounce = null;
+
+  function stripJSONComments(jsonstring) {
+    const json = jsonstring.split('');
+    let ix = 0;
+    const lastindex = json.length - 1;
+    while (ix < lastindex) {
+      if (json[ix] === '"') {
+        ix += 1;
+        while (json[ix] !== '"' && ix < lastindex) {
+          if (json[ix] === '\\') ix += 1;
+          ix += 1;
+        }
+      } else if (json[ix] === '/' && json[ix + 1] === '/') {
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 2;
+        while (json[ix] !== '\n' && json[ix] !== '\r' && ix <= lastindex) {
+          json[ix] = ' '; ix += 1;
+        }
+      } else if (json[ix] === '/' && json[ix + 1] === '*') {
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 2;
+        while (!(json[ix] === '*' && json[ix + 1] === '/') && ix <= lastindex) {
+          if (json[ix] !== '\n' && json[ix] !== '\r') json[ix] = ' ';
+          ix += 1;
+        }
+        json[ix] = ' '; json[ix + 1] = ' '; ix += 1;
+      }
+      ix += 1;
+    }
+    return json.join('');
+  }
+
+  function locateError(source, message) {
+    const posMatch = message.match(/position (\d+)/);
+    if (!posMatch) return message;
+    const pos = parseInt(posMatch[1], 10);
+    const upToError = source.substring(0, pos);
+    const line = (upToError.match(/\n/g) || []).length + 1;
+    const col = pos - upToError.lastIndexOf('\n');
+    return `${message} (line ${line}, column ${col})`;
+  }
+
+  function rangeHasComment(source, start, end) {
+    let i = start;
+    while (i < end) {
+      const c = source[i];
+      if (c === '"') {
+        i++;
+        while (i < end) {
+          if (source[i] === '\\') { i += 2; continue; }
+          if (source[i] === '"') { i++; break; }
+          i++;
+        }
+        continue;
+      }
+      if (c === '/' && (source[i + 1] === '/' || source[i + 1] === '*')) return true;
+      i++;
+    }
+    return false;
+  }
+
+  function scanTopLevelKeySpans(source) {
+    const spans = {};
+    const n = source.length;
+    let i = 0;
+    function skipWsAndComments() {
+      while (i < n) {
+        const c = source[i];
+        if (c === ' ' || c === '\t' || c === '\n' || c === '\r') { i++; continue; }
+        if (c === '/' && source[i + 1] === '/') { i += 2; while (i < n && source[i] !== '\n') i++; continue; }
+        if (c === '/' && source[i + 1] === '*') { i += 2; while (i < n && !(source[i] === '*' && source[i + 1] === '/')) i++; i += 2; continue; }
+        break;
+      }
+    }
+    function readString() {
+      i++;
+      while (i < n) {
+        if (source[i] === '\\') { i += 2; continue; }
+        if (source[i] === '"') { i++; return; }
+        i++;
+      }
+    }
+    function skipValue() {
+      const c = source[i];
+      if (c === '"') { readString(); return; }
+      if (c === '{' || c === '[') {
+        const open = c; const close = c === '{' ? '}' : ']';
+        let depth = 0;
+        while (i < n) {
+          const ch = source[i];
+          if (ch === '"') { readString(); continue; }
+          if (ch === '/' && source[i + 1] === '/') { i += 2; while (i < n && source[i] !== '\n') i++; continue; }
+          if (ch === '/' && source[i + 1] === '*') { i += 2; while (i < n && !(source[i] === '*' && source[i + 1] === '/')) i++; i += 2; continue; }
+          if (ch === open) { depth++; i++; continue; }
+          if (ch === close) { depth--; i++; if (depth === 0) return; continue; }
+          i++;
+        }
+        return;
+      }
+      while (i < n) {
+        const ch = source[i];
+        if (ch === ',' || ch === '}' || ch === ']' || ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') break;
+        if (ch === '/' && (source[i + 1] === '/' || source[i + 1] === '*')) break;
+        i++;
+      }
+    }
+    function lineIndentOf(pos) {
+      let s = pos;
+      while (s > 0 && source[s - 1] !== '\n') s--;
+      let ind = '';
+      while (s < n && (source[s] === ' ' || source[s] === '\t')) { ind += source[s]; s++; }
+      return ind;
+    }
+    skipWsAndComments();
+    if (source[i] !== '{') return spans;
+    i++;
+    while (i < n) {
+      skipWsAndComments();
+      if (source[i] === '}' || source[i] !== '"') break;
+      const keyStart = i;
+      readString();
+      let keyName;
+      try { keyName = JSON.parse(source.slice(keyStart, i)); } catch (e) { break; }
+      skipWsAndComments();
+      if (source[i] !== ':') break;
+      i++;
+      skipWsAndComments();
+      const valueStart = i;
+      skipValue();
+      spans[keyName] = { valueStart, valueEnd: i, indent: lineIndentOf(keyStart) };
+      skipWsAndComments();
+      if (source[i] === ',') { i++; continue; }
+    }
+    return spans;
+  }
+
+  function serializeTopLevelValue(value, indent) {
+    const s = JSON.stringify(value, null, 2);
+    if (!s.includes('\n')) return s;
+    return s.split('\n').map((line, idx) => (idx === 0 ? line : indent + line)).join('\n');
+  }
+
+  function deepEqual(a, b) {
+    if (a === b) return true;
+    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
+      return true;
+    }
+    const ka = Object.keys(a); const kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    for (const k of ka) {
+      if (!Object.prototype.hasOwnProperty.call(b, k) || !deepEqual(a[k], b[k])) return false;
+    }
+    return true;
+  }
+
+  function patchRawPreservingComments(rawSource, currentObj, nextObj) {
+    const keys = new Set([...Object.keys(currentObj || {}), ...Object.keys(nextObj || {})]);
+    for (const k of keys) {
+      const inCur = Object.prototype.hasOwnProperty.call(currentObj, k);
+      const inNext = Object.prototype.hasOwnProperty.call(nextObj, k);
+      if (inCur !== inNext) return null;
+    }
+    const spans = scanTopLevelKeySpans(rawSource);
+    const edits = [];
+    for (const k of Object.keys(nextObj)) {
+      if (deepEqual(currentObj[k], nextObj[k])) continue;
+      const span = spans[k];
+      if (!span) return null;
+      edits.push({ start: span.valueStart, end: span.valueEnd, text: serializeTopLevelValue(nextObj[k], span.indent) });
+    }
+    if (!edits.length) return rawSource;
+    edits.sort((a, b) => b.start - a.start);
+    let out = rawSource;
+    for (const e of edits) out = out.slice(0, e.start) + e.text + out.slice(e.end);
+    return out;
+  }
+
+  function setDirty() {
+    const dirty = rawText.value !== savedText;
+    filenameEl.innerHTML = currentFileName
+      ? `${dirty ? '<span class="dirty">● </span>' : ''}${currentFileName}`
+      : 'No file open';
+    btnBailout.disabled = !currentFileName || !dirty;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function suppressAutofill(root) {
+    root.querySelectorAll('input, textarea').forEach(el => {
+      el.setAttribute('autocomplete', 'off');
+      el.setAttribute('data-lpignore', 'true');
+      el.setAttribute('data-1p-ignore', 'true');
+      el.setAttribute('data-bwignore', 'true');
+      el.setAttribute('data-form-type', 'other');
+    });
+  }
+
+  function buildLeafHtml(value) {
+    if (value === null) return `<span class="val-null">null</span>`;
+    if (typeof value === 'string') return `<span class="val-string">"${escapeHtml(value)}"</span>`;
+    if (typeof value === 'number') return `<span class="val-number">${value}</span>`;
+    if (typeof value === 'boolean') return `<span class="val-boolean">${value}</span>`;
+    return '';
+  }
+
+  function buildTreeNode(key, value, isRoot) {
+    const isArray = Array.isArray(value);
+    const isObject = value !== null && typeof value === 'object' && !isArray;
+
+    if (!isArray && !isObject) {
+      const div = document.createElement('div');
+      div.className = isRoot ? 'leaf leafRoot' : 'leaf';
+      div.innerHTML = `${key !== null ? `<span class="key">${escapeHtml(key)}:</span>` : ''} ${buildLeafHtml(value)}`;
+      return div;
+    }
+
+    const entries = isArray ? value.map((v, i) => [i, v]) : Object.entries(value);
+    const details = document.createElement('details');
+    details.className = 'node';
+    if (isRoot) details.open = true;
+
+    const summary = document.createElement('summary');
+    const label = key !== null ? `<span class="key">${escapeHtml(key)}:</span>` : '';
+    const typeLabel = isArray ? `Array` : `Object`;
+    summary.innerHTML = `${label} <span class="type-count">${typeLabel}[${entries.length}]</span>`;
+    details.appendChild(summary);
+
+    let built = false;
+    function buildChildren() {
+      if (built) return;
+      built = true;
+      entries.forEach(([k, v]) => {
+        details.appendChild(buildTreeNode(isArray ? null : k, v, false));
+      });
+    }
+
+    if (isRoot || entries.length <= 20) {
+      buildChildren();
+    } else {
+      details.addEventListener('toggle', function onToggle() {
+        if (details.open) {
+          buildChildren();
+          details.removeEventListener('toggle', onToggle);
+        }
+      });
+    }
+
+    return details;
+  }
+
+  function renderTree(parsed) {
+    treeContainer.innerHTML = '';
+    treeContainer.appendChild(buildTreeNode(null, parsed, true));
+  }
+
+  const settingsForm = document.getElementById('settingsForm');
+  const tabStructure = document.getElementById('tabStructure');
+  const tabSettings = document.getElementById('tabSettings');
+  const tabControls = document.getElementById('tabControls');
+  const tabLayers = document.getElementById('tabLayers');
+  const tabStyles = document.getElementById('tabStyles');
+  
+  let formTouchedThisSession = false;
+
+  settingsForm.innerHTML = `
+    <p class="disabledNote" id="formDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+
+    <div class="formSection">
+      <h3>Projection</h3>
+      <div class="formRow"><label>projectionCode</label><input type="text" id="f_projectionCode" placeholder="EPSG:3857"></div>
+      <div class="formRow"><label>projectionExtent</label>
+        <input type="number" id="f_projExtent0" placeholder="minX">
+        <input type="number" id="f_projExtent1" placeholder="minY">
+        <input type="number" id="f_projExtent2" placeholder="maxX">
+        <input type="number" id="f_projExtent3" placeholder="maxY">
+      </div>
+      <div class="formRow" style="align-items:flex-start;"><label>proj4Defs</label>
+        <div style="flex:1; min-width:0;">
+          <div id="proj4List"></div>
+          <div class="proj4LibraryRow">
+            <button type="button" class="miniBtn" id="btnAddProj4">+ Add custom</button>
+            <select id="proj4Library">
+              <option value="">Add from library (Swedish SWEREF99 / RT90)…</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="formSection">
+      <h3>View</h3>
+      <div class="formRow"><label>extent</label>
+        <input type="number" id="f_extent0" placeholder="minX">
+        <input type="number" id="f_extent1" placeholder="minY">
+        <input type="number" id="f_extent2" placeholder="maxX">
+        <input type="number" id="f_extent3" placeholder="maxY">
+      </div>
+      <div class="formRow"><label>center</label>
+        <input type="number" id="f_center0" placeholder="x">
+        <input type="number" id="f_center1" placeholder="y">
+      </div>
+      <div class="formRow"><label>zoom</label><input type="number" step="0.1" id="f_zoom"></div>
+      <div class="formRow" style="align-items:flex-start;"><label>resolutions</label><textarea id="f_resolutions" rows="3" placeholder="comma or newline separated"></textarea></div>
+    </div>
+
+    <div class="formSection">
+      <h3>Page settings</h3>
+      <div class="formRow"><label>footer.img</label><input type="text" id="f_footerImg"></div>
+      <div class="formRow"><label>footer.url</label><input type="text" id="f_footerUrl"></div>
+      <div class="formRow"><label>footer.text</label><input type="text" id="f_footerText"></div>
+      <div class="formRow"><label>mapGrid.visible</label><input type="checkbox" id="f_mapGrid"></div>
+      <div class="formRow"><label>mapInteractions.embedded</label><input type="checkbox" id="f_embedded"></div>
+    </div>
+
+    <div class="formSection">
+      <h3>Source</h3>
+      <div id="sourceList"></div>
+      <button type="button" class="miniBtn" id="btnAddSource">+ Add source</button>
+    </div>
+
+    <div class="formSection">
+      <h3>Palette</h3>
+      <div id="paletteList"></div>
+      <button type="button" class="miniBtn" id="btnAddColor">+ Add color</button>
+    </div>
+  `;
+  suppressAutofill(settingsForm);
+
+  const commentWarning = document.getElementById('commentWarning');
+  const formDisabledNote = document.getElementById('formDisabledNote');
+
+  function updateCommentWarning() {
+    const src = rawText.value;
+    if (!rangeHasComment(src, 0, src.length)) { commentWarning.classList.remove('shown'); return; }
+    const spans = scanTopLevelKeySpans(src);
+    const fragile = Object.keys(spans).filter(k => rangeHasComment(src, spans[k].valueStart, spans[k].valueEnd));
+    let msg = 'This file has comments. Editing via these forms keeps comments in the sections you don’t touch, but rewrites the one you do. The raw JSON pane is always comment-safe.';
+    if (fragile.length) msg += ` Comments live in: <code>${fragile.join('</code> <code>')}</code> — editing those sections here will drop their inline comments.`;
+    commentWarning.innerHTML = msg;
+    commentWarning.classList.add('shown');
+  }
+  const sourceList = document.getElementById('sourceList');
+  const paletteList = document.getElementById('paletteList');
+
+  function setSettingsFormEnabled(enabled) {
+    settingsForm.classList.toggle('stale', !enabled);
+    formDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function numOrUndef(v) {
+    if (v === '' || v === null || v === undefined) return undefined;
+    const n = parseFloat(v);
+    return Number.isNaN(n) ? undefined : n;
+  }
+
+  function makeSourceRow(name, sourceObj) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    const src = sourceObj && typeof sourceObj === 'object' ? sourceObj : {};
+    const knownSourceFields = ['url', 'projection', 'crossOrigin', 'workspace'];
+    row.dataset.extraProps = JSON.stringify(
+      Object.fromEntries(Object.entries(src).filter(([k]) => !knownSourceFields.includes(k)))
+    );
+    const url = src.url || '';
+    const projection = src.projection || '';
+    const crossOrigin = src.crossOrigin || '';
+    const workspace = src.workspace || '';
+    row.innerHTML = `
+      <input type="text" class="srcName" placeholder="source key" value="${escapeHtml(name || '')}">
+      <input type="text" class="srcUrl" placeholder="service endpoint" value="${escapeHtml(url || '')}">
+      <input type="text" class="srcProjection" placeholder="EPSG:3857 (optional)" value="${escapeHtml(projection || '')}">
+      <input type="text" class="srcCrossOrigin" placeholder="crossOrigin (e.g. anonymous)" value="${escapeHtml(crossOrigin || '')}">
+      <input type="text" class="srcWorkspace" placeholder="workspace (WFS)" value="${escapeHtml(workspace || '')}">
+      <button type="button" class="miniBtn srcRemove">✕</button>
+    `;
+    row.querySelector('.srcRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelectorAll('input').forEach(el => el.addEventListener('input', applyFormChange));
+    suppressAutofill(row);
+    return row;
+  }
+
+  function makeColorRow(color) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    row.innerHTML = `
+      <span class="swatch" style="background:${escapeHtml(color || '#ffffff')}"></span>
+      <input type="text" class="colorVal" placeholder="rgb(0,0,0) or #hex" value="${escapeHtml(color || '')}">
+      <button type="button" class="miniBtn colorRemove">✕</button>
+    `;
+    const input = row.querySelector('.colorVal');
+    const swatch = row.querySelector('.swatch');
+    input.addEventListener('input', () => { swatch.style.background = input.value; applyFormChange(); });
+    row.querySelector('.colorRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    suppressAutofill(row);
+    return row;
+  }
+
+  document.getElementById('btnAddSource').addEventListener('click', () => {
+    const row = makeSourceRow('', {});
+    sourceList.appendChild(row);
+    row.querySelector('input').focus();
+  });
+  document.getElementById('btnAddColor').addEventListener('click', () => {
+    const row = makeColorRow('');
+    paletteList.appendChild(row);
+    row.querySelector('input').focus();
+  });
+
+  const KNOWN_SWEDISH_PROJECTIONS = [
+    { code: 'EPSG:3006', label: 'SWEREF99 TM', projection: '+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3007', label: 'SWEREF99 12 00', projection: '+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3008', label: 'SWEREF99 13 30', projection: '+proj=tmerc +lat_0=0 +lon_0=13.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3009', label: 'SWEREF99 15 00', projection: '+proj=tmerc +lat_0=0 +lon_0=15 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3010', label: 'SWEREF99 16 30', projection: '+proj=tmerc +lat_0=0 +lon_0=16.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3011', label: 'SWEREF99 18 00', projection: '+proj=tmerc +lat_0=0 +lon_0=18 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3012', label: 'SWEREF99 14 15', projection: '+proj=tmerc +lat_0=0 +lon_0=14.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3013', label: 'SWEREF99 15 45', projection: '+proj=tmerc +lat_0=0 +lon_0=15.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3014', label: 'SWEREF99 17 15', projection: '+proj=tmerc +lat_0=0 +lon_0=17.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3015', label: 'SWEREF99 18 45', projection: '+proj=tmerc +lat_0=0 +lon_0=18.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3016', label: 'SWEREF99 20 15', projection: '+proj=tmerc +lat_0=0 +lon_0=20.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3017', label: 'SWEREF99 21 45', projection: '+proj=tmerc +lat_0=0 +lon_0=21.75 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3018', label: 'SWEREF99 23 15', projection: '+proj=tmerc +lat_0=0 +lon_0=23.25 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs' },
+    { code: 'EPSG:3021', label: 'RT90 2.5 gon V', projection: '+proj=tmerc +lat_0=0 +lon_0=15.80827777777778 +k=1 +x_0=1500000 +y_0=0 +ellps=bessel +units=m +no_defs' }
+  ];
+
+  function makeProj4Row(def) {
+    const row = document.createElement('div');
+    row.className = 'dynRow';
+    const d = def && typeof def === 'object' ? def : {};
+    row.innerHTML = `
+      <input type="text" class="proj4Code" placeholder="EPSG:3010" value="${escapeHtml(d.code || '')}">
+      <input type="text" class="proj4Alias" placeholder="alias (optional)" value="${escapeHtml(d.alias || '')}">
+      <input type="text" class="proj4Proj" placeholder="+proj=... proj4 string" value="${escapeHtml(d.projection || '')}">
+      <button type="button" class="miniBtn proj4Remove">✕</button>
+    `;
+    row.querySelector('.proj4Remove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelectorAll('input').forEach(el => el.addEventListener('input', applyFormChange));
+    suppressAutofill(row);
+    return row;
+  }
+
+  const proj4List = document.getElementById('proj4List');
+  const proj4Library = document.getElementById('proj4Library');
+  KNOWN_SWEDISH_PROJECTIONS.forEach((def, i) => {
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent = `${def.code} — ${def.label}`;
+    proj4Library.appendChild(opt);
+  });
+
+  document.getElementById('btnAddProj4').addEventListener('click', () => {
+    const row = makeProj4Row({});
+    proj4List.appendChild(row);
+    row.querySelector('input').focus();
+  });
+  proj4Library.addEventListener('change', () => {
+    const idx = proj4Library.value;
+    proj4Library.value = '';
+    if (idx === '') return;
+    const def = KNOWN_SWEDISH_PROJECTIONS[Number(idx)];
+    const existing = Array.from(proj4List.querySelectorAll('.proj4Code')).map(el => el.value.trim().toUpperCase());
+    if (existing.includes(def.code.toUpperCase())) return;
+    const row = makeProj4Row(def);
+    proj4List.appendChild(row);
+    applyFormChange();
+  });
+
+  const scalarFieldIds = [
+    'f_projectionCode', 'f_projExtent0', 'f_projExtent1', 'f_projExtent2', 'f_projExtent3',
+    'f_extent0', 'f_extent1', 'f_extent2', 'f_extent3', 'f_center0', 'f_center1', 'f_zoom',
+    'f_resolutions', 'f_footerImg', 'f_footerUrl', 'f_footerText'
+  ];
+  scalarFieldIds.forEach(id => {
+    document.getElementById(id).addEventListener('input', applyFormChange);
+  });
+  document.getElementById('f_mapGrid').addEventListener('change', applyFormChange);
+  document.getElementById('f_embedded').addEventListener('change', applyFormChange);
+
+  function populateSettingsForm(parsed) {
+    if (settingsForm.contains(document.activeElement)) return;
+    const g = id => document.getElementById(id);
+    g('f_projectionCode').value = parsed.projectionCode || '';
+    const pe = parsed.projectionExtent || [];
+    g('f_projExtent0').value = pe[0] ?? '';
+    g('f_projExtent1').value = pe[1] ?? '';
+    g('f_projExtent2').value = pe[2] ?? '';
+    g('f_projExtent3').value = pe[3] ?? '';
+    const ex = parsed.extent || [];
+    g('f_extent0').value = ex[0] ?? '';
+    g('f_extent1').value = ex[1] ?? '';
+    g('f_extent2').value = ex[2] ?? '';
+    g('f_extent3').value = ex[3] ?? '';
+    const ce = parsed.center || [];
+    g('f_center0').value = ce[0] ?? '';
+    g('f_center1').value = ce[1] ?? '';
+    g('f_zoom').value = parsed.zoom ?? '';
+    g('f_resolutions').value = Array.isArray(parsed.resolutions) ? parsed.resolutions.join(', ') : '';
+
+    const footer = (parsed.pageSettings && parsed.pageSettings.footer) || {};
+    g('f_footerImg').value = footer.img || '';
+    g('f_footerUrl').value = footer.url || '';
+    g('f_footerText').value = footer.text || '';
+    g('f_mapGrid').checked = !!(parsed.pageSettings && parsed.pageSettings.mapGrid && parsed.pageSettings.mapGrid.visible);
+    g('f_embedded').checked = !!(parsed.pageSettings && parsed.pageSettings.mapInteractions && parsed.pageSettings.mapInteractions.embedded);
+
+    sourceList.innerHTML = '';
+    Object.entries(parsed.source || {}).forEach(([name, def]) => {
+      sourceList.appendChild(makeSourceRow(name, def));
+    });
+
+    paletteList.innerHTML = '';
+    (parsed.palette || []).forEach(color => {
+      paletteList.appendChild(makeColorRow(color));
+    });
+
+    proj4List.innerHTML = '';
+    (parsed.proj4Defs || []).forEach(def => {
+      proj4List.appendChild(makeProj4Row(def));
+    });
+  }
+
+  const KNOWN_CONTROLS = [
+    'about', 'attribution', 'bookmarks', 'draganddrop', 'draw', 'editor',
+    'externalurl', 'fullscreen', 'geoposition', 'home', 'legend', 'link',
+    'localization', 'mapmenu', 'measure', 'position', 'print', 'progressbar',
+    'rotate', 'scale', 'scaleline', 'scalepicker', 'search', 'sharemap',
+    'splash', 'zoom'
+  ];
+
+  const controlsForm = document.getElementById('controlsForm');
+
+  controlsForm.innerHTML = `
+    <p class="disabledNote" id="controlsDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <datalist id="controlNamesList">${KNOWN_CONTROLS.map(n => `<option value="${n}">`).join('')}</datalist>
+    <div id="controlsList"></div>
+    <button type="button" class="miniBtn" id="btnAddControl">+ Add control</button>
+  `;
+  suppressAutofill(controlsForm);
+  const controlsList = document.getElementById('controlsList');
+  const controlsDisabledNote = document.getElementById('controlsDisabledNote');
+
+  function setControlsFormEnabled(enabled) {
+    controlsForm.classList.toggle('stale', !enabled);
+    controlsDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function makeControlRow(name, optionsObj) {
+    const row = document.createElement('div');
+    row.className = 'controlRow';
+    const hasOptions = optionsObj !== undefined;
+    row.dataset.lastValidOptions = hasOptions ? JSON.stringify(optionsObj) : '';
+
+    row.innerHTML = `
+      <div class="controlRowHead">
+        <input type="text" class="ctrlName" list="controlNamesList" placeholder="control name" value="${escapeHtml(name || '')}">
+        <span class="unknownBadge">unrecognized name</span>
+        <button type="button" class="miniBtn ctrlUp" title="Move up">↑</button>
+        <button type="button" class="miniBtn ctrlDown" title="Move down">↓</button>
+        <button type="button" class="miniBtn ctrlRemove">✕</button>
+      </div>
+      <details ${hasOptions ? 'open' : ''}>
+        <summary>options</summary>
+        <textarea class="optionsText" placeholder="{}" spellcheck="false">${hasOptions ? escapeHtml(JSON.stringify(optionsObj, null, 2)) : ''}</textarea>
+        <div class="optionsStatus muted">No options set for this control.</div>
+      </details>
+    `;
+
+    const nameInput = row.querySelector('.ctrlName');
+    const badge = row.querySelector('.unknownBadge');
+    function refreshNameState() {
+      const val = nameInput.value.trim().toLowerCase();
+      const known = KNOWN_CONTROLS.includes(val);
+      const empty = val === '';
+      nameInput.classList.toggle('unknownName', !known && !empty);
+      badge.classList.toggle('shown', !known && !empty);
+    }
+    refreshNameState();
+    nameInput.addEventListener('input', () => { refreshNameState(); applyFormChange(); });
+
+    const optionsText = row.querySelector('.optionsText');
+    const optionsStatus = row.querySelector('.optionsStatus');
+    function refreshOptionsStatus() {
+      const text = optionsText.value.trim();
+      if (text === '') {
+        optionsText.classList.remove('invalidJson');
+        optionsStatus.className = 'optionsStatus muted';
+        optionsStatus.textContent = 'No options set for this control.';
+        row.dataset.lastValidOptions = '';
+        return;
+      }
+      try {
+        const parsedOptions = JSON.parse(text);
+        optionsText.classList.remove('invalidJson');
+        optionsStatus.className = 'optionsStatus muted';
+        optionsStatus.textContent = 'Valid.';
+        row.dataset.lastValidOptions = JSON.stringify(parsedOptions);
+      } catch (e) {
+        optionsText.classList.add('invalidJson');
+        optionsStatus.className = 'optionsStatus err';
+        optionsStatus.textContent = 'Invalid JSON — keeping last valid options until fixed.';
+      }
+    }
+    optionsText.addEventListener('input', () => { refreshOptionsStatus(); applyFormChange(); });
+
+    row.querySelector('.ctrlRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelector('.ctrlUp').addEventListener('click', () => {
+      const prev = row.previousElementSibling;
+      if (prev) { controlsList.insertBefore(row, prev); applyFormChange(); }
+    });
+    row.querySelector('.ctrlDown').addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next) { controlsList.insertBefore(next, row); applyFormChange(); }
+    });
+
+    suppressAutofill(row);
+    return row;
+  }
+
+  document.getElementById('btnAddControl').addEventListener('click', () => {
+    const row = makeControlRow('', undefined);
+    controlsList.appendChild(row);
+    row.querySelector('input').focus();
+  });
+
+  function populateControlsForm(parsed) {
+    if (controlsForm.contains(document.activeElement)) return;
+    controlsList.innerHTML = '';
+    (parsed.controls || []).forEach(control => {
+      controlsList.appendChild(makeControlRow(control.name, control.options));
+    });
+  }
+
+  function collectControlsFromDOM() {
+    return Array.from(controlsList.querySelectorAll('.controlRow')).map(row => {
+      const name = row.querySelector('.ctrlName').value.trim();
+      const entry = { name };
+      const lastValid = row.dataset.lastValidOptions;
+      if (lastValid) entry.options = JSON.parse(lastValid);
+      return entry;
+    }).filter(c => c.name !== '');
+  }
+
+  const KNOWN_LAYER_TYPES = [
+    'GEOJSON', 'GPX', 'TOPOJSON', 'WFS', 'AGS_FEATURE', 'VECTORTILE',
+    'WMS', 'WMTS', 'XYZ', 'AGS_MAP', 'OSM', 'GROUP', 'COG'
+  ];
+  const KNOWN_LAYER_FIELDS = ['name', 'title', 'type', 'group', 'source', 'style', 'visible', 'queryable', 'opacity', 'layers'];
+
+  const layersFormEl = document.getElementById('layersForm');
+
+  layersFormEl.innerHTML = `
+    <p class="disabledNote" id="layersDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <datalist id="layerTypesList">${KNOWN_LAYER_TYPES.map(n => `<option value="${n}">`).join('')}</datalist>
+    <datalist id="groupNamesList"></datalist>
+    <datalist id="sourceNamesList"></datalist>
+    <datalist id="styleNamesList"></datalist>
+    <input type="text" id="layerSearch" placeholder="Filter by name or title…">
+    <div id="layerCount"></div>
+    <div id="layersList"></div>
+    <button type="button" class="miniBtn" id="btnAddLayer">+ Add layer</button>
+  `;
+  suppressAutofill(layersFormEl);
+  const layersDisabledNote = document.getElementById('layersDisabledNote');
+  const layersList = document.getElementById('layersList');
+  const layerSearch = document.getElementById('layerSearch');
+  const layerCountEl = document.getElementById('layerCount');
+
+  function setLayersFormEnabled(enabled) {
+    layersFormEl.classList.toggle('stale', !enabled);
+    layersDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function flattenGroupNames(groups) {
+    let names = [];
+    (groups || []).forEach(g => {
+      names.push(g.name);
+      if (Array.isArray(g.groups)) names = names.concat(flattenGroupNames(g.groups));
+    });
+    return names;
+  }
+
+  function refreshLayerDatalists(parsed) {
+    const groupNames = flattenGroupNames(parsed.groups).concat(['root', 'none']);
+    document.getElementById('groupNamesList').innerHTML = groupNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
+    document.getElementById('sourceNamesList').innerHTML = Object.keys(parsed.source || {}).map(n => `<option value="${escapeHtml(n)}">`).join('');
+    document.getElementById('styleNamesList').innerHTML = Object.keys(parsed.styles || {}).map(n => `<option value="${escapeHtml(n)}">`).join('');
+  }
+
+  function countLayersRecursive(layers) {
+    let n = 0;
+    (layers || []).forEach(l => { n += 1; if (Array.isArray(l.layers)) n += countLayersRecursive(l.layers); });
+    return n;
+  }
+
+  function makeLayerRow(layer) {
+    const row = document.createElement('div');
+    row.className = 'layerRow';
+    const isGroupType = (layer.type || '').toUpperCase() === 'GROUP';
+    if (isGroupType) row.classList.add('isGroup');
+
+    const advanced = {};
+    Object.keys(layer).forEach(k => { if (!KNOWN_LAYER_FIELDS.includes(k)) advanced[k] = layer[k]; });
+    const hasAdvanced = Object.keys(advanced).length > 0;
+    row.dataset.lastValidAdvanced = hasAdvanced ? JSON.stringify(advanced) : '';
+
+    const subLayers = Array.isArray(layer.layers) ? layer.layers : [];
+
+    row.innerHTML = `
+      <div class="layerRowHead">
+        <input type="text" class="layerName" placeholder="layer id" value="${escapeHtml(layer.name || '')}">
+        <input type="text" class="layerTitle" placeholder="title" value="${escapeHtml(layer.title || '')}">
+        <input type="text" class="layerType" list="layerTypesList" placeholder="type" value="${escapeHtml(layer.type || '')}">
+        <span class="unknownBadge">unrecognized type</span>
+        <input type="text" class="layerGroup" list="groupNamesList" placeholder="group" value="${escapeHtml(layer.group || '')}">
+        <input type="text" class="layerSource" list="sourceNamesList" placeholder="source" value="${escapeHtml(layer.source || '')}">
+        <input type="text" class="layerStyle" list="styleNamesList" placeholder="style" value="${escapeHtml(layer.style || '')}">
+        <select class="layerVisible" title="visible">
+          <option value="">visible: —</option>
+          <option value="true">visible: true</option>
+          <option value="false">visible: false</option>
+        </select>
+        <select class="layerQueryable" title="queryable">
+          <option value="">queryable: —</option>
+          <option value="true">queryable: true</option>
+          <option value="false">queryable: false</option>
+        </select>
+        <input type="number" class="layerOpacity" placeholder="opacity" step="0.05" value="${layer.opacity ?? ''}">
+        <button type="button" class="miniBtn layerUp" title="Move up">↑</button>
+        <button type="button" class="miniBtn layerDown" title="Move down">↓</button>
+        <button type="button" class="miniBtn layerRemove">✕</button>
+      </div>
+      <div class="layerRowBody">
+        <details ${hasAdvanced ? 'open' : ''}>
+          <summary>advanced (attributes, filter, geometryType, minScale/maxScale, abstract, ...)</summary>
+          <textarea class="advancedText optionsText" placeholder="{}" spellcheck="false">${hasAdvanced ? escapeHtml(JSON.stringify(advanced, null, 2)) : ''}</textarea>
+          <div class="advancedStatus optionsStatus muted">${hasAdvanced ? 'Valid.' : 'No extra properties.'}</div>
+        </details>
+        <details class="subLayersDetails" ${subLayers.length ? 'open' : ''}>
+          <summary>nested layers (for GROUP type) — ${subLayers.length}</summary>
+          <div class="layerSubList"></div>
+          <button type="button" class="miniBtn addSubLayer">+ Add sub-layer</button>
+        </details>
+      </div>
+    `;
+
+    row.querySelector('.layerVisible').value = layer.visible === true ? 'true' : layer.visible === false ? 'false' : '';
+    row.querySelector('.layerQueryable').value = layer.queryable === true ? 'true' : layer.queryable === false ? 'false' : '';
+
+    const nameInput = row.querySelector('.layerName');
+    const titleInput = row.querySelector('.layerTitle');
+    row.dataset.layerName = (layer.name || '').toLowerCase();
+    row.dataset.layerTitle = (layer.title || '').toLowerCase();
+    nameInput.addEventListener('input', () => { row.dataset.layerName = nameInput.value.toLowerCase(); applyLayerSearchFilter(); applyFormChange(); });
+    titleInput.addEventListener('input', () => { row.dataset.layerTitle = titleInput.value.toLowerCase(); applyLayerSearchFilter(); applyFormChange(); });
+
+    const typeInput = row.querySelector('.layerType');
+    const badge = row.querySelector('.unknownBadge');
+    function refreshTypeState() {
+      const val = typeInput.value.trim().toUpperCase();
+      const known = KNOWN_LAYER_TYPES.includes(val);
+      const empty = val === '';
+      typeInput.classList.toggle('unknownName', !known && !empty);
+      badge.classList.toggle('shown', !known && !empty);
+      row.classList.toggle('isGroup', val === 'GROUP');
+    }
+    refreshTypeState();
+    typeInput.addEventListener('input', () => { refreshTypeState(); applyFormChange(); });
+
+    row.querySelectorAll('.layerGroup, .layerSource, .layerStyle, .layerOpacity').forEach(el => {
+      el.addEventListener('input', applyFormChange);
+    });
+    row.querySelector('.layerVisible').addEventListener('change', applyFormChange);
+    row.querySelector('.layerQueryable').addEventListener('change', applyFormChange);
+
+    const advancedText = row.querySelector('.advancedText');
+    const advancedStatus = row.querySelector('.advancedStatus');
+    function refreshAdvancedStatus() {
+      const text = advancedText.value.trim();
+      if (text === '') {
+        advancedText.classList.remove('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus muted';
+        advancedStatus.textContent = 'No extra properties.';
+        row.dataset.lastValidAdvanced = '';
+        return;
+      }
+      try {
+        const parsedAdvanced = JSON.parse(text);
+        advancedText.classList.remove('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus muted';
+        advancedStatus.textContent = 'Valid.';
+        row.dataset.lastValidAdvanced = JSON.stringify(parsedAdvanced);
+      } catch (e) {
+        advancedText.classList.add('invalidJson');
+        advancedStatus.className = 'advancedStatus optionsStatus err';
+        advancedStatus.textContent = 'Invalid JSON — keeping last valid properties until fixed.';
+      }
+    }
+    advancedText.addEventListener('input', () => { refreshAdvancedStatus(); applyFormChange(); });
+
+    row.querySelector('.layerRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+    row.querySelector('.layerUp').addEventListener('click', () => {
+      const prev = row.previousElementSibling;
+      if (prev) { row.parentElement.insertBefore(row, prev); applyFormChange(); }
+    });
+    row.querySelector('.layerDown').addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next) { row.parentElement.insertBefore(next, row); applyFormChange(); }
+    });
+
+    const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+    subLayers.forEach(sub => subList.appendChild(makeLayerRow(sub)));
+    row.querySelector(':scope > .layerRowBody > .subLayersDetails > .addSubLayer').addEventListener('click', () => {
+      const subRow = makeLayerRow({ name: '', type: '' });
+      subList.appendChild(subRow);
+      subRow.querySelector('input').focus();
+    });
+
+    suppressAutofill(row);
+    return row;
+  }
+
+  function collectLayerRow(row) {
+    const g = sel => row.querySelector(':scope > .layerRowHead > ' + sel);
+    const name = g('.layerName').value.trim();
+    const title = g('.layerTitle').value.trim();
+    const type = g('.layerType').value.trim();
+    const group = g('.layerGroup').value.trim();
+    const source = g('.layerSource').value.trim();
+    const style = g('.layerStyle').value.trim();
+    const visible = g('.layerVisible').value;
+    const queryable = g('.layerQueryable').value;
+    const opacity = g('.layerOpacity').value;
+
+    const entry = { name };
+    if (title) entry.title = title;
+    if (type) entry.type = type;
+    if (group) entry.group = group;
+    if (source) entry.source = source;
+    if (style) entry.style = style;
+    if (visible !== '') entry.visible = visible === 'true';
+    if (queryable !== '') entry.queryable = queryable === 'true';
+    if (opacity !== '') {
+      const n = parseFloat(opacity);
+      if (!Number.isNaN(n)) entry.opacity = n;
+    }
+
+    const lastAdvanced = row.dataset.lastValidAdvanced;
+    if (lastAdvanced) Object.assign(entry, JSON.parse(lastAdvanced));
+
+    const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+    const subLayers = subList ? Array.from(subList.children).map(collectLayerRow).filter(l => l.name !== '') : [];
+    if (subLayers.length) entry.layers = subLayers;
+
+    return entry;
+  }
+
+  function collectLayersFromDOM() {
+    return Array.from(layersList.children).map(collectLayerRow).filter(l => l.name !== '');
+  }
+
+  document.getElementById('btnAddLayer').addEventListener('click', () => {
+    const row = makeLayerRow({ name: '', type: '' });
+    layersList.appendChild(row);
+    row.querySelector('input').focus();
+  });
+
+  function applyLayerSearchFilter() {
+    const q = layerSearch.value.trim().toLowerCase();
+    function filterContainer(container) {
+      let anyVisible = false;
+      Array.from(container.children).forEach(row => {
+        if (!row.classList || !row.classList.contains('layerRow')) return;
+        const subList = row.querySelector(':scope > .layerRowBody > .subLayersDetails > .layerSubList');
+        const childMatch = subList ? filterContainer(subList) : false;
+        const selfMatch = q === '' || row.dataset.layerName.includes(q) || row.dataset.layerTitle.includes(q);
+        const show = selfMatch || childMatch;
+        row.classList.toggle('filteredOut', !show);
+        if (show) anyVisible = true;
+      });
+      return anyVisible;
+    }
+    filterContainer(layersList);
+  }
+  layerSearch.addEventListener('input', applyLayerSearchFilter);
+
+  function populateLayersForm(parsed) {
+    if (layersFormEl.contains(document.activeElement)) return;
+    refreshLayerDatalists(parsed);
+    layersList.innerHTML = '';
+    (parsed.layers || []).forEach(layer => layersList.appendChild(makeLayerRow(layer)));
+    layerCountEl.textContent = `${countLayersRecursive(parsed.layers)} layer(s) total.`;
+    applyLayerSearchFilter();
+  }
+
+  const stylesFormEl = document.getElementById('stylesForm');
+
+  stylesFormEl.innerHTML = `
+    <p class="disabledNote" id="stylesDisabledNote" style="display:none;">Fix the JSON error in the raw pane before using this form.</p>
+    <div id="missingStylesWarning"></div>
+    <div class="filterRow">
+      <input type="text" id="styleSearch" placeholder="Filter by style name…">
+      <label class="checkboxLabel">
+        <input type="checkbox" id="styleUnusedFilter"> Unused only
+      </label>
+    </div>
+    <div id="styleCount"></div>
+    <div id="stylesList"></div>
+    <button type="button" class="miniBtn" id="btnAddStyle">+ Add style</button>
+  `;
+  suppressAutofill(stylesFormEl);
+  const stylesDisabledNote = document.getElementById('stylesDisabledNote');
+  const missingStylesWarning = document.getElementById('missingStylesWarning');
+  const stylesList = document.getElementById('stylesList');
+  const styleSearch = document.getElementById('styleSearch');
+  const styleUnusedFilter = document.getElementById('styleUnusedFilter');
+  const styleCountEl = document.getElementById('styleCount');
+
+  function setStylesFormEnabled(enabled) {
+    stylesFormEl.classList.toggle('stale', !enabled);
+    stylesDisabledNote.style.display = enabled ? 'none' : 'block';
+  }
+
+  function computeStyleUsage(layers) {
+    const counts = {};
+    function walk(list) {
+      (list || []).forEach(l => {
+        if (l.style) counts[l.style] = (counts[l.style] || 0) + 1;
+        if (l.clusterStyle) counts[l.clusterStyle] = (counts[l.clusterStyle] || 0) + 1;
+        if (Array.isArray(l.layers)) walk(l.layers);
+      });
+    }
+    walk(layers);
+    return counts;
+  }
+
+  let currentStyleUsage = {};
+
+  function makeStyleRow(name, valueArr, fromFile) {
+    const row = document.createElement('div');
+    row.className = 'styleRow';
+    const text = JSON.stringify(valueArr, null, 2);
+    row.dataset.lastValidValue = text;
+    row.dataset.fromFile = fromFile ? 'true' : 'false';
+
+    row.innerHTML = `
+      <div class="styleRowHead">
+        <input type="text" class="styleName" placeholder="style name" value="${escapeHtml(name || '')}">
+        <span class="usageBadge">used by 0</span>
+        <button type="button" class="miniBtn styleRemove">✕</button>
+      </div>
+      <div class="styleRowBody">
+        <details open>
+          <summary>style rules</summary>
+          <textarea class="styleText optionsText" spellcheck="false">${escapeHtml(text)}</textarea>
+          <div class="styleStatus optionsStatus muted">Valid.</div>
+        </details>
+      </div>
+    `;
+
+    const nameInput = row.querySelector('.styleName');
+    const badge = row.querySelector('.usageBadge');
+    row.dataset.styleName = (name || '').toLowerCase();
+    function refreshUsageBadge() {
+      const count = currentStyleUsage[nameInput.value.trim()] || 0;
+      badge.textContent = `used by ${count} layer${count === 1 ? '' : 's'}`;
+      badge.classList.toggle('zero', count === 0);
+    }
+    refreshUsageBadge();
+    nameInput.addEventListener('input', () => {
+      row.dataset.styleName = nameInput.value.toLowerCase();
+      refreshUsageBadge();
+      applyStyleSearchFilter();
+      applyFormChange();
+    });
+
+    const styleText = row.querySelector('.styleText');
+    const styleStatus = row.querySelector('.styleStatus');
+    function refreshStyleStatus() {
+      const val = styleText.value.trim();
+      if (val === '') {
+        styleText.classList.add('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus err';
+        styleStatus.textContent = 'Empty — keeping last valid style until fixed.';
+        return;
+      }
+      try {
+        const parsedVal = JSON.parse(val);
+        styleText.classList.remove('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus muted';
+        styleStatus.textContent = 'Valid.';
+        row.dataset.lastValidValue = JSON.stringify(parsedVal);
+      } catch (e) {
+        styleText.classList.add('invalidJson');
+        styleStatus.className = 'styleStatus optionsStatus err';
+        styleStatus.textContent = 'Invalid JSON — keeping last valid style until fixed.';
+      }
+    }
+    styleText.addEventListener('input', () => { refreshStyleStatus(); applyFormChange(); });
+
+    row.querySelector('.styleRemove').addEventListener('click', () => { row.remove(); applyFormChange(); });
+
+    suppressAutofill(row);
+    return row;
+  }
+
+  document.getElementById('btnAddStyle').addEventListener('click', () => {
+    const row = makeStyleRow('', [[{}]]);
+    stylesList.appendChild(row);
+    row.querySelector('input').focus();
+  });
+
+  function applyStyleSearchFilter() {
+    const q = styleSearch.value.trim().toLowerCase();
+    const showUnusedOnly = styleUnusedFilter.checked;
+    
+    stylesList.querySelectorAll('.styleRow').forEach(row => {
+      const nameMatch = q === '' || row.dataset.styleName.includes(q);
+      const usageCount = currentStyleUsage[row.dataset.styleName] || 0;
+      const usageMatch = showUnusedOnly ? usageCount === 0 : true;
+      
+      row.classList.toggle('filteredOut', !(nameMatch && usageMatch));
+    });
+  }
+  
+  styleSearch.addEventListener('input', applyStyleSearchFilter);
+  styleUnusedFilter.addEventListener('change', applyStyleSearchFilter);
+
+  function populateStylesForm(parsed) {
+    if (stylesFormEl.contains(document.activeElement)) return;
+    currentStyleUsage = computeStyleUsage(parsed.layers);
+    stylesList.innerHTML = '';
+    Object.entries(parsed.styles || {}).forEach(([name, valueArr]) => {
+      stylesList.appendChild(makeStyleRow(name, valueArr, true));
+    });
+    styleCountEl.textContent = `${Object.keys(parsed.styles || {}).length} style(s) total.`;
+    applyStyleSearchFilter();
+    const definedNames = new Set(Object.keys(parsed.styles || {}));
+    const missing = Object.keys(currentStyleUsage).filter(n => !definedNames.has(n));
+    if (missing.length) {
+      missingStylesWarning.textContent = `${missing.length} layer(s) reference undefined style(s): ${missing.join(', ')}`;
+      missingStylesWarning.classList.add('shown');
+    } else {
+      missingStylesWarning.classList.remove('shown');
+    }
+  }
+
+  function collectStylesFromDOM() {
+    const styles = {};
+    stylesList.querySelectorAll('.styleRow').forEach(row => {
+      const name = row.querySelector('.styleName').value.trim();
+      if (!name && row.dataset.fromFile !== 'true') return;
+      const lastValid = row.dataset.lastValidValue;
+      if (lastValid) styles[name] = JSON.parse(lastValid);
+    });
+    return styles;
+  }
+
+  function collectFormValues() {
+    const next = JSON.parse(JSON.stringify(currentParsed));
+    const g = id => document.getElementById(id).value;
+
+    next.projectionCode = g('f_projectionCode') || undefined;
+    if (!next.projectionCode) delete next.projectionCode;
+
+    const pe = [numOrUndef(g('f_projExtent0')), numOrUndef(g('f_projExtent1')), numOrUndef(g('f_projExtent2')), numOrUndef(g('f_projExtent3'))];
+    if (pe.every(v => v !== undefined)) next.projectionExtent = pe; else delete next.projectionExtent;
+
+    const ex = [numOrUndef(g('f_extent0')), numOrUndef(g('f_extent1')), numOrUndef(g('f_extent2')), numOrUndef(g('f_extent3'))];
+    if (ex.every(v => v !== undefined)) next.extent = ex; else delete next.extent;
+
+    const ce = [numOrUndef(g('f_center0')), numOrUndef(g('f_center1'))];
+    if (ce.every(v => v !== undefined)) next.center = ce; else delete next.center;
+
+    const zoom = numOrUndef(g('f_zoom'));
+    if (zoom !== undefined) next.zoom = zoom; else delete next.zoom;
+
+    const resolutions = g('f_resolutions').split(/[\s,]+/).map(s => s.trim()).filter(Boolean).map(Number).filter(n => !Number.isNaN(n));
+    if (resolutions.length) next.resolutions = resolutions; else delete next.resolutions;
+
+    const footerImg = g('f_footerImg'), footerUrl = g('f_footerUrl'), footerText = g('f_footerText');
+    const footer = Object.assign({}, (next.pageSettings && next.pageSettings.footer) || {});
+    if (footerImg) footer.img = footerImg; else delete footer.img;
+    if (footerUrl) footer.url = footerUrl; else delete footer.url;
+    if (footerText) footer.text = footerText; else delete footer.text;
+    if (Object.keys(footer).length) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.footer = footer;
+    } else if (next.pageSettings) {
+      delete next.pageSettings.footer;
+    }
+    const origPage = currentParsed.pageSettings || {};
+    const mapGridChecked = document.getElementById('f_mapGrid').checked;
+    if (mapGridChecked || Object.prototype.hasOwnProperty.call(origPage, 'mapGrid')) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.mapGrid = { visible: mapGridChecked };
+    } else if (next.pageSettings) {
+      delete next.pageSettings.mapGrid;
+    }
+    const embeddedChecked = document.getElementById('f_embedded').checked;
+    if (embeddedChecked || Object.prototype.hasOwnProperty.call(origPage, 'mapInteractions')) {
+      next.pageSettings = next.pageSettings || {};
+      next.pageSettings.mapInteractions = { embedded: embeddedChecked };
+    } else if (next.pageSettings) {
+      delete next.pageSettings.mapInteractions;
+    }
+    if (next.pageSettings && Object.keys(next.pageSettings).length === 0) delete next.pageSettings;
+
+    const nextSource = {};
+    sourceList.querySelectorAll('.dynRow').forEach(row => {
+      const name = row.querySelector('.srcName').value.trim();
+      const url = row.querySelector('.srcUrl').value.trim();
+      const projection = row.querySelector('.srcProjection').value.trim();
+      const crossOrigin = row.querySelector('.srcCrossOrigin').value.trim();
+      const workspace = row.querySelector('.srcWorkspace').value.trim();
+      if (!name) return;
+      const extra = row.dataset.extraProps ? JSON.parse(row.dataset.extraProps) : {};
+      nextSource[name] = Object.assign(
+        {},
+        url ? { url } : {},
+        projection ? { projection } : {},
+        crossOrigin ? { crossOrigin } : {},
+        workspace ? { workspace } : {},
+        extra
+      );
+    });
+    if (Object.keys(nextSource).length) next.source = nextSource; else delete next.source;
+
+    const nextPalette = [];
+    paletteList.querySelectorAll('.colorVal').forEach(input => {
+      if (input.value.trim()) nextPalette.push(input.value.trim());
+    });
+    if (nextPalette.length) next.palette = nextPalette; else delete next.palette;
+
+    const nextProj4Defs = [];
+    proj4List.querySelectorAll('.dynRow').forEach(row => {
+      const code = row.querySelector('.proj4Code').value.trim();
+      const alias = row.querySelector('.proj4Alias').value.trim();
+      const projectionStr = row.querySelector('.proj4Proj').value.trim();
+      if (!code || !projectionStr) return;
+      const entry = { code, projection: projectionStr };
+      if (alias) entry.alias = alias;
+      nextProj4Defs.push(entry);
+    });
+    if (nextProj4Defs.length || Object.prototype.hasOwnProperty.call(currentParsed, 'proj4Defs')) next.proj4Defs = nextProj4Defs; else delete next.proj4Defs;
+
+    const ctrls = collectControlsFromDOM();
+    if (ctrls.length || Object.prototype.hasOwnProperty.call(currentParsed, 'controls')) next.controls = ctrls; else delete next.controls;
+    const lyrs = collectLayersFromDOM();
+    if (lyrs.length || Object.prototype.hasOwnProperty.call(currentParsed, 'layers')) next.layers = lyrs; else delete next.layers;
+    const stys = collectStylesFromDOM();
+    if (Object.keys(stys).length || Object.prototype.hasOwnProperty.call(currentParsed, 'styles')) next.styles = stys; else delete next.styles;
+
+    return next;
+  }
+
+  function applyFormChange() {
+    if (!currentParsed) return;
+    formTouchedThisSession = true;
+    const next = collectFormValues();
+    let serialized = null;
+    try {
+      serialized = patchRawPreservingComments(rawText.value, baselineCollected || currentParsed, next);
+    } catch (e) {
+      serialized = null;
+    }
+    if (serialized === null) serialized = JSON.stringify(next, null, 2);
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+    setter.call(rawText, serialized);
+    rawText.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function switchTab(tab) {
+    tabStructure.classList.toggle('active', tab === 'structure');
+    tabSettings.classList.toggle('active', tab === 'settings');
+    tabControls.classList.toggle('active', tab === 'controls');
+    tabLayers.classList.toggle('active', tab === 'layers');
+    tabStyles.classList.toggle('active', tab === 'styles');
+    treeContainer.classList.toggle('active', tab === 'structure');
+    settingsForm.classList.toggle('active', tab === 'settings');
+    controlsForm.classList.toggle('active', tab === 'controls');
+    layersFormEl.classList.toggle('active', tab === 'layers');
+    stylesFormEl.classList.toggle('active', tab === 'styles');
+  }
+  tabStructure.addEventListener('click', () => switchTab('structure'));
+  tabSettings.addEventListener('click', () => switchTab('settings'));
+  tabControls.addEventListener('click', () => switchTab('controls'));
+  tabLayers.addEventListener('click', () => switchTab('layers'));
+  tabStyles.addEventListener('click', () => switchTab('styles'));
+
+  setSettingsFormEnabled(false);
+  setControlsFormEnabled(false);
+  setLayersFormEnabled(false);
+  setStylesFormEnabled(false);
+
+  let currentParsed = null;
+  let baselineCollected = null;
+
+  function parseAndRender() {
+    const text = rawText.value;
+    if (text.trim() === '') {
+      statusBar.className = 'idle';
+      statusBar.textContent = 'No file loaded.';
+      treeContainer.innerHTML = '';
+      treeContainer.classList.remove('stale');
+      currentParsed = null;
+      setSettingsFormEnabled(false);
+      setControlsFormEnabled(false);
+      setLayersFormEnabled(false);
+      setStylesFormEnabled(false);
+      commentWarning.classList.remove('shown');
+      return;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(stripJSONComments(text));
+    } catch (e) {
+      statusBar.className = 'err';
+      statusBar.textContent = 'Invalid JSON: ' + locateError(text, e.message);
+      treeContainer.classList.add('stale');
+      setSettingsFormEnabled(false);
+      setControlsFormEnabled(false);
+      setLayersFormEnabled(false);
+      setStylesFormEnabled(false);
+      return;
+    }
+    statusBar.className = 'ok';
+    const controlCount = Array.isArray(parsed.controls) ? parsed.controls.length : 0;
+    const layerCount = Array.isArray(parsed.layers) ? parsed.layers.length : 0;
+    statusBar.textContent = `Valid JSON — ${controlCount} controls, ${layerCount} top-level layers.`;
+    treeContainer.classList.remove('stale');
+    renderTree(parsed);
+    currentParsed = parsed;
+    setSettingsFormEnabled(true);
+    setControlsFormEnabled(true);
+    setLayersFormEnabled(true);
+    setStylesFormEnabled(true);
+    populateSettingsForm(parsed);
+    populateControlsForm(parsed);
+    populateLayersForm(parsed);
+    populateStylesForm(parsed);
+    updateCommentWarning();
+    baselineCollected = collectFormValues();
+  }
+
+  rawText.addEventListener('input', () => {
+    setDirty();
+    btnSaveAs.disabled = rawText.value.trim() === '';
+    clearTimeout(parseDebounce);
+    parseDebounce = setTimeout(parseAndRender, 250);
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (!btnSave.disabled) saveFile();
+    }
+    // Tab switching hotkeys
+    if (e.altKey && e.key >= '1' && e.key <= '5') {
+        e.preventDefault();
+        const tabs = ['structure', 'settings', 'controls', 'layers', 'styles'];
+        switchTab(tabs[parseInt(e.key) - 1]);
+    }
+  });
+
+  function loadText(text, name, handle) {
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    rawText.value = text;
+    savedText = text;
+    currentFileName = name;
+    fileHandle = handle || null;
+    btnSave.disabled = false;
+    btnSaveAs.disabled = false;
+    setDirty();
+    parseAndRender();
+  }
+
+  async function openFile() {
+    if (hasFSAccess) {
+      let handles;
+      try {
+        handles = await window.showOpenFilePicker({
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+      } catch (e) {
+        return;
+      }
+      const handle = handles[0];
+      const file = await handle.getFile();
+      const text = await file.text();
+      loadText(text, file.name, handle);
+    } else {
+      fileInput.click();
+    }
+  }
+
+  function bailoutFile() {
+    if (!currentFileName || savedText === null) return;
+    if (confirm('Are you sure you want to discard your unsaved changes?')) {
+      rawText.value = savedText;
+      setDirty();
+      parseAndRender();
+      statusBar.className = 'idle';
+      statusBar.textContent = `Reverted changes. Viewing clean snapshot of ${currentFileName}.`;
+    }
+  }
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => loadText(reader.result, file.name, null);
+    reader.readAsText(file);
+  });
+
+  function downloadFallback(text, name) {
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name || 'config.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function saveFile() {
+    const text = rawText.value;
+    if (fileHandle) {
+      const writable = await fileHandle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      savedText = text;
+      setDirty();
+      statusBar.className = 'ok';
+      statusBar.textContent = `Saved to ${currentFileName}.`;
+      return;
+    }
+    if (hasFSAccess) {
+      await saveAsFile();
+      return;
+    }
+    downloadFallback(text, currentFileName);
+    savedText = text;
+    setDirty();
+  }
+
+  async function saveAsFile() {
+    const text = rawText.value;
+    if (hasFSAccess) {
+      let handle;
+      try {
+        handle = await window.showSaveFilePicker({
+          suggestedName: currentFileName || 'config.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+      } catch (e) {
+        return;
+      }
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      fileHandle = handle;
+      const file = await handle.getFile();
+      currentFileName = file.name;
+      savedText = text;
+      setDirty();
+      statusBar.className = 'ok';
+      statusBar.textContent = `Saved to ${currentFileName}.`;
+      return;
+    }
+    const name = prompt('File name', currentFileName || 'config.json');
+    if (name === null) return;
+    downloadFallback(text, name);
+    currentFileName = name;
+    savedText = text;
+    setDirty();
+  }
+
+  btnOpen.addEventListener('click', openFile);
+  btnBailout.addEventListener('click', bailoutFile);
+  btnSave.addEventListener('click', saveFile);
+  btnSaveAs.addEventListener('click', saveAsFile);
+
+  window.addEventListener('beforeunload', (e) => {
+    if (savedText !== null && rawText.value !== savedText) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

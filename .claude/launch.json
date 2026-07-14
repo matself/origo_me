@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "origo-build",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude/static-server.js", "build", "9967"],
+      "port": 9967
+    },
+    {
+      "name": "admin-editor",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude/static-server.js", "admin-editor", "9968"],
+      "port": 9968
+    }
+  ]
+}
