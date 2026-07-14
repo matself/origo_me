@@ -30,7 +30,8 @@
     "build-js-analyze": "webpack --config ./tasks/webpack.analyze.js",
     "copy": "webpack --config ./tasks/webpack.copy.js",
     "copy-dev": "webpack --config ./tasks/webpack.copy-dev.js",
-    "copy-plugins": "copyfiles plugins/* build"
+    "copy-plugins": "copyfiles plugins/* build",
+    "reformat-config": "node tools/reformat-config-comments.js"
   },
   "dependencies": {
     "@glidejs/glide": "^3.7.1",
