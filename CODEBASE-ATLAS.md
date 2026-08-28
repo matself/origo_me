@@ -4,7 +4,7 @@ A working map of this repository: what Origo is built from, how it boots, and wh
 fork departs from upstream. Written as orientation for anyone — human or agent — picking up
 work here without prior context.
 
-Snapshot taken at commit `3b17b49` on `master`. Line counts cover `src/` only and exclude
+Snapshot taken at commit `710d2f5` on `master`. Line counts cover `src/` only and exclude
 build output and dependencies; they drift, the structure does not.
 
 | | |
@@ -51,8 +51,8 @@ Two entry points matter:
 
 ## Fork vs upstream
 
-The fork's changes are concentrated almost entirely outside the framework itself: **32 commits
-ahead** of upstream, **11 behind** (all Dependabot bumps).
+The fork's changes are concentrated almost entirely outside the framework itself: **35 commits
+ahead** of upstream, **0 behind**.
 
 | What | Where | Size | Nature |
 | --- | --- | --- | --- |
@@ -244,34 +244,43 @@ Runtime dependencies beyond OpenLayers are few, and each maps to one feature:
 
 ## Things to watch
 
-Observations from reading the tree, roughly in order of how likely they are to bite.
+Observations from reading the tree, roughly in order of how likely they are to bite. Items
+marked *left deliberately* are known and intentionally not acted on; the reasoning is given so
+the decision does not have to be rediscovered.
 
-**The build depends on an undeclared package.** `tasks/webpack.common.js` lists
-`core-js/stable` as an entry, but `core-js` is not in `package.json`. It resolves only because
-`jspdf` to `canvg` pulls it in transitively (3.41.0 in the lockfile). If that chain ever drops
-it, the build breaks with a missing-module error that points nowhere useful. This is upstream's
-issue, not the fork's — worth an upstream PR adding it as a direct dependency.
+**`src/controls/offline/` is orphaned.** *Left deliberately.* Five files covering a download
+handler, an offline store and WFS/GeoJSON/TopoJSON adapters, imported by nothing and not
+exported from `controls.js`. Its localization strings are still shipped in both locale files, which makes it
+look like a half-landed feature rather than deliberate dead code. It is upstream's code, so
+deleting it here would buy nothing and create a permanent merge conflict surface; the right
+venue is an upstream issue asking whether it is staged work or dead weight.
 
-**Eleven commits behind, all security bumps.** Every commit this fork is missing is a Dependabot
-upgrade — `dompurify`, `ws`, `shell-quote`, `http-proxy-middleware` and others. None touch
-framework code, so a merge from upstream should be low-risk and is the cheapest hygiene win
-available.
+**Built output is committed.** *Left deliberately.* `build/js/origo.js` (8.4 MB) and
+`origo.min.js` (2.6 MB) are tracked. The `.gitattributes` `linguist-generated` marks keep them
+out of PR diffs, but they still have to be rebuilt and committed in lockstep with any source
+change, and they dominate clone size. This is what makes the fork directly deployable, so it
+stays; the risk to watch is a source change shipping without a rebuild.
 
-**`src/controls/offline/` is orphaned.** Five files covering a download handler, an offline
-store and WFS/GeoJSON/TopoJSON adapters, imported by nothing and not exported from
-`controls.js`. Its localization strings are still shipped in both locale files, which makes it
-look like a half-landed feature rather than deliberate dead code.
+**Concentration risk in the editor.** *Left deliberately.* `edithandler.js` at 2,343 lines is
+seven percent of the entire source in one file, and it owns interaction state, form binding,
+geometry validation and transaction dispatch simultaneously. Any editing bug starts here.
+Splitting it in a fork would make every future upstream merge painful for no functional gain.
 
-**Built output is committed.** `build/js/origo.js` (8.4 MB) and `origo.min.js` (2.6 MB) are
-tracked. The `.gitattributes` `linguist-generated` marks keep them out of PR diffs, but they
-still have to be rebuilt and committed in lockstep with any source change, and they dominate
-clone size. Fine for a deployment fork; a trap if a source change ever ships without a rebuild.
+**`hashchange` only reacts to `map=`.** The listener in `origo.js` re-initialises the viewer
+only when the new hash contains a `map` parameter, so changing just `center`, `zoom` or `layers`
+on an embedded map does nothing. This limits URL-driven control of an embedded map — see
+[`SHAREMAP.md`](SHAREMAP.md). Changing it means changing framework behaviour, with real
+regression risk for anyone whose page writes to the hash, so it belongs upstream as a discussion
+rather than as a local patch.
 
-**Concentration risk in the editor.** `edithandler.js` at 2,343 lines is seven percent of the
-entire source in one file, and it owns interaction state, form binding, geometry validation and
-transaction dispatch simultaneously. Any editing bug starts here.
+### Recently addressed
 
-**The permalink surface was undocumented.** It was an internal round-trip format that
-municipalities began using as an embedding API; `SHAREMAP.md` now covers it. The related trap:
-the `hashchange` listener in `origo.js` only re-initialises when the new hash contains `map=`,
-so changing only `center` or `zoom` on an embedded map does nothing.
+* **core-js was undeclared** (fixed `710d2f5`). `tasks/webpack.common.js` lists `core-js/stable`
+  as a webpack entry, but `core-js` was not in `package.json` — it resolved only because
+  `jspdf` to `canvg` pulled it in transitively. Now declared directly at `^3.41.0`, the version
+  already in the lockfile.
+* **Eleven upstream commits behind** (fixed `9e67f17`). All were Dependabot bumps — `dompurify`,
+  `ws`, `shell-quote`, `http-proxy-middleware` and others — touching only `package.json` and
+  `package-lock.json`. Merged; no bundle rebuild was required.
+* **The permalink surface was undocumented** (fixed by `SHAREMAP.md`). It was an internal
+  round-trip format that municipalities began using as an embedding API.
