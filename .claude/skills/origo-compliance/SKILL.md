@@ -1,6 +1,6 @@
 ---
 name: origo-compliance
-description: The contribution rules for the Origo map framework — Airbnb JS/CSS style enforced by CI, the o- selector prefix, SCSS-only styling, PR title prefixes (dep/docs/feature/fix), OpenLayers commit-message format, BSD-2 license compatibility for new dependencies, when to write a plugin instead of touching core, and the fork's bundle-rebuild rule. Use this whenever writing or reviewing code in this repository, adding or upgrading a dependency, editing .scss or icons, writing a commit message or PR description, planning a contribution back to origo-map/origo, or deciding whether something belongs in core or a plugin — even when the user hasn't mentioned contributing, because most of these rules are enforced by CI or by reviewers and are cheaper to follow than to retrofit.
+description: The contribution rules for the Origo map framework — Airbnb JS/CSS style enforced by CI, the o- selector prefix, SCSS-only styling, PR title prefixes (dep/docs/feature/fix), OpenLayers commit-message format, BSD-2 license compatibility for new dependencies, when to write a plugin instead of touching core, where AI-assisted contributions stand, and the fork's bundle-rebuild rule. Use this whenever writing or reviewing code in this repository, adding or upgrading a dependency, editing .scss or icons, writing a commit message or PR description, planning a contribution back to origo-map/origo, deciding whether something belongs in core or a plugin, or asking what the project's policy on anything is — even when the user hasn't mentioned contributing, because most of these rules are enforced by CI or by reviewers and are cheaper to follow than to retrofit.
 ---
 
 # Contributing to Origo, in compliance
@@ -149,6 +149,52 @@ rather than bundling its own.
 * The BSD 2-Clause licence requires the copyright notice and disclaimer to be retained in both
   source and binary redistributions. If you ship a bundle, the notice travels with it.
 
+## AI-assisted contributions
+
+**Origo has no AI policy.** As of 2026-08-28 there is nothing about AI, LLMs, generated code or
+assisted contributions in the repository's policy files (which are byte-identical to upstream
+`origo-map/origo`), in the published documentation, in the documentation repository, or in an
+organisation-wide `.github` repository — that last one does not exist. So there is no disclosure
+requirement to satisfy and no prohibition to work around.
+
+What that absence means in practice: **the contributor owns the contribution regardless of how
+it was produced.** No rule is relaxed because a tool wrote the diff, and three of the existing
+rules bite harder on generated code than on hand-written code.
+
+**Provenance is a licence question, not a style question.** `DEVELOPING.md` requires every
+third-party library to carry a licence compatible with BSD-2, because the project has to be able
+to relicense what it ships. Submitting code means asserting it is yours to contribute under
+those terms. Generated code that reproduces a substantial chunk of some other project sits in
+exactly the same risk category as an incompatible dependency — with the difference that nobody
+can see it in the diff. Treat anything that looks like it came from a recognisable upstream as
+something to verify, not to assume.
+
+**The lint gate does not care who wrote it.** Airbnb rules that generated JavaScript commonly
+trips: `comma-dangle: never`, `no-use-before-define`, `no-param-reassign`, `prefer-const`. Run
+`npm run lint` before proposing anything — CI runs it on every push, so an unlinted PR fails
+before a human reads it. Never report that checks pass without having run them.
+
+**Origo's local conventions are the ones a model will not know**, because they are unlike
+general web practice and are not in most training data. Check generated code specifically for:
+
+* the `o-` prefix on every CSS class and id;
+* styling changed in `.scss`, never in the generated `css/style.css`;
+* breakpoints via Origo's configuration-driven element queries rather than media queries;
+* templating with ES6 template literals — **not** Handlebars, which `DEVELOPING.md` still
+  wrongly claims is used (see [Known documentation drift](#known-documentation-drift)). A model
+  reading the project's own documentation will suggest the wrong thing here.
+
+**Keep the diff reviewable.** `CONTRIBUTING.md` asks for one issue per PR, logical incremental
+commits, and an issue opened before the work starts. Generated changes tend to sprawl across
+files and arrive as one large commit, which is precisely what that process exists to prevent.
+Split the work the way you would have if you had written it by hand, and be able to explain
+every line in review — a maintainer's time is the scarce resource, and unreviewable volume
+spends it fastest.
+
+**Commit trailers are a fork-local practice.** This fork records assistance with a
+`Co-Authored-By:` trailer on commits that had it. Upstream neither requires nor forbids this;
+decide deliberately whether such trailers belong on a PR aimed at `origo-map/origo`.
+
 ## Conduct
 
 The project uses the Contributor Covenant v1.4 (`CODE_OF_CONDUCT.md`), covering issues, PRs,
@@ -181,9 +227,13 @@ PR upstream to fix the file.
   not in `package.json` and is imported nowhere. Templates are plain ES6 template literals; see
   `src/templates/viewertemplate.js` and the helpers in `src/utils/templatehelpers.js`. Write new
   templates the same way.
-* **The documentation repository is named inconsistently.** `CONTRIBUTING.md` points
-  documentation PRs at `origo-map/api-documentation`, while `README.md` links readers to
-  `origo-map/origo-documentation`. Check which is live before opening a docs PR.
+* **`CONTRIBUTING.md` names the wrong documentation repository.** It sends documentation PRs to
+  `origo-map/api-documentation`; the live repository is
+  [`origo-map/origo-documentation`](https://github.com/origo-map/origo-documentation)
+  ("Api documentation for Origo"), which is what `README.md` and `PLUGINS.md` link to and what
+  publishes the site at
+  <https://origo-map.github.io/origo-documentation/latest/#origo-api>. Verified 2026-08-28.
+  Open documentation PRs against `origo-documentation`.
 
 ## Quick pre-flight
 
