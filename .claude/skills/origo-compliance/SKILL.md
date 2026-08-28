@@ -217,6 +217,14 @@ This repository is a fork, which adds obligations the upstream docs do not menti
   `admin-editor/` or `.claude/` costs nothing at merge time; edits inside `src/` cost forever.
 * Merge upstream regularly — the fork is deployment infrastructure, so falling behind on
   security bumps is the main hygiene risk. See `CODEBASE-ATLAS.md` for the current state.
+* **GitHub Actions is deliberately switched off here, so nothing verifies a push.** GitHub
+  disables Actions on forks until the owner turns them on, and that has been left that way on
+  purpose — the demo-map workflow is written for upstream and would only fail here. Do not read
+  the three workflow files as evidence that CI runs: the API reports all three as `active`
+  because that is the workflow files' own state, not the repository's, and this fork has zero
+  workflow runs in its entire history. **Run `npm run lint` locally before pushing** — it is the
+  same command, config and coverage as `lint.yml`, just on your Node version rather than Node
+  20. The lint gate returns when a branch reaches `origo-map/origo`.
 
 ## Known documentation drift
 
@@ -239,7 +247,7 @@ PR upstream to fix the file.
 
 Before proposing a change, walk the list:
 
-1. `npm run lint` clean — this is the CI gate.
+1. `npm run lint` clean — the CI gate upstream, and in this fork nobody runs it but you.
 2. Styling changed only in `.scss`, every new selector prefixed `o-`, no layout media queries.
 3. New dependency? Licence compatible with BSD-2, and not a framework.
 4. Touched `src/` in this fork? Rebuild bundles and commit them.
