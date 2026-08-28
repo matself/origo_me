@@ -227,7 +227,8 @@ Webpack 5 with a shared base and four merged configs; Dart Sass compiled separat
 
 The library ships as a classic global, not a module: `library: { type: 'var', name: 'Origo' }`
 with `chunkLoading: false`. That is deliberate — an Origo app is a plain `<script>` tag and a
-JSON file, deployable to any static host.
+JSON file, deployable to any static host. Serving it is covered in
+[`BUILD-AND-DEPLOY.md`](BUILD-AND-DEPLOY.md).
 
 Runtime dependencies beyond OpenLayers are few, and each maps to one feature:
 
