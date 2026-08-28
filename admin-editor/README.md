@@ -49,4 +49,4 @@ I **Basic Settings** kan du lägga till vanliga svenska projektioner (SWEREF99-z
 
 ## Köra lokalt
 
-Ingen build behövs — öppna `config_editor.html` direkt i webbläsaren, eller kör den lilla statiska servern som ligger i `.claude/static-server.js` (se `.claude/launch.json` för portnummer) och gå till `/config_editor.html` — serverns rot letar efter `index.html` och ger 404.
+Ingen build behövs — öppna `config_editor.html` direkt i webbläsaren. Vill du hellre köra den över http finns en liten statisk server i `.claude/static-server.js` (se `.claude/launch.json` för portnummer); gå då till `/config_editor.html`.
