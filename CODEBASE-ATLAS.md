@@ -56,7 +56,7 @@ ahead** of upstream, **0 behind**.
 
 | What | Where | Size | Nature |
 | --- | --- | --- | --- |
-| Config editor | `admin-editor/index.html` | 1,957 ln | New standalone tool — no build step, File System Access API, form to raw-JSON two-way binding |
+| Config editor | `admin-editor/config_editor.html` | 1,957 ln | New standalone tool — no build step, File System Access API, form to raw-JSON two-way binding |
 | Comment reformatter | `tools/reformat-config-comments.js` | 274 ln | New CLI — converts `//` comments in configs into JSON-legal `"//key"` entries |
 | XYZ projection fix | `src/layer/xyz.js` | 1 ln | The only framework change: honour a layer's or source's own `projection` before falling back to the viewer's |
 | Sharemap docs | `SHAREMAP.md` | 166 ln | New — documents the permalink / mapstate URL format |

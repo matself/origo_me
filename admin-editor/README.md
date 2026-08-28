@@ -1,6 +1,6 @@
 # Origo Config Editor
 
-Ett fristående HTML-verktyg för att redigera Origo-kartkonfigurationer (JSON) direkt i webbläsaren, utan byggsteg eller server. Öppna `index.html` i Chrome eller Edge för bäst upplevelse.
+Ett fristående HTML-verktyg för att redigera Origo-kartkonfigurationer (JSON) direkt i webbläsaren, utan byggsteg eller server. Öppna `config_editor.html` i Chrome eller Edge för bäst upplevelse.
 
 ## Vad gör det?
 
@@ -49,4 +49,4 @@ I **Basic Settings** kan du lägga till vanliga svenska projektioner (SWEREF99-z
 
 ## Köra lokalt
 
-Ingen build behövs — öppna `index.html` direkt i webbläsaren, eller kör den lilla statiska servern som ligger i `.claude/static-server.js` (se `.claude/launch.json` för portnummer).
+Ingen build behövs — öppna `config_editor.html` direkt i webbläsaren, eller kör den lilla statiska servern som ligger i `.claude/static-server.js` (se `.claude/launch.json` för portnummer) och gå till `/config_editor.html` — serverns rot letar efter `index.html` och ger 404.
