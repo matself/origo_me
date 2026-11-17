@@ -19,6 +19,7 @@ skip that section entirely — you will have a complete, working deployment with
 - [Prerequisites](#prerequisites)
 - [Building](#building)
 - [Preparing the build for production](#preparing-the-build-for-production)
+- [Runbook: origo.webkarta.se](#runbook-origowebkartase)
 - [nginx](#nginx)
 - [TLS](#tls)
 - [Deploying under a sub-path](#deploying-under-a-sub-path)
@@ -128,6 +129,105 @@ sudo chown -R www-data:www-data /var/www/origo
 
 `--delete` keeps removed files from lingering; drop it if the webroot holds anything the build
 does not produce.
+
+## Runbook: origo.webkarta.se
+
+The sections above are generic. This one is the actual instance, written down so a deploy does
+not depend on anyone remembering how it went last time.
+
+| | |
+| --- | --- |
+| Host | `origo.webkarta.se` — Ubuntu, nginx, gzip enabled |
+| Webroot | `/var/www/origo.webkarta.se` |
+| Transfer | WinSCP over Tailscale, as root |
+| Build step on the server | none — files are copied out of a local checkout's `build/` |
+
+### 1. Sync and rebuild locally
+
+```bash
+git fetch upstream
+git merge upstream/master
+npm ci                  # only when package-lock.json changed
+npm run lint            # must be clean; CI does not run in this fork
+npm run prebuild-sass   # see the warning below
+npm run build
+git add build/ && git commit
+```
+
+**`npm run build` does not regenerate `css/style.css`.** The copy step takes it from the
+repository's `css/` directory, but only `prebuild-sass` writes it there — `build-sass` writes to
+`dist/`, which nothing copies. Skip `prebuild-sass` and an SCSS change will be missing from the
+deployed stylesheet while every other file looks correctly updated. Run both, in that order.
+
+### 2. Back up on the server
+
+WinSCP has a built-in terminal (Ctrl+T):
+
+```bash
+cp -a /var/www/origo.webkarta.se /var/www/origo.webkarta.se.bak-$(date +%Y%m%d)
+```
+
+Rolling back is then a `mv`. Note the disk is small — check free space before keeping many
+backups around.
+
+### 3. Copy
+
+Source `…\origo_me\build\` → target `/var/www/origo.webkarta.se/`. These eight entries, which
+is everything in `build/`:
+
+```
+css/  data/  examples/  img/  js/  origo-documentation/  index.html  index.json
+```
+
+Three traps, all of which have been hit or nearly hit:
+
+* **Copy from `build/`, never from the repository root.** The root has no `js/` directory at
+  all — the bundle is generated output that only exists under `build/`. Copying the root would
+  publish `src/`, `scss/`, `package.json` and `node_modules/` to the public webroot.
+* **Do not enable "delete files missing from source"** in a WinSCP synchronisation.
+  `configeditor.html` exists only on the server and would be deleted; so would `js/` if the
+  source directory were ever wrong.
+* **Do not filter by timestamp.** Directory mtimes only change when entries are added or
+  removed, so `build/js/` can show a months-old date while both bundles inside it were rewritten
+  minutes ago.
+
+### 4. Switch to the minified bundle
+
+`index.html` ships pointing at the unminified `js/origo.js` (8.7 MB, 1.6 MB gzipped). Edit the
+deployed copy to:
+
+```html
+<script src="js/origo.min.js"></script>
+```
+
+This is redone after every deploy, because the repository's `index.html` is upstream's demo page
+and is deliberately left unmodified — a local edit there would conflict on every future merge.
+
+### 5. Verify from outside
+
+```bash
+curl -sS -o /dev/null -D - https://origo.webkarta.se/js/origo.min.js | grep -iE 'last-modified|content-length'
+curl -sS https://origo.webkarta.se/index.html | grep -o 'src="js/origo[^"]*"'
+curl -sS -o /dev/null -H 'Accept-Encoding: gzip' -w '%{size_download}\n' https://origo.webkarta.se/js/origo.min.js
+```
+
+Expect the script tag to name `origo.min.js`, `Content-Length` to match the local
+`build/js/origo.min.js` byte for byte, and the gzipped transfer to be around 780 kB. Downloading
+the served bundle and running `cmp` against the local one is the conclusive check that what is
+deployed is what was built.
+
+### Known state and open items
+
+* `index.json` on the server is currently byte-identical to the repository's stock demo
+  configuration. **The day it is customised, exclude it from the copy** or every deploy will
+  silently revert it.
+* `configeditor.html` is served publicly at the webroot. It has no backend and cannot write to
+  the server, but it is an unnecessary public surface; the repository calls the same file
+  `admin-editor/config_editor.html`.
+* nginx sends **no `Cache-Control`**, so browsers fall back to heuristic freshness and may serve
+  a stale bundle for days after a deploy under an unchanged filename. The headers in the next
+  section fix this, and adding them is the one change that requires
+  `nginx -t && systemctl reload nginx`. Copying files never does.
 
 ## nginx
 
