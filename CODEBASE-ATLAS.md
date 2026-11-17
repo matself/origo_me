@@ -61,7 +61,7 @@ ahead** of upstream, **0 behind**.
 | XYZ projection fix | `src/layer/xyz.js` | 1 ln | The only framework change: honour a layer's or source's own `projection` before falling back to the viewer's |
 | Sharemap docs | `SHAREMAP.md` | 166 ln | New — documents the permalink / mapstate URL format |
 | Dev servers | `.claude/` | 51 ln | Static servers for `build/` (port 9967) and `admin-editor/` (port 9968) |
-| Rebuilt bundles | `build/js/*.js` | 11 MB | Regenerated output, committed; marked `linguist-generated` to collapse diffs |
+| Rebuilt bundles | `build/js/*.js` | 11 MB | Upstream commits `build/` too — what differs here is that the bundles are rebuilt from this fork's source; marked `linguist-generated` to collapse diffs |
 
 The framework core is effectively untouched — one line in `xyz.js`. Everything else is *tooling
 around* Origo: authoring and validating the JSON configs that Origo consumes. This is a fork

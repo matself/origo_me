@@ -206,10 +206,13 @@ had a reason. The enforcement contact is listed in `CODE_OF_CONDUCT.md`.
 
 This repository is a fork, which adds obligations the upstream docs do not mention:
 
-* **`build/` is committed here.** `build/js/origo.js` and `origo.min.js` are tracked, so any
-  change under `src/` must be followed by `npm run build` and the regenerated bundles committed
-  alongside it. A source change that ships without a rebuild silently does nothing in
-  deployment. Dependency-only changes do not need a rebuild.
+* **Rebuild the bundles whenever you touch `src/` or `scss/`.** `build/` is committed — that is
+  upstream's own convention, not a fork invention, because the repository doubles as a
+  distributable you can serve directly. The obligation it creates lands on a fork: a checkout
+  carries *upstream's* build, so the moment this fork has its own source change, `npm run build`
+  has to run and the regenerated bundles be committed alongside the change. Otherwise the source
+  says one thing and the deployed `origo.min.js` another. Dependency-only changes need no
+  rebuild.
 * **Upstream contributions target `origo-map/origo`,** not this fork. Keep changes intended for
   upstream free of fork-local tooling so they can be cherry-picked cleanly.
 * **Prefer not to modify or delete upstream code without cause.** Every local edit to a core

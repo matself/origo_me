@@ -75,10 +75,15 @@ build/
 
 Everything under `build/` is the deployable artifact. Nothing outside it is needed at runtime.
 
-**This fork commits `build/`,** which gives you a second option: deploy straight from the
-repository without building on the server at all. That is only safe if the committed bundles are
-current — see the rebuild rule in `.claude/skills/origo-compliance/SKILL.md`. If in doubt,
-rebuild.
+**Origo commits `build/` to the repository** — upstream does this, not just this fork, and it is
+deliberate: the repository doubles as a distributable. That gives you a second option, which is
+how `origo.webkarta.se` is deployed: copy `build/` straight out of a checkout, with no Node and
+no build step on the server at all.
+
+The catch is that a checkout gives you *someone's* build, not necessarily one of your source. As
+soon as a fork carries its own source change, the committed bundles have to be rebuilt or the
+deployment silently ships upstream's code instead — see the rebuild rule in
+`.claude/skills/origo-compliance/SKILL.md`. If in doubt, rebuild.
 
 ## Preparing the build for production
 
